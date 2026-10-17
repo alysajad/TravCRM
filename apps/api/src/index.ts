@@ -9,7 +9,7 @@ import { registerFinance } from './finance.js'
 import { registerIntegrations } from './integrations.js'
 
 const app = Fastify({ logger: true, bodyLimit: 1024 * 1024 })
-await app.register(cors, { origin: env.webOrigin.split(',').map(x => x.trim()), allowedHeaders: ['Content-Type', 'Authorization', 'X-Company-Id'] })
+await app.register(cors, { origin: env.webOrigin.split(',').map(x => x.trim()), methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'], allowedHeaders: ['Content-Type', 'Authorization', 'X-Company-Id'] })
 await app.register(rawBody, { global: false, encoding: 'utf8', runFirst: true })
 app.setErrorHandler((error, request, reply) => {
   const fault = error as Error & { statusCode?: number }
