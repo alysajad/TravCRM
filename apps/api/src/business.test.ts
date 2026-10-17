@@ -11,6 +11,7 @@ const { quotePdf } = await import('./pdf.js')
 const { groupBookingStays } = await import('./bookings.js')
 const { mergeEntitlements } = await import('./core.js')
 const { operationLocalTime } = await import('./operations.js')
+const { normalizeEmail, normalizePhone, matchClientContacts, latestTimeline } = await import('./clients.js')
 
 test('quotation totals use cents and apply GST after discount', () => {
   assert.deepEqual(priceQuote(1000, 200, 100, 5), { gst_amount: 55, total_amount: 1155 })
@@ -40,11 +41,35 @@ test('company plan overrides can add and remove features and replace limits', ()
   assert.deepEqual(value.limits, { team_members: 8, quotes_monthly: 100 })
 })
 
-test('query validation requires customer contact and keeps known fields', () => {
-  assert.throws(() => validateRecord(modules.queries!, { client_name: 'A' }), /Phone is required/)
+test('query validation accepts reviewable contacts and keeps known fields', () => {
+  assert.deepEqual(validateRecord(modules.queries!, { client_name: 'A' }), { title: 'A', status: 'Pending', data: { client_name: 'A' } })
   assert.deepEqual(validateRecord(modules.queries!, { client_name: 'A', phone: '1234567', status: 'Pending', notes: 'Call tomorrow', unexpected: 'discard' }), { title: 'A', status: 'Pending', data: { client_name: 'A', phone: '1234567', notes: 'Call tomorrow' } })
   assert.throws(() => validateRecord(modules.queries!, { client_name: 'A', phone: '1234567', status: 'Invalid' }), /Status is invalid/)
   assert.throws(() => validateRecord(modules.queries!, { client_name: 'A', phone: '1234567', arrival_date: '2026-02-31' }), /Expected arrival is invalid/)
+})
+
+test('customer contact normalization and matching are conservative', () => {
+  assert.equal(normalizeEmail('  PERSON@Example.COM '), 'person@example.com')
+  assert.equal(normalizePhone('+91 (987) 654-3210'), '919876543210')
+  const clients = [
+    { id: 'a', data: { email_normalized: 'a@example.com', phone_normalized: '1111111' } },
+    { id: 'b', data: { email_normalized: 'b@example.com', phone_normalized: '2222222' } },
+    { id: 'c', data: { email_normalized: 'duplicate@example.com', phone_normalized: '3333333' } },
+    { id: 'd', data: { email_normalized: 'duplicate@example.com', phone_normalized: '4444444' } }
+  ]
+  assert.deepEqual(matchClientContacts(clients, ' A@example.com ', ''), { outcome: 'unique', clientId: 'a' })
+  assert.deepEqual(matchClientContacts(clients, 'new@example.com', '9999999'), { outcome: 'none', clientId: null })
+  assert.deepEqual(matchClientContacts(clients, 'duplicate@example.com', ''), { outcome: 'conflict', clientId: null })
+  assert.deepEqual(matchClientContacts(clients, 'a@example.com', '2222222'), { outcome: 'conflict', clientId: null })
+  assert.deepEqual(matchClientContacts(clients, '', ''), { outcome: 'missing', clientId: null })
+})
+
+test('customer timeline is reverse chronological and capped at 100', () => {
+  const entries = Array.from({ length: 105 }, (_, index) => ({ id: index, occurred_at: new Date(Date.UTC(2026, 0, index + 1)).toISOString() }))
+  const result = latestTimeline(entries)
+  assert.equal(result.length, 100)
+  assert.equal(result[0]!.id, 104)
+  assert.equal(result.at(-1)!.id, 5)
 })
 
 test('quotation PDF renders company branding and Indian-script client details', async () => {

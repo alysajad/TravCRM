@@ -3,12 +3,14 @@ import { z } from 'zod'
 import { admin, audit, enforceLimit, HttpError, requirePermission, unwrap } from './core.js'
 import { quotePdf } from './pdf.js'
 import { statuses } from './modules.js'
+import { resolveClientLink } from './clients.js'
 
 const idSchema = z.uuid()
 const priceLineInput = z.object({ category: z.enum(['package','hotel','transport','activity','supplement','custom']).default('custom'), label: z.string().trim().min(1).max(200), quantity: z.coerce.number().positive().max(10000), unit_amount: z.coerce.number().min(0).max(999999999) })
 const transportDayInput = z.object({ destination: z.string().max(300).optional(), hotel: z.string().max(300).optional(), pickup: z.string().max(300).optional(), dropoff: z.string().max(300).optional() })
 const quoteInput = z.object({
   query_id: idSchema.optional().nullable(),
+  client_id: idSchema.optional().nullable(),
   client_name: z.string().trim().min(1).max(200), email: z.email().optional().or(z.literal('')),
   phone: z.string().max(50).optional(), status: z.enum(statuses.quote as [string, ...string[]]).default('Draft'),
   destination: z.string().trim().min(1).max(200), days: z.coerce.number().int().min(1).max(60),
@@ -51,10 +53,14 @@ async function prepare(request: Parameters<typeof requirePermission>[0], raw: un
   if (value.status === 'Confirmed') throw new HttpError(400, 'Use Confirm & create booking to confirm a quotation.')
   if (value.itinerary.length !== value.days) throw new HttpError(400, 'Choose one day plan for each day.')
   if (value.stays.length !== value.days - 1) throw new HttpError(400, 'Choose one hotel for each night.')
+  let inheritedClientId: string | null = null
   if (value.query_id) {
-    const { data } = await ctx.db.from('records').select('id').eq('company_id', ctx.companyId).eq('type', 'query').eq('id', value.query_id).maybeSingle()
+    const { data } = await admin.from('records').select('id,data').eq('company_id', ctx.companyId).eq('type', 'query').eq('id', value.query_id).maybeSingle()
     if (!data) throw new HttpError(400, 'The linked query is not in this company.')
+    inheritedClientId = data.data?.client_id || null
   }
+  const clientLink = await resolveClientLink(ctx, { clientId: value.client_id, inheritedClientId, name: value.client_name, email: value.email, phone: value.phone })
+  value.client_id = clientLink.clientId
   if (value.assignee_id) {
     const { data } = await admin.from('memberships').select('user_id').eq('company_id', ctx.companyId).eq('user_id', value.assignee_id).eq('active', true).maybeSingle()
     if (!data) throw new HttpError(400, 'The assignee is not in this company.')
@@ -74,7 +80,7 @@ async function prepare(request: Parameters<typeof requirePermission>[0], raw: un
   const stays = value.stays.map((x, i) => ({ night: i + 1, hotel_id: x.hotel_id, name: map.get(x.hotel_id)!.title, property_type: map.get(x.hotel_id)!.data?.property_type || 'Hotel', room_type_id: x.room_type_id || null, room_type: x.room_type_id ? map.get(x.room_type_id)?.title : null, image_path: map.get(x.hotel_id)!.data?.image_path || null }))
   const cab = value.transport.cab_id ? map.get(value.transport.cab_id) : null
   const transport = { ...value.transport, vehicle_type: value.transport.vehicle_type || cab?.data?.type || cab?.title || '', vehicle_number: value.transport.vehicle_number || cab?.data?.registration || '', driver_name: value.transport.driver_name || cab?.data?.driver_name || '', driver_phone: value.transport.driver_phone || cab?.data?.driver_phone || '' }
-  return { ctx, row: { ...value, company_id: ctx.companyId, itinerary, stays, transport, ...priceQuote(value.base_amount, value.child_amount, value.discount_amount, value.gst_percent) } }
+  return { ctx, row: { ...value, company_id: ctx.companyId, itinerary, stays, transport, ...priceQuote(value.base_amount, value.child_amount, value.discount_amount, value.gst_percent) }, clientLinkStatus: clientLink.status }
 }
 
 const round = (value: unknown) => Math.round(Number(value || 0) * 100) / 100
@@ -96,16 +102,17 @@ export async function registerQuotes(app: FastifyInstance): Promise<void> {
     if (q?.trim()) builder = builder.ilike('client_name', `%${q.trim().replace(/[%_]/g, '')}%`)
     const { data, error, count } = await builder
     if (error) throw new HttpError(400, error.message)
-    return { items: data, total: count || 0, page: pageNumber, pageSize: 25 }
+    return { items: (data || []).map(row => ({ ...row, client_link_status: row.client_id ? 'linked' : 'needs_review' })), total: count || 0, page: pageNumber, pageSize: 25 }
   })
 
   app.get('/quotes/:id', async request => {
     const ctx = requirePermission(request, 'quotes.read')
-    return unwrap(await ctx.db.from('quotes').select('*').eq('company_id', ctx.companyId).eq('id', path(request.params).id).single())
+    const quote = unwrap(await ctx.db.from('quotes').select('*').eq('company_id', ctx.companyId).eq('id', path(request.params).id).single())
+    return { ...quote, client_link_status: quote.client_id ? 'linked' : 'needs_review' }
   })
 
   app.post('/quotes', async request => {
-    const { ctx, row } = await prepare(request, request.body)
+    const { ctx, row, clientLinkStatus } = await prepare(request, request.body)
     const since = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1)).toISOString()
     const { count } = await admin.from('quotes').select('id', { count: 'exact', head: true }).eq('company_id', ctx.companyId).gte('created_at', since)
     await enforceLimit(ctx, 'quotes_monthly', count || 0)
@@ -113,7 +120,7 @@ export async function registerQuotes(app: FastifyInstance): Promise<void> {
     if (error) throw new HttpError(400, error.message)
     const quote = unwrap(await ctx.db.from('quotes').insert({ ...row, quote_number: quoteNumber, created_by: ctx.userId }).select('*').single())
     await audit(ctx, 'quotes.create', quote.id)
-    return quote
+    return { ...quote, client_link_status: clientLinkStatus }
   })
 
   app.patch('/quotes/:id', async request => {
@@ -124,7 +131,7 @@ export async function registerQuotes(app: FastifyInstance): Promise<void> {
     const prepared = await prepare(request, request.body); const row = prepared.row
     const quote = unwrap(await ctx.db.from('quotes').update({ ...row, updated_at: new Date().toISOString() }).eq('company_id', ctx.companyId).eq('id', id).select('*').single())
     await audit(ctx, 'quotes.update', id)
-    return quote
+    return { ...quote, client_link_status: prepared.clientLinkStatus }
   })
 
   app.post('/quotes/:id/duplicate', async request => {
@@ -135,7 +142,7 @@ export async function registerQuotes(app: FastifyInstance): Promise<void> {
     const { id, created_at, updated_at, nights, created_by, quote_number, quote_revision, quote_series_id, supersedes_quote_id, booking_id, locked_at, ...copy } = source
     const quote = unwrap(await ctx.db.from('quotes').insert({ ...copy, quote_number: quoteNumber, status: 'Draft', created_by: ctx.userId }).select('*').single())
     await audit(ctx, 'quotes.duplicate', quote.id, { source: id })
-    return quote
+    return { ...quote, client_link_status: quote.client_id ? 'linked' : 'needs_review' }
   })
 
   app.delete('/quotes/:id', async request => {

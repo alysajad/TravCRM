@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { admin, audit, enforceLimit, HttpError, requirePermission, unwrap } from './core.js'
 import { modules, validateRecord } from './modules.js'
+import { normalizeEmail, normalizePhone, resolveClientLink } from './clients.js'
 
 const params = (value: unknown) => value as { slug: string; id?: string }
 const query = (value: unknown) => value as { page?: string; q?: string; status?: string }
@@ -36,7 +37,7 @@ export async function registerRecords(app: FastifyInstance): Promise<void> {
     if (mod.type !== 'query') builder = builder.eq('status', 'Active')
     const { data, error } = await builder.order('title').limit(1000)
     if (error) throw new HttpError(400, error.message)
-    return data
+    return mod.type === 'query' ? (data || []).map(row => ({ ...row, title: row.data?.client_id ? row.title : `${row.title} · Needs client link`, client_link_status: row.data?.client_id ? 'linked' : 'needs_review' })) : data
   })
 
   app.get('/assignees', async request => {
@@ -72,14 +73,15 @@ export async function registerRecords(app: FastifyInstance): Promise<void> {
     if (status) builder = builder.eq('status', status)
     const { data, error, count } = await builder
     if (error) throw new HttpError(400, error.message)
-    return { items: data, total: count ?? 0, page: pageNumber, pageSize: 25 }
+    return { items: mod.type === 'query' ? (data || []).map(row => ({ ...row, title: row.data?.client_id ? row.title : `${row.title} · Needs client link`, client_link_status: row.data?.client_id ? 'linked' : 'needs_review' })) : data, total: count ?? 0, page: pageNumber, pageSize: 25 }
   })
 
   app.get('/records/:slug/:id', async request => {
     const { slug, id } = params(request.params); const mod = modules[slug]
     if (!mod || !id) throw new HttpError(404, 'Record not found.')
     const ctx = requirePermission(request, `${mod.type}.read`)
-    return unwrap(await ctx.db.from('records').select('*').eq('company_id', ctx.companyId).eq('type', mod.type).eq('id', id).single())
+    const item = unwrap(await ctx.db.from('records').select('*').eq('company_id', ctx.companyId).eq('type', mod.type).eq('id', id).single())
+    return mod.type === 'query' ? { ...item, client_link_status: item.data?.client_id ? 'linked' : 'needs_review' } : item
   })
 
   app.post('/leads/:id/convert', async request => {
@@ -88,14 +90,15 @@ export async function registerRecords(app: FastifyInstance): Promise<void> {
     const lead = unwrap(await ctx.db.from('records').select('*').eq('company_id', ctx.companyId).eq('type', 'lead').eq('id', (request.params as { id: string }).id).single())
     const { data: existing } = await ctx.db.from('records').select('*').eq('company_id', ctx.companyId).eq('type', 'query').eq('data->>source_lead_id', lead.id).maybeSingle()
     if (existing) return existing
-    const payload = { client_name: lead.data.name || lead.title, phone: lead.data.phone || '', email: lead.data.email || '', notes: `Lead from ${lead.data.page || 'Facebook'}`, source_lead_id: lead.id }
-    if (!payload.phone) throw new HttpError(400, 'Add a phone number to this lead before creating a query.')
+    const payload: Record<string, any> = { client_name: lead.data.name || lead.title, phone: lead.data.phone || '', email: lead.data.email || '', notes: `Lead from ${lead.data.page || 'Facebook'}`, source_lead_id: lead.id }
+    const link = await resolveClientLink(ctx, { name: payload.client_name, email: payload.email, phone: payload.phone })
+    if (link.clientId) payload.client_id = link.clientId
     const created = await ctx.db.from('records').insert({ company_id: ctx.companyId, type: 'query', title: payload.client_name, status: 'Pending', data: payload, created_by: ctx.userId }).select('*').single()
     if (created.error?.code === '23505') return unwrap(await ctx.db.from('records').select('*').eq('company_id', ctx.companyId).eq('type', 'query').eq('data->>source_lead_id', lead.id).single())
     const item = unwrap(created)
     await admin.from('records').update({ data: { ...lead.data, converted_query_id: item.id } }).eq('company_id', ctx.companyId).eq('id', lead.id)
     await audit(ctx, 'leads.convert', item.id, { lead: lead.id })
-    return item
+    return { ...item, client_link_status: link.status }
   })
 
   async function validatedData(slug: string, body: unknown, ctx: ReturnType<typeof requirePermission>) {
@@ -116,7 +119,8 @@ export async function registerRecords(app: FastifyInstance): Promise<void> {
       } else if (field.relation) {
         const related = modules[field.relation]
         if (!related) throw new HttpError(400, `${field.label} is invalid.`)
-        const { data } = await ctx.db.from('records').select('id').eq('company_id', ctx.companyId).eq('type', related.type).eq('id', value.data[field.key]).maybeSingle()
+        const source = related.type === 'client' ? admin : ctx.db
+        const { data } = await source.from('records').select('id').eq('company_id', ctx.companyId).eq('type', related.type).eq('id', value.data[field.key]).maybeSingle()
         if (!data) throw new HttpError(400, `${field.label} is not in this company.`)
       }
     }
@@ -135,9 +139,16 @@ export async function registerRecords(app: FastifyInstance): Promise<void> {
       await enforceLimit(ctx, 'leads_monthly', count || 0)
     }
     const { value } = await validatedData(slug, request.body, ctx)
+    let clientLinkStatus: 'linked' | 'needs_review' | undefined
+    if (mod.type === 'client') Object.assign(value.data, { email_normalized: normalizeEmail(value.data.email), phone_normalized: normalizePhone(value.data.phone) })
+    if (mod.type === 'query') {
+      const link = await resolveClientLink(ctx, { clientId: value.data.client_id as string | undefined, name: String(value.data.client_name), email: value.data.email, phone: value.data.phone })
+      link.clientId ? value.data.client_id = link.clientId : delete value.data.client_id
+      clientLinkStatus = link.status
+    }
     const item = unwrap(await ctx.db.from('records').insert({ company_id: ctx.companyId, type: mod.type, title: value.title, status: value.status, data: value.data, created_by: ctx.userId }).select('*').single())
     await audit(ctx, `${mod.type}.create`, item.id)
-    return item
+    return clientLinkStatus ? { ...item, client_link_status: clientLinkStatus } : item
   })
 
   app.patch('/records/:slug/:id', async request => {
@@ -146,10 +157,18 @@ export async function registerRecords(app: FastifyInstance): Promise<void> {
     const ctx = requirePermission(request, `${mod.type}.write`)
     const { value } = await validatedData(slug, request.body, ctx)
     const previous = unwrap(await ctx.db.from('records').select('data').eq('company_id', ctx.companyId).eq('type', mod.type).eq('id', id).single())
+    let clientLinkStatus: 'linked' | 'needs_review' | undefined
+    if (mod.type === 'client') Object.assign(value.data, { email_normalized: normalizeEmail(value.data.email), phone_normalized: normalizePhone(value.data.phone) })
+    if (mod.type === 'query') {
+      const link = await resolveClientLink(ctx, { clientId: value.data.client_id as string | undefined, name: String(value.data.client_name), email: value.data.email, phone: value.data.phone })
+      link.clientId ? value.data.client_id = link.clientId : delete value.data.client_id
+      clientLinkStatus = link.status
+    }
     const preserved = Object.fromEntries(Object.entries(previous.data || {}).filter(([key]) => !mod.fields.some(field => field.key === key)))
     const item = unwrap(await ctx.db.from('records').update({ title: value.title, status: value.status, data: { ...preserved, ...value.data }, updated_at: new Date().toISOString() }).eq('company_id', ctx.companyId).eq('type', mod.type).eq('id', id).select('*').single())
+    if (mod.type === 'query' && previous.data?.client_id !== item.data?.client_id) await admin.from('quotes').update({ client_id: item.data?.client_id || null }).eq('company_id', ctx.companyId).eq('query_id', id)
     await audit(ctx, `${mod.type}.update`, id)
-    return item
+    return clientLinkStatus ? { ...item, client_link_status: clientLinkStatus } : item
   })
 
   app.delete('/records/:slug/:id', async request => {

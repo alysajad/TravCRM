@@ -109,7 +109,8 @@ export function enforceRouteFeature(request: FastifyRequest): void {
     [/^\/api\/v1\/records\/(expenses|invoices|hotel-payments)(\/|$)/, 'finance'],
     [/^\/api\/v1\/records\/(stay-vouchers|cab-vouchers)(\/|$)/, 'documents'],
     [/^\/api\/v1\/(records|options|assignees|leads)(\/|$)/, 'crm'],
-    [/^\/api\/v1\/(integrations|lead-form)(\/|$)/, 'integrations']
+    [/^\/api\/v1\/(integrations|lead-form)(\/|$)/, 'integrations'],
+    [/^\/api\/v1\/(clients|queries)(\/|$)/, 'crm']
   ]
   const match = rules.find(([pattern]) => pattern.test(path))
   if (match) requireFeature(ctx, match[1])
