@@ -10,6 +10,7 @@ const { priceQuote } = await import('./quotes.js')
 const { quotePdf } = await import('./pdf.js')
 const { groupBookingStays } = await import('./bookings.js')
 const { mergeEntitlements } = await import('./core.js')
+const { operationLocalTime } = await import('./operations.js')
 
 test('quotation totals use cents and apply GST after discount', () => {
   assert.deepEqual(priceQuote(1000, 200, 100, 5), { gst_amount: 55, total_amount: 1155 })
@@ -26,6 +27,11 @@ test('booking stay segments merge consecutive nights at the same property', () =
   assert.equal(stays.length, 2)
   assert.deepEqual(stays.map(x => [x.check_in, x.check_out]), [['2026-11-10','2026-11-12'], ['2026-11-12','2026-11-13']])
   assert.equal(stays[0]!.rooms, 2)
+})
+
+test('operation deadlines respect the company timezone', () => {
+  assert.equal(operationLocalTime('2026-11-10', 9, 'Asia/Kolkata'), '2026-11-10T03:30:00.000Z')
+  assert.equal(operationLocalTime('2026-07-10', 9, 'Europe/London'), '2026-07-10T08:00:00.000Z')
 })
 
 test('company plan overrides can add and remove features and replace limits', () => {

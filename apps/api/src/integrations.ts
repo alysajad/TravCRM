@@ -34,11 +34,11 @@ async function storageBytes(path: string): Promise<number> {
 }
 
 type Smtp = { host: string; port: number; secure: boolean; user: string; password: string; from: string }
-type Whatsapp = { phone_number_id: string; access_token: string; template_name: string; voucher_template_name: string; language: string }
+type Whatsapp = { phone_number_id: string; access_token: string; template_name: string; voucher_template_name: string; operations_template_name?: string; language: string }
 type Facebook = { page_id: string; page_access_token: string }
 const schemas = {
   smtp: z.object({ host: z.string().min(1), port: z.coerce.number().int().min(1).max(65535), secure: z.boolean(), user: z.string().min(1), password: z.string().min(1), from: z.email() }),
-  whatsapp: z.object({ phone_number_id: z.string().min(1), access_token: z.string().min(1), template_name: z.string().min(1), voucher_template_name: z.string().min(1), language: z.string().default('en') }),
+  whatsapp: z.object({ phone_number_id: z.string().min(1), access_token: z.string().min(1), template_name: z.string().min(1), voucher_template_name: z.string().min(1), operations_template_name: z.string().min(1).default('travcrm_operations_update'), language: z.string().default('en') }),
   facebook: z.object({ page_id: z.string().min(1), page_access_token: z.string().min(1) })
 }
 type Kind = keyof typeof schemas
@@ -88,6 +88,27 @@ async function sendWhatsapp(account: Whatsapp, recipient: string, name: string, 
   const body = await response.json() as { messages?: { id: string }[]; error?: { message: string } }
   if (!response.ok || !body.messages?.[0]?.id) throw new Error(body.error?.message || 'WhatsApp did not accept the message.')
   return body.messages[0].id
+}
+
+export async function sendOperationalMessage(companyId: string, channel: string, recipient: string, subject: string, body: string): Promise<string> {
+  if (channel === 'email') {
+    const smtp = await account<Smtp>(companyId, 'smtp')
+    const transport = nodemailer.createTransport({ host: smtp.host, port: smtp.port, secure: smtp.secure, auth: { user: smtp.user, pass: smtp.password }, connectionTimeout: 15000, greetingTimeout: 15000, socketTimeout: 15000 })
+    return (await transport.sendMail({ from: smtp.from, to: recipient, subject, text: body })).messageId
+  }
+  if (channel !== 'whatsapp') throw new Error('Unsupported reminder channel.')
+  const whatsapp = await account<Whatsapp>(companyId, 'whatsapp')
+  if (!whatsapp.operations_template_name) throw new Error('Set an approved operations WhatsApp template in Connections.')
+  const digits = recipient.replace(/\D/g, '')
+  const to = digits.length === 10 ? `91${digits}` : digits.length === 11 && digits.startsWith('0') ? `91${digits.slice(1)}` : digits
+  if (!/^\d{11,15}$/.test(to)) throw new Error('Enter a valid WhatsApp phone number with country code.')
+  const response = await fetch(`https://graph.facebook.com/${env.metaGraphVersion}/${whatsapp.phone_number_id}/messages`, {
+    method: 'POST', headers: { Authorization: `Bearer ${whatsapp.access_token}`, 'Content-Type': 'application/json' }, signal: AbortSignal.timeout(15000),
+    body: JSON.stringify({ messaging_product: 'whatsapp', to, type: 'template', template: { name: whatsapp.operations_template_name, language: { code: whatsapp.language }, components: [{ type: 'body', parameters: [{ type: 'text', text: subject }, { type: 'text', text: body }] }] } })
+  })
+  const result = await response.json() as { messages?: { id: string }[]; error?: { message: string } }
+  if (!response.ok || !result.messages?.[0]?.id) throw new Error(result.error?.message || 'WhatsApp did not accept the reminder.')
+  return result.messages[0].id
 }
 
 function verifyMeta(raw: string | Buffer, signature: string | undefined): boolean {
@@ -369,7 +390,7 @@ export async function registerIntegrations(app: FastifyInstance): Promise<void> 
   })
 
   app.post('/files/upload-url', async request => {
-    const ctx = requireAnyPermission(request, ['files.write', 'documents.write', 'settings.write'])
+    const ctx = requireAnyPermission(request, ['files.write', 'documents.write', 'settings.write', 'traveller_documents.write'])
     const parsed = z.object({ filename: z.string().min(1).max(200), content_type: z.string().regex(/^(image\/(png|jpeg|webp)|application\/pdf)$/), size: z.coerce.number().int().positive().max(25 * 1024 * 1024) }).safeParse(request.body)
     if (!parsed.success) throw new HttpError(400, 'Upload a PNG, JPEG, WebP, or PDF file.')
     const { limits } = await companyEntitlements(ctx.companyId)

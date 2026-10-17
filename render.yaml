@@ -18,6 +18,8 @@ services:
         sync: false
       - key: INTEGRATION_ENCRYPTION_KEY
         sync: false
+      - key: CRON_SECRET
+        generateValue: true
       - key: WEB_ORIGIN
         value: https://travcrm-ten.vercel.app
       - key: PUBLIC_APP_URL

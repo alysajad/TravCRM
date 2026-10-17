@@ -109,7 +109,12 @@ export async function registerFinance(app: FastifyInstance): Promise<void> {
     }
     const missedFollowups = canReadFollowups ? followups.filter(row => String(row.data?.due_date || '') < today).length : 0
     const todayFollowups = canReadFollowups ? followups.filter(row => row.data?.due_date === today).length : 0
-    return { counts: Object.fromEntries(counts), totalQueries: counts.reduce((sum, [, value]) => sum + value, 0), totalQuotes: quoteCount || 0, dueFollowups: dueFollowups || 0, todayFollowups, missedFollowups, arrivals, followups, ...bookingMetrics }
+    const canReadOperations = ctx.platform || ctx.permissions.includes('*') || ctx.permissions.includes('booking_operations.read')
+    const [openTasks, overdueTasks] = canReadOperations ? await Promise.all([
+      ctx.db.from('booking_tasks').select('id', { count: 'exact', head: true }).eq('company_id', ctx.companyId).in('status', ['todo','in_progress','blocked']),
+      ctx.db.from('booking_tasks').select('id', { count: 'exact', head: true }).eq('company_id', ctx.companyId).in('status', ['todo','in_progress','blocked']).lt('due_at', new Date().toISOString())
+    ]) : [{ count: 0 }, { count: 0 }]
+    return { counts: Object.fromEntries(counts), totalQueries: counts.reduce((sum, [, value]) => sum + value, 0), totalQuotes: quoteCount || 0, dueFollowups: dueFollowups || 0, todayFollowups, missedFollowups, openTasks: openTasks.count || 0, overdueTasks: overdueTasks.count || 0, arrivals, followups, ...bookingMetrics }
   })
 
   app.get('/records/:slug/:id/pdf', async (request, reply) => {

@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { admin, audit, enforceLimit, HttpError, requirePermission, unwrap } from './core.js'
 import { recordPdf } from './pdf.js'
+import { initializeBookingOperations, queueSupplierReminder } from './operations.js'
 
 const id = (value: unknown) => (value as { id: string }).id
 const round = (value: unknown) => Math.round(Number(value || 0) * 100) / 100
@@ -91,7 +92,19 @@ export async function registerBookings(app: FastifyInstance): Promise<void> {
     if (query.to) builder = builder.lte('arrival_date', query.to)
     const { data, error, count } = await builder
     if (error) throw new HttpError(400, error.message)
-    return { items: data, total: count || 0, page, pageSize: 25 }
+    const ids = (data || []).map(row => row.id)
+    if (!ids.length) return { items: data, total: count || 0, page, pageSize: 25 }
+    const canReadOperations = ctx.platform || ctx.permissions.includes('*') || ctx.permissions.includes('booking_operations.read')
+    const [tasks, stays, transport, services, travellerDocuments] = await Promise.all([
+      canReadOperations ? ctx.db.from('booking_tasks').select('booking_id,status').eq('company_id', ctx.companyId).in('booking_id', ids) : Promise.resolve({ data: [], error: null }),
+      ctx.db.from('booking_stays').select('booking_id,confirmation_status').eq('company_id', ctx.companyId).in('booking_id', ids),
+      ctx.db.from('booking_transport_days').select('booking_id,confirmation_status,driver_status').eq('company_id', ctx.companyId).in('booking_id', ids),
+      canReadOperations ? ctx.db.from('booking_services').select('booking_id,status').eq('company_id', ctx.companyId).in('booking_id', ids) : Promise.resolve({ data: [], error: null }),
+      (ctx.platform || ctx.permissions.includes('*') || ctx.permissions.includes('traveller_documents.read')) ? ctx.db.from('booking_traveller_documents').select('booking_id,status').eq('company_id', ctx.companyId).in('booking_id', ids) : Promise.resolve({ data: [], error: null })
+    ])
+    for (const result of [tasks, stays, transport, services, travellerDocuments]) if (result.error) throw new HttpError(400, result.error.message)
+    const items = (data || []).map(row => { const bookingTasks = (tasks.data || []).filter(x => x.booking_id === row.id); const supplierRows = [...(stays.data || []).filter(x => x.booking_id === row.id).map(x => x.confirmation_status === 'confirmed'), ...(transport.data || []).filter(x => x.booking_id === row.id).map(x => x.confirmation_status === 'confirmed' && ['confirmed','completed'].includes(x.driver_status)), ...(services.data || []).filter(x => x.booking_id === row.id).map(x => ['confirmed','ticketed'].includes(x.status))]; return { ...row, operations: { tasks_total: bookingTasks.length, tasks_done: bookingTasks.filter(x => x.status === 'done').length, suppliers_total: supplierRows.length, suppliers_ready: supplierRows.filter(Boolean).length, missing_documents: (travellerDocuments.data || []).filter(x => x.booking_id === row.id && ['required','rejected','expired'].includes(x.status)).length } } })
+    return { items, total: count || 0, page, pageSize: 25 }
   })
 
   app.get('/bookings/:id', async request => {
@@ -133,6 +146,11 @@ export async function registerBookings(app: FastifyInstance): Promise<void> {
     const seriesPayments = seriesQuotes.length ? unwrap(await ctx.db.from('payments').select('amount').eq('company_id', ctx.companyId).in('quote_id', seriesQuotes.map(row => row.id))) : []
     const paid = round(seriesPayments.reduce((sum, payment) => sum + Number(payment.amount), 0))
     if (paid > round(quote.total_amount)) throw new HttpError(400, `The revised quotation total cannot be below ${paid.toFixed(2)} already received.`)
+    const existingBooking = (await ctx.db.from('bookings').select('id').eq('company_id', ctx.companyId).eq('quote_series_id', quote.quote_series_id).maybeSingle()).data
+    const [oldStays, oldTransport] = existingBooking ? await Promise.all([
+      ctx.db.from('booking_stays').select('*').eq('company_id', ctx.companyId).eq('booking_id', existingBooking.id),
+      ctx.db.from('booking_transport_days').select('*').eq('company_id', ctx.companyId).eq('booking_id', existingBooking.id)
+    ]) : [{ data: [] }, { data: [] }]
     const stays = groupBookingStays(quote)
     const transport = buildTransport(quote)
     const departure = isoAdd(quote.arrival_date, Math.max(0, quote.days - 1))
@@ -141,6 +159,17 @@ export async function registerBookings(app: FastifyInstance): Promise<void> {
     const { data: bookingId, error } = await admin.rpc('apply_quote_booking', { p_company_id: ctx.companyId, p_quote_id: quote.id, p_actor_id: ctx.userId, p_snapshot: snapshot, p_stays: stays, p_transport: transport, p_documents: documents })
     if (error) throw new HttpError(400, error.message)
     const booking = unwrap(await ctx.db.from('bookings').select('*').eq('company_id', ctx.companyId).eq('id', bookingId).single())
+    if (existingBooking) {
+      let needsReview = false
+      const [newStays, newTransport] = await Promise.all([
+        admin.from('booking_stays').select('*').eq('company_id', ctx.companyId).eq('booking_id', booking.id),
+        admin.from('booking_transport_days').select('*').eq('company_id', ctx.companyId).eq('booking_id', booking.id)
+      ])
+      for (const row of newStays.data || []) { const old = (oldStays.data || []).find(x => x.sequence === row.sequence); if (old) { const changed = old.property_name !== row.property_name || old.check_in !== row.check_in || old.check_out !== row.check_out; needsReview ||= changed; await admin.from('booking_stays').update({ confirmation_status: changed ? 'reconfirmation_required' : old.confirmation_status, confirmation_reference: old.confirmation_reference, supplier_cost: old.supplier_cost, supplier_id: old.supplier_id, supplier_phone: old.supplier_phone, supplier_email: old.supplier_email, confirmation_deadline: old.confirmation_deadline }).eq('id', row.id) } }
+      for (const row of newTransport.data || []) { const old = (oldTransport.data || []).find(x => x.day === row.day); if (old) { const changed = old.destination !== row.destination || old.service_date !== row.service_date; needsReview ||= changed; await admin.from('booking_transport_days').update({ confirmation_status: changed ? 'reconfirmation_required' : old.confirmation_status, confirmation_reference: old.confirmation_reference, supplier_id: old.supplier_id, supplier_name: old.supplier_name, supplier_phone: old.supplier_phone, supplier_email: old.supplier_email, vehicle_type: old.vehicle_type, vehicle_number: old.vehicle_number, driver_name: old.driver_name, driver_phone: old.driver_phone, driver_status: old.driver_status, driver_confirmed_at: old.driver_confirmed_at, instructions: old.instructions }).eq('id', row.id) } }
+      if (needsReview) await admin.from('booking_tasks').insert({ company_id: ctx.companyId, booking_id: booking.id, title: `Review supplier changes from revision ${booking.revision}`, category: 'suppliers', status: 'todo', priority: 'urgent', due_at: new Date().toISOString(), assignee_id: booking.assignee_id || ctx.userId, source: 'system', created_by: ctx.userId })
+    }
+    await initializeBookingOperations(ctx.companyId, booking, ctx.userId)
     await audit(ctx, 'bookings.confirm', booking.id, { quote: quote.id, quote_revision: quote.quote_revision })
     return booking
   })
@@ -150,31 +179,43 @@ export async function registerBookings(app: FastifyInstance): Promise<void> {
     const parsed = z.object({ status: z.enum(bookingStatuses) }).safeParse(request.body)
     if (!parsed.success) throw new HttpError(400, 'Choose a valid booking status.')
     const booking = unwrap(await ctx.db.from('bookings').update({ status: parsed.data.status, updated_at: new Date().toISOString() }).eq('company_id', ctx.companyId).eq('id', id(request.params)).select('*').single())
+    if (parsed.data.status === 'cancelled') await Promise.all([
+      admin.from('booking_tasks').update({ status: 'cancelled', updated_at: new Date().toISOString() }).eq('company_id', ctx.companyId).eq('booking_id', booking.id).in('status', ['todo','in_progress','blocked']),
+      admin.from('messages').update({ status: 'cancelled', updated_at: new Date().toISOString() }).eq('company_id', ctx.companyId).eq('booking_id', booking.id).in('status', ['queued','retry'])
+    ])
     await audit(ctx, 'bookings.status', booking.id, parsed.data)
     return booking
   })
 
   app.patch('/booking-stays/:id', async request => {
     const ctx = requirePermission(request, 'bookings.write')
-    const parsed = z.object({ meal_plan: z.enum(mealPlans).optional(), confirmation_status: z.enum(['pending','confirmed','cancelled']).optional(), confirmation_reference: z.string().max(200).nullable().optional(), supplier_cost: z.coerce.number().min(0).max(999999999).optional(), inclusions: z.string().max(10000).optional() }).safeParse(request.body)
+    const parsed = z.object({ meal_plan: z.enum(mealPlans).optional(), confirmation_status: z.enum(['pending','requested','on_hold','confirmed','reconfirmation_required','cancelled']).optional(), confirmation_reference: z.string().max(200).nullable().optional(), supplier_cost: z.coerce.number().min(0).max(999999999).optional(), inclusions: z.string().max(10000).optional(), supplier_id: z.uuid().nullable().optional(), supplier_phone: z.string().max(50).nullable().optional(), supplier_email: z.union([z.email(), z.literal('')]).nullable().optional(), confirmation_deadline: z.iso.datetime().nullable().optional() }).safeParse(request.body)
     if (!parsed.success) throw new HttpError(400, 'Check stay details.')
     const stay = unwrap(await ctx.db.from('booking_stays').update({ ...parsed.data, updated_at: new Date().toISOString() }).eq('company_id', ctx.companyId).eq('id', id(request.params)).select('*').single())
     const { data: draft } = await admin.from('booking_documents').select('id,payload').eq('company_id', ctx.companyId).eq('booking_id', stay.booking_id).eq('type', 'stay_voucher').eq('stay_sequence', stay.sequence).eq('status', 'draft').maybeSingle()
     if (draft) await admin.from('booking_documents').update({ payload: { ...draft.payload, meal_plan: stay.meal_plan, confirmation_reference: stay.confirmation_reference || '', inclusions: stay.inclusions || '' }, updated_at: new Date().toISOString() }).eq('id', draft.id)
+    if (!['confirmed','cancelled'].includes(stay.confirmation_status)) await queueSupplierReminder(ctx.companyId, stay.booking_id, `stay:${stay.id}`, { name: stay.property_name, phone: stay.supplier_phone, email: stay.supplier_email })
     await audit(ctx, 'booking_stays.update', stay.id, { booking: stay.booking_id })
     return stay
   })
 
   app.patch('/booking-transport/:id', async request => {
     const ctx = requirePermission(request, 'bookings.write')
-    const parsed = z.object({ vehicle_type: z.string().max(100).optional(), vehicle_number: z.string().max(100).optional(), driver_name: z.string().max(200).optional(), driver_phone: z.string().max(50).optional(), pickup: z.string().max(300).optional(), dropoff: z.string().max(300).optional(), destination: z.string().min(1).max(300).optional(), hotel: z.string().max(300).optional() }).safeParse(request.body)
+    const parsed = z.object({ cab_id: z.uuid().nullable().optional(), vehicle_type: z.string().max(100).optional(), vehicle_number: z.string().max(100).optional(), driver_name: z.string().max(200).optional(), driver_phone: z.string().max(50).optional(), driver_status: z.enum(['unassigned','assigned','confirmed','completed','cancelled']).optional(), confirmation_status: z.enum(['pending','requested','on_hold','confirmed','reconfirmation_required','cancelled']).optional(), confirmation_reference: z.string().max(200).nullable().optional(), supplier_id: z.uuid().nullable().optional(), supplier_name: z.string().max(200).nullable().optional(), supplier_phone: z.string().max(50).nullable().optional(), supplier_email: z.union([z.email(), z.literal('')]).nullable().optional(), instructions: z.string().max(2000).nullable().optional(), pickup: z.string().max(300).optional(), dropoff: z.string().max(300).optional(), destination: z.string().min(1).max(300).optional(), hotel: z.string().max(300).optional() }).safeParse(request.body)
     if (!parsed.success) throw new HttpError(400, 'Check transport details.')
-    const row = unwrap(await ctx.db.from('booking_transport_days').update({ ...parsed.data, updated_at: new Date().toISOString() }).eq('company_id', ctx.companyId).eq('id', id(request.params)).select('*').single())
+    const values: Record<string, any> = { ...parsed.data, supplier_email: parsed.data.supplier_email || null, updated_at: new Date().toISOString() }
+    if (parsed.data.cab_id) {
+      const cab = unwrap(await ctx.db.from('records').select('id,data').eq('company_id', ctx.companyId).eq('type', 'cab').eq('id', parsed.data.cab_id).single())
+      Object.assign(values, { vehicle_type: parsed.data.vehicle_type || cab.data?.type || cab.data?.name || '', vehicle_number: parsed.data.vehicle_number || cab.data?.registration || '', driver_name: parsed.data.driver_name || cab.data?.driver_name || '', driver_phone: parsed.data.driver_phone || cab.data?.driver_phone || '', driver_status: parsed.data.driver_status || 'assigned' })
+    }
+    if (values.driver_status === 'confirmed') values.driver_confirmed_at = new Date().toISOString()
+    const row = unwrap(await ctx.db.from('booking_transport_days').update(values).eq('company_id', ctx.companyId).eq('id', id(request.params)).select('*').single())
     const [{ data: routes }, { data: draft }] = await Promise.all([
       ctx.db.from('booking_transport_days').select('*').eq('company_id', ctx.companyId).eq('booking_id', row.booking_id).order('day'),
       admin.from('booking_documents').select('id,payload').eq('company_id', ctx.companyId).eq('booking_id', row.booking_id).eq('type', 'cab_voucher').eq('status', 'draft').maybeSingle()
     ])
     if (draft && routes?.length) await admin.from('booking_documents').update({ payload: { ...draft.payload, vehicle_type: routes[0]?.vehicle_type || '', vehicle_number: routes[0]?.vehicle_number || '', driver_name: routes[0]?.driver_name || '', driver_phone: routes[0]?.driver_phone || '', routes }, updated_at: new Date().toISOString() }).eq('id', draft.id)
+    if (!['confirmed','cancelled'].includes(row.confirmation_status)) await queueSupplierReminder(ctx.companyId, row.booking_id, `transport:${row.id}`, { name: row.supplier_name, phone: row.supplier_phone, email: row.supplier_email })
     await audit(ctx, 'booking_transport.update', row.id, { booking: row.booking_id })
     return row
   })

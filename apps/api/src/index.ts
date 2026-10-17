@@ -9,6 +9,7 @@ import { registerFinance } from './finance.js'
 import { registerIntegrations } from './integrations.js'
 import { registerPlatform } from './platform.js'
 import { registerBookings } from './bookings.js'
+import { registerOperations, runOperationsJob } from './operations.js'
 
 const app = Fastify({ logger: true, bodyLimit: 1024 * 1024 })
 await app.register(cors, { origin: env.webOrigin.split(',').map(x => x.trim()), methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'], allowedHeaders: ['Content-Type', 'Authorization', 'X-Company-Id'] })
@@ -20,6 +21,7 @@ app.setErrorHandler((error, request, reply) => {
   reply.code(status).send({ error: status >= 500 && !(fault instanceof HttpError) ? 'Unexpected server error.' : fault.message })
 })
 app.get('/health', async () => ({ ok: true }))
+app.post('/api/v1/internal/jobs/reminders', runOperationsJob)
 
 await app.register(async api => {
   api.addHook('onRequest', async request => {
@@ -31,6 +33,7 @@ await app.register(async api => {
   await registerRecords(api)
   await registerQuotes(api)
   await registerBookings(api)
+  await registerOperations(api)
   await registerFinance(api)
   await registerIntegrations(api)
   await registerPlatform(api)

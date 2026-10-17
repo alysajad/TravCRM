@@ -28,7 +28,7 @@ async function main() {
   const company = unwrap(await db.from('companies').select('id,name').eq('slug', process.env.DEMO_COMPANY_SLUG || 'huzpoint').single(), 'find Huz company')
   const member = unwrap(await db.from('memberships').select('user_id').eq('company_id', company.id).eq('active', true).limit(1).single(), 'find Huz user')
   const cab = unwrap(await db.from('records').select('id,title,data').eq('company_id', company.id).eq('type', 'cab').eq('status', 'Active').limit(1).single(), 'find demo cab')
-  const quotes = unwrap(await db.from('quotes').select('*').eq('company_id', company.id).in('client_name', ['Aisha Khan & Zaid','Rohit Sharma Family','Neha Kapoor','Arjun Mehta & Friends']).order('created_at'), 'find demo quotes')
+  const quotes = unwrap(await db.from('quotes').select('*').eq('company_id', company.id).in('client_name', ['Aisha Khan & Zaid','Rohit Sharma Family','Meera & Suresh Iyer','Neha Kapoor','Arjun Mehta & Friends']).order('created_at'), 'find demo quotes')
   if (!quotes.length) throw new Error('Run scripts/seed-huz-demo.mjs before this booking seed.')
   const created = []
   for (const original of quotes) {

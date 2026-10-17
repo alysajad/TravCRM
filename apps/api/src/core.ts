@@ -16,7 +16,8 @@ export const env = {
   metaVerifyToken: process.env.META_VERIFY_TOKEN || '',
   metaGraphVersion: process.env.META_GRAPH_VERSION || 'v23.0',
   turnstileSecret: process.env.TURNSTILE_SECRET_KEY || '',
-  turnstileSiteKey: process.env.TURNSTILE_SITE_KEY || ''
+  turnstileSiteKey: process.env.TURNSTILE_SITE_KEY || '',
+  cronSecret: process.env.CRON_SECRET || ''
 }
 
 if (!env.url || !env.anon || !env.secret) throw new Error('Set SUPABASE_URL, SUPABASE_ANON_KEY and SUPABASE_SECRET_KEY.')
@@ -103,7 +104,7 @@ export function enforceRouteFeature(request: FastifyRequest): void {
   const path = request.url.split('?')[0] || ''
   const rules: [RegExp, string][] = [
     [/^\/api\/v1\/(quotes|quote-options)(\/|$)/, 'quotations'],
-    [/^\/api\/v1\/(bookings|booking-stays|booking-transport|booking-documents)(\/|$)/, 'bookings'],
+    [/^\/api\/v1\/(bookings|booking-stays|booking-transport|booking-documents|booking-tasks|booking-travellers|traveller-documents|booking-services|operations|operation-templates|reminder-rules|notifications)(\/|$)/, 'bookings'],
     [/^\/api\/v1\/(payments|ledger|hotel-ledger)(\/|$)/, 'finance'],
     [/^\/api\/v1\/records\/(expenses|invoices|hotel-payments)(\/|$)/, 'finance'],
     [/^\/api\/v1\/records\/(stay-vouchers|cab-vouchers)(\/|$)/, 'documents'],

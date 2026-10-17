@@ -16,6 +16,8 @@ type Dashboard = {
   activeBookings: number
   pendingHotelConfirmations: number
   unpaidBalance: number
+  openTasks: number
+  overdueTasks: number
   upcomingBookings: { id: string; booking_number: string; client_name: string; destination: string; arrival_date: string; status: string }[]
   arrivals: RecordItem[]
   followups: RecordItem[]
@@ -53,6 +55,7 @@ export default function DashboardPage({ me }: { me: Me }) {
     { label: 'Active bookings', value: data?.activeBookings, icon: Sparkles, hint: 'Confirmed and travelling', className: 'white', path: '/bookings', permission: 'bookings.read' },
     { label: 'Today arrivals', value: data?.todayArrivals, icon: CalendarDays, hint: `${data?.tomorrowArrivals || 0} arriving tomorrow`, className: 'sky', path: '/bookings', permission: 'bookings.read' },
     { label: 'Pending hotels', value: data?.pendingHotelConfirmations, icon: Clock3, hint: 'Supplier confirmations', className: 'white', path: '/bookings', permission: 'bookings.read' },
+    { label: 'Operations tasks', value: data?.openTasks, icon: Clock3, hint: `${data?.overdueTasks || 0} overdue`, className: 'violet', path: '/operations/tasks', permission: 'booking_operations.read' },
     { label: 'Outstanding', value: money(data?.unpaidBalance), icon: FileText, hint: 'Across active bookings', className: 'white', path: '/ledger', permission: 'payments.read' },
     { label: 'Follow-ups due', value: data?.dueFollowups, icon: Clock3, hint: `${data?.missedFollowups || 0} missed · ${data?.todayFollowups || 0} today`, className: 'white', path: '/records/follow-ups', permission: 'follow_up.read' }
   ].filter(metric => can(metric.permission))

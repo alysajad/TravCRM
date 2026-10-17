@@ -9,6 +9,7 @@ Travel CRM for multiple companies, with a React/TypeScript frontend, a Node/Fast
 - Queries, follow-ups, lead sources, clients, day plans, hotels, houseboats, room types, cabs, and supporting catalogs.
 - Numbered quotation revisions with rooming, assignee, structured INR/GST price lines, day plans, stays, optional daily transport, branded PDF, and outbound email/WhatsApp sending.
 - Explicit quotation confirmation into a controlled booking snapshot, supplier stay tracking, daily transport operations, revision history, and editable draft or locked issued stay/cab vouchers.
+- Booking operations with reusable pre-trip checklists, team assignments, traveller documents, supplier readiness, flight/train/activity reservations, driver confirmation, reminders, and an in-app notification inbox.
 - Recorded client and hotel payments, client and hotel ledgers, invoices with a GST percentage calculation, expenses, stay and cab vouchers, and PDFs.
 - Meta OAuth lead-ad intake, branded hosted website forms, secure website lead endpoints, and per-company SMTP and WhatsApp connections.
 - Six company-controlled PDF layouts, including photo timelines, expedition booklets and tour brochures, with day-plan imagery, a cover image, section order, policies, signature, colors, and a discreet TravCRM footer.
@@ -17,7 +18,7 @@ The interface follows the supplied dashboard reference with the #FDF2FB, #4A3A52
 
 ## Local setup
 
-1. Create a Supabase project. Run the files in `supabase/migrations` in filename order in the SQL editor. Existing installations should run only migrations they have not yet applied; booking operations require `0004_booking_operations.sql`, and the SaaS control plane requires `0005_saas_control_plane.sql`. Keep the `crm-private` Storage bucket private.
+1. Create a Supabase project. Run the files in `supabase/migrations` in filename order in the SQL editor. Existing installations should run only migrations they have not yet applied; the booking workspace requires `0004_booking_operations.sql`, the SaaS control plane requires `0005_saas_control_plane.sql`, and the trip operations desk requires `0006_booking_operations_workspace.sql`. Keep the `crm-private` Storage bucket private.
 2. In Supabase Auth, disable public sign-up. Create your own user with a password in **Authentication → Users**, then run:
 
    ```sql
@@ -30,7 +31,7 @@ The interface follows the supplied dashboard reference with the #FDF2FB, #4A3A52
 
 The API listens on port 4000 by default. `GET /health` is its health endpoint. Run `npm run check`, `npm run test`, and `npm run build` before deployment.
 
-After applying migration `0004`, existing quotations receive document numbers automatically. To add booking-operation examples to the existing Huz demo workspace, run `node --env-file=apps/api/.env scripts/seed-huz-bookings.mjs`. The script is idempotent and uses the existing demo customers.
+After applying migration `0004`, existing quotations receive document numbers automatically. To create the Huz demo bookings, run `node --env-file=apps/api/.env scripts/seed-huz-bookings.mjs`. After applying migration `0006`, run `npm run seed:operations` to add task, traveller, document, supplier, reservation, driver, and notification scenarios to those bookings. Both scripts are idempotent.
 
 ## External connections
 
@@ -45,7 +46,9 @@ Credentials are encrypted with AES-GCM before storage. The API secret and encryp
 
 For Vercel, import this repository as a project and leave **Root Directory** at the repository root. The included `vercel.json` installs dependencies, builds only the React workspace, serves `apps/web/dist`, and rewrites application routes to `index.html`. Set `VITE_API_URL` (including `/api/v1`), `VITE_SUPABASE_URL`, and `VITE_SUPABASE_ANON_KEY` in Vercel's frontend environment. The Supabase secret key and integration encryption key belong only in the API host. Vercel Hobby is limited to personal, non-commercial use; choose an eligible plan for a live business CRM.
 
-For the API, create a **Blueprint** in Render from this GitHub repository. The root `render.yaml` creates a free Node web service in Singapore, builds only `@travcrm/api`, and checks `/health`. It sets `WEB_ORIGIN` and `PUBLIC_APP_URL` to the current frontend origin, `https://travcrm-ten.vercel.app`; update both if that domain changes. Enter the prompted environment variables in Render: the Supabase URL and publishable key (`SUPABASE_ANON_KEY`), the server-only secret key, and the existing 64-character hex `INTEGRATION_ENCRYPTION_KEY`. Render supplies `PORT`. After deployment, verify `https://YOUR-RENDER-HOST/health` returns `{ "ok": true }`, then set Vercel's `VITE_API_URL` to `https://YOUR-RENDER-HOST/api/v1` and redeploy the frontend. Add `https://travcrm-ten.vercel.app/set-password` to Supabase Auth redirect URLs.
+For the API, create a **Blueprint** in Render from this GitHub repository. The root `render.yaml` creates a free Node web service in Singapore, builds only `@travcrm/api`, and checks `/health`. It sets `WEB_ORIGIN` and `PUBLIC_APP_URL` to the current frontend origin, `https://travcrm-ten.vercel.app`; update both if that domain changes. Enter the prompted environment variables in Render: the Supabase URL and publishable key (`SUPABASE_ANON_KEY`), the server-only secret key, and the existing 64-character hex `INTEGRATION_ENCRYPTION_KEY`. Render supplies `PORT`; the Blueprint generates `CRON_SECRET`. After deployment, verify `https://YOUR-RENDER-HOST/health` returns `{ "ok": true }`, then set Vercel's `VITE_API_URL` to `https://YOUR-RENDER-HOST/api/v1` and redeploy the frontend. Add `https://travcrm-ten.vercel.app/set-password` to Supabase Auth redirect URLs.
+
+To send scheduled arrival, departure, supplier, and overdue-task alerts, copy Render's `CRON_SECRET`, open `supabase/cron/reminders.sql`, and replace the two commented example values with the API URL and that secret. Run the two `vault.create_secret` statements once, then run the extension and schedule statements. Supabase will call the protected reminder worker every 15 minutes. Keep the same secret in Render and Supabase Vault.
 
 For one-click Meta connection, add `META_APP_ID`, `META_APP_SECRET`, `META_VERIFY_TOKEN`, and `META_REDIRECT_URI=https://YOUR-RENDER-HOST/api/v1/integrations/meta/oauth/callback` in Render. Add that exact callback as a valid OAuth redirect URI in Meta. Optional website-form spam protection uses a Cloudflare Turnstile site key and secret in `TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`.
 
