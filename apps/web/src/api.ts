@@ -14,7 +14,17 @@ export type Quote = { id: string; client_name: string; email?: string; phone?: s
 export type Page<T> = { items: T[]; total: number; page: number; pageSize: number }
 
 export function selectedCompany() { return localStorage.getItem('travcrm-company') || '' }
-export function selectCompany(id: string) { localStorage.setItem('travcrm-company', id); window.location.reload() }
+export function selectCompany(id: string, path = '/') { if (id) localStorage.setItem('travcrm-company', id); else localStorage.removeItem('travcrm-company'); window.location.assign(path) }
+
+export async function publicApi<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const response = await fetch(`${base}${path}`, { ...init, headers: { ...(init.body ? { 'Content-Type': 'application/json' } : {}), ...init.headers } })
+  if (!response.ok) {
+    let message = `Request failed (${response.status}).`
+    try { message = (await response.json()).error || message } catch { /* keep HTTP status */ }
+    throw new Error(message)
+  }
+  return response.json() as Promise<T>
+}
 
 export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   if (!supabase) throw new Error('Set the Supabase and API environment variables.')

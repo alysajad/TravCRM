@@ -11,8 +11,12 @@ export const env = {
   secret: process.env.SUPABASE_SECRET_KEY || '',
   encryptionKey: process.env.INTEGRATION_ENCRYPTION_KEY || '',
   metaAppSecret: process.env.META_APP_SECRET || '',
+  metaAppId: process.env.META_APP_ID || '',
+  metaRedirectUri: process.env.META_REDIRECT_URI || '',
   metaVerifyToken: process.env.META_VERIFY_TOKEN || '',
-  metaGraphVersion: process.env.META_GRAPH_VERSION || 'v23.0'
+  metaGraphVersion: process.env.META_GRAPH_VERSION || 'v23.0',
+  turnstileSecret: process.env.TURNSTILE_SECRET_KEY || '',
+  turnstileSiteKey: process.env.TURNSTILE_SITE_KEY || ''
 }
 
 if (!env.url || !env.anon || !env.secret) throw new Error('Set SUPABASE_URL, SUPABASE_ANON_KEY and SUPABASE_SECRET_KEY.')
@@ -51,6 +55,12 @@ export function requirePermission(request: FastifyRequest, permission: string): 
   return ctx
 }
 
+export function requireAnyPermission(request: FastifyRequest, permissions: string[]): Context & { companyId: string } {
+  const ctx = requireCompany(request)
+  if (!ctx.platform && !ctx.permissions.includes('*') && !permissions.some(permission => ctx.permissions.includes(permission))) throw new HttpError(403, 'You do not have permission for this action.')
+  return ctx
+}
+
 export async function authenticate(request: FastifyRequest): Promise<void> {
   const token = request.headers.authorization?.replace(/^Bearer\s+/i, '')
   if (!token) throw new HttpError(401, 'Sign in to continue.')
@@ -59,18 +69,19 @@ export async function authenticate(request: FastifyRequest): Promise<void> {
   const userId = claimData.claims.sub
   const [{ data: platform }, { data: membership, error: memberError }] = await Promise.all([
     admin.from('platform_admins').select('user_id').eq('user_id', userId).maybeSingle(),
-    admin.from('memberships').select('company_id,name,active,roles(name,permissions),companies(name,active)').eq('user_id', userId).maybeSingle()
+    admin.from('memberships').select('company_id,name,active,roles(name,permissions),companies(name,active,status,trial_ends_at)').eq('user_id', userId).maybeSingle()
   ])
   if (memberError) throw new HttpError(500, 'Could not load your account.')
   const isPlatform = Boolean(platform)
   const company = Array.isArray(membership?.companies) ? membership.companies[0] : membership?.companies
-  if (!isPlatform && (!membership || !membership.active || !company || !company.active)) throw new HttpError(403, 'Your account is not active.')
+  const trialExpired = company?.status === 'trial' && company.trial_ends_at && company.trial_ends_at < new Date().toISOString().slice(0, 10)
+  if (!isPlatform && (!membership || !membership.active || !company || !['trial', 'active'].includes(company.status) || trialExpired)) throw new HttpError(403, trialExpired ? 'Your TravCRM trial has ended. Contact your administrator.' : 'This company workspace is not active.')
   let companyId: string | null = membership?.company_id ?? null
   let companyName: string | null = company?.name ?? null
   if (isPlatform && typeof request.headers['x-company-id'] === 'string') {
     const selected = request.headers['x-company-id']
-    const { data: company } = await admin.from('companies').select('id,name,active').eq('id', selected).maybeSingle()
-    if (!company?.active) throw new HttpError(404, 'Company not found.')
+    const { data: company } = await admin.from('companies').select('id,name,status').eq('id', selected).maybeSingle()
+    if (!company || company.status === 'archived') throw new HttpError(404, 'Company workspace is archived.')
     companyId = company.id
     companyName = company.name
   }
@@ -90,6 +101,10 @@ export function unwrap<T>(result: { data: T; error: { message: string; code?: st
 
 export async function audit(ctx: Context, action: string, targetId?: string, details: Record<string, unknown> = {}): Promise<void> {
   await admin.from('audit_events').insert({ company_id: ctx.companyId, actor_id: ctx.userId, action, target_id: targetId, details })
+}
+
+export async function platformAudit(ctx: Context, action: string, company?: { id: string; name: string } | null, details: Record<string, unknown> = {}): Promise<void> {
+  await admin.from('platform_audit_events').insert({ actor_id: ctx.userId, target_company_id: company?.id, company_name: company?.name, action, details })
 }
 
 function keyBytes(): Buffer {

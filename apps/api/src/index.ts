@@ -7,6 +7,7 @@ import { registerRecords } from './records.js'
 import { registerQuotes } from './quotes.js'
 import { registerFinance } from './finance.js'
 import { registerIntegrations } from './integrations.js'
+import { registerPlatform } from './platform.js'
 
 const app = Fastify({ logger: true, bodyLimit: 1024 * 1024 })
 await app.register(cors, { origin: env.webOrigin.split(',').map(x => x.trim()), methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'], allowedHeaders: ['Content-Type', 'Authorization', 'X-Company-Id'] })
@@ -21,7 +22,7 @@ app.get('/health', async () => ({ ok: true }))
 
 await app.register(async api => {
   api.addHook('onRequest', async request => {
-    if (request.url.startsWith('/api/v1/webhooks/meta')) return
+    if (request.url.startsWith('/api/v1/webhooks/meta') || request.url.startsWith('/api/v1/integrations/meta/oauth/callback') || request.url.startsWith('/api/v1/public/')) return
     await authenticate(request)
   })
   await registerAdmin(api)
@@ -29,6 +30,7 @@ await app.register(async api => {
   await registerQuotes(api)
   await registerFinance(api)
   await registerIntegrations(api)
+  await registerPlatform(api)
 }, { prefix: '/api/v1' })
 
 await app.listen({ port: env.port, host: '0.0.0.0' })

@@ -1,9 +1,14 @@
 import type { FastifyInstance } from 'fastify'
-import { createHmac, timingSafeEqual, randomUUID } from 'node:crypto'
+import { createHash, createHmac, timingSafeEqual, randomBytes, randomUUID } from 'node:crypto'
 import nodemailer from 'nodemailer'
 import { z } from 'zod'
-import { admin, audit, decrypt, encrypt, env, HttpError, requirePermission, unwrap } from './core.js'
+import { admin, audit, decrypt, encrypt, env, HttpError, requireAnyPermission, requirePermission, unwrap } from './core.js'
 import { quotePdf, recordPdf } from './pdf.js'
+
+const leadBuckets = new Map<string, { count: number; reset: number }>()
+const leadFields = ['name','phone','email','destination','message'] as const
+const leadFormSchema = z.object({ title: z.string().trim().min(2).max(120), success_message: z.string().trim().min(2).max(500), primary_color: z.string().regex(/^#[0-9a-fA-F]{6}$/), enabled_fields: z.array(z.enum(leadFields)).min(1), required_fields: z.array(z.enum(leadFields)), allowed_origins: z.array(z.string().url()).max(20), source_label: z.string().trim().min(2).max(80), active: z.boolean() })
+const keyHash = (value: string) => createHash('sha256').update(value).digest('hex')
 
 type Smtp = { host: string; port: number; secure: boolean; user: string; password: string; from: string }
 type Whatsapp = { phone_number_id: string; access_token: string; template_name: string; voucher_template_name: string; language: string }
@@ -83,28 +88,162 @@ async function handleLead(entry: Record<string, any>): Promise<void> {
     const fields = Object.fromEntries((lead.field_data || []).map(x => [x.name, x.values?.[0] || '']))
     const name = fields.full_name || [fields.first_name, fields.last_name].filter(Boolean).join(' ') || 'Facebook lead'
     const { error } = await admin.from('records').insert({ company_id: integration.company_id, type: 'lead', title: name, status: 'Active', data: { name, phone: fields.phone_number || '', email: fields.email || '', page: pageId, received_at: (lead.created_time || new Date().toISOString()).slice(0, 10), external_id: leadId, raw_fields: fields } })
-    if (error && error.code !== '23505') throw new Error(error.message)
+    if (error && error.code !== '23505') {
+      await admin.from('integration_accounts').update({ last_error: error.message }).eq('company_id', integration.company_id).eq('kind', 'facebook')
+      throw new Error(error.message)
+    }
+    await admin.from('integration_accounts').update({ last_success_at: new Date().toISOString(), last_error: null }).eq('company_id', integration.company_id).eq('kind', 'facebook')
   }
+}
+
+async function verifyTurnstile(token: string | undefined, ip: string): Promise<boolean> {
+  if (!env.turnstileSecret) return true
+  if (!token) return false
+  const body = new URLSearchParams({ secret: env.turnstileSecret, response: token, remoteip: ip })
+  const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body, signal: AbortSignal.timeout(8000) })
+  const result = await response.json() as { success?: boolean }
+  return Boolean(result.success)
 }
 
 export async function registerIntegrations(app: FastifyInstance): Promise<void> {
   app.get('/integrations', async request => {
-    const ctx = requirePermission(request, 'settings.write')
-    const { data, error } = await admin.from('integration_accounts').select('kind,external_id,updated_at').eq('company_id', ctx.companyId)
+    const ctx = requirePermission(request, 'integrations.read')
+    const { data, error } = await admin.from('integration_accounts').select('kind,external_id,connected_at,last_success_at,last_error,updated_at').eq('company_id', ctx.companyId)
     if (error) throw new HttpError(400, error.message)
     return data
   })
 
   app.put('/integrations/:kind', async request => {
-    const ctx = requirePermission(request, 'settings.write')
+    const ctx = requirePermission(request, 'integrations.write')
     const k = kind(request.params)
     const parsed = schemas[k].safeParse(request.body)
     if (!parsed.success) throw new HttpError(400, parsed.error.issues[0]?.message || 'Check account details.')
     const value = parsed.data
     const external_id = k === 'facebook' ? (value as Facebook).page_id : k === 'whatsapp' ? (value as Whatsapp).phone_number_id : null
-    unwrap(await admin.from('integration_accounts').upsert({ company_id: ctx.companyId, kind: k, external_id, ciphertext: encrypt(value), updated_at: new Date().toISOString() }).select('kind').single())
+    unwrap(await admin.from('integration_accounts').upsert({ company_id: ctx.companyId, kind: k, external_id, ciphertext: encrypt(value), connected_at: new Date().toISOString(), last_error: null, updated_at: new Date().toISOString() }).select('kind').single())
     await audit(ctx, `integrations.${k}.connect`)
     return { kind: k, connected: true }
+  })
+
+  app.delete('/integrations/:kind', async request => {
+    const ctx = requirePermission(request, 'integrations.write')
+    const k = kind(request.params)
+    const { error } = await admin.from('integration_accounts').delete().eq('company_id', ctx.companyId).eq('kind', k)
+    if (error) throw new HttpError(400, error.message)
+    await audit(ctx, `integrations.${k}.disconnect`)
+    return { ok: true }
+  })
+
+  app.post('/integrations/meta/oauth/start', async request => {
+    const ctx = requirePermission(request, 'integrations.write')
+    if (!env.metaAppId || !env.metaAppSecret || !env.metaRedirectUri) throw new HttpError(503, 'Meta OAuth is not configured by the TravCRM platform administrator.')
+    const state = unwrap(await admin.from('integration_oauth_states').insert({ company_id: ctx.companyId, actor_id: ctx.userId }).select('state').single()).state
+    const query = new URLSearchParams({ client_id: env.metaAppId, redirect_uri: env.metaRedirectUri, state, response_type: 'code', scope: 'pages_show_list,pages_read_engagement,pages_manage_metadata,leads_retrieval' })
+    return { url: `https://www.facebook.com/${env.metaGraphVersion}/dialog/oauth?${query}` }
+  })
+
+  app.get('/integrations/meta/oauth/callback', async (request, reply) => {
+    const parsed = z.object({ code: z.string().min(1), state: z.uuid() }).safeParse(request.query)
+    if (!parsed.success) throw new HttpError(400, 'Meta did not return a valid connection request.')
+    const state = unwrap(await admin.from('integration_oauth_states').select('*').eq('state', parsed.data.state).gt('expires_at', new Date().toISOString()).single())
+    const query = new URLSearchParams({ client_id: env.metaAppId, client_secret: env.metaAppSecret, redirect_uri: env.metaRedirectUri, code: parsed.data.code })
+    const tokenResponse = await fetch(`https://graph.facebook.com/${env.metaGraphVersion}/oauth/access_token?${query}`, { signal: AbortSignal.timeout(15000) })
+    const tokenBody = await tokenResponse.json() as { access_token?: string; error?: { message: string } }
+    if (!tokenResponse.ok || !tokenBody.access_token) throw new HttpError(400, tokenBody.error?.message || 'Meta login could not be completed.')
+    const longQuery = new URLSearchParams({ grant_type: 'fb_exchange_token', client_id: env.metaAppId, client_secret: env.metaAppSecret, fb_exchange_token: tokenBody.access_token })
+    const longResponse = await fetch(`https://graph.facebook.com/${env.metaGraphVersion}/oauth/access_token?${longQuery}`, { signal: AbortSignal.timeout(15000) })
+    const longBody = await longResponse.json() as { access_token?: string }
+    const userToken = longBody.access_token || tokenBody.access_token
+    const pagesResponse = await fetch(`https://graph.facebook.com/${env.metaGraphVersion}/me/accounts?fields=id,name,access_token&access_token=${encodeURIComponent(userToken)}`, { signal: AbortSignal.timeout(15000) })
+    const pagesBody = await pagesResponse.json() as { data?: { id: string; name: string; access_token: string }[]; error?: { message: string } }
+    if (!pagesResponse.ok) throw new HttpError(400, pagesBody.error?.message || 'Could not load Facebook Pages.')
+    await admin.from('integration_oauth_states').update({ ciphertext: encrypt(pagesBody.data || []) }).eq('state', state.state)
+    return reply.redirect(`${env.appUrl.replace(/\/$/, '')}/integrations?meta_state=${state.state}`)
+  })
+
+  app.get('/integrations/meta/oauth/pages', async request => {
+    const ctx = requirePermission(request, 'integrations.write')
+    const parsed = z.object({ state: z.uuid() }).safeParse(request.query)
+    if (!parsed.success) throw new HttpError(400, 'Meta connection state is missing.')
+    const state = unwrap(await admin.from('integration_oauth_states').select('*').eq('state', parsed.data.state).eq('company_id', ctx.companyId).eq('actor_id', ctx.userId).gt('expires_at', new Date().toISOString()).single())
+    if (!state.ciphertext) throw new HttpError(400, 'Complete Meta login first.')
+    return decrypt<{ id: string; name: string; access_token: string }[]>(state.ciphertext).map(({ id, name }) => ({ id, name }))
+  })
+
+  app.post('/integrations/meta/oauth/complete', async request => {
+    const ctx = requirePermission(request, 'integrations.write')
+    const parsed = z.object({ state: z.uuid(), page_id: z.string().min(1) }).safeParse(request.body)
+    if (!parsed.success) throw new HttpError(400, 'Choose a Facebook Page.')
+    const state = unwrap(await admin.from('integration_oauth_states').select('*').eq('state', parsed.data.state).eq('company_id', ctx.companyId).eq('actor_id', ctx.userId).gt('expires_at', new Date().toISOString()).single())
+    const page = decrypt<{ id: string; name: string; access_token: string }[]>(state.ciphertext).find(x => x.id === parsed.data.page_id)
+    if (!page) throw new HttpError(400, 'Facebook Page not found in this connection.')
+    const subscribe = await fetch(`https://graph.facebook.com/${env.metaGraphVersion}/${encodeURIComponent(page.id)}/subscribed_apps`, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ subscribed_fields: 'leadgen', access_token: page.access_token }), signal: AbortSignal.timeout(15000) })
+    const subscribed = await subscribe.json() as { success?: boolean; error?: { message: string } }
+    if (!subscribe.ok || !subscribed.success) throw new HttpError(400, subscribed.error?.message || 'The Page could not be subscribed to lead notifications.')
+    unwrap(await admin.from('integration_accounts').upsert({ company_id: ctx.companyId, kind: 'facebook', external_id: page.id, ciphertext: encrypt({ page_id: page.id, page_access_token: page.access_token, page_name: page.name }), connected_at: new Date().toISOString(), last_error: null, updated_at: new Date().toISOString() }).select('kind').single())
+    await admin.from('integration_oauth_states').delete().eq('state', state.state)
+    await audit(ctx, 'integrations.facebook.connect', undefined, { page_id: page.id, page_name: page.name })
+    return { kind: 'facebook', connected: true, page: { id: page.id, name: page.name } }
+  })
+
+  app.get('/lead-form', async request => {
+    const ctx = requirePermission(request, 'integrations.read')
+    const { data } = await admin.from('lead_forms').select('*').eq('company_id', ctx.companyId).maybeSingle()
+    if (data) return data
+    const publicKey = randomBytes(12).toString('hex')
+    return unwrap(await admin.from('lead_forms').insert({ company_id: ctx.companyId, public_key: publicKey }).select('*').single())
+  })
+
+  app.put('/lead-form', async request => {
+    const ctx = requirePermission(request, 'integrations.write')
+    const parsed = leadFormSchema.safeParse(request.body)
+    if (!parsed.success || parsed.data.required_fields.some(x => !parsed.data.enabled_fields.includes(x))) throw new HttpError(400, 'Check the lead form settings and required fields.')
+    const form = unwrap(await admin.from('lead_forms').update({ ...parsed.data, updated_at: new Date().toISOString() }).eq('company_id', ctx.companyId).select('*').single())
+    await audit(ctx, 'lead_form.update')
+    return form
+  })
+
+  app.post('/lead-form/rotate-key', async request => {
+    const ctx = requirePermission(request, 'integrations.write')
+    const secret = `trv_${randomBytes(24).toString('base64url')}`
+    unwrap(await admin.from('lead_forms').update({ write_key_hash: keyHash(secret), updated_at: new Date().toISOString() }).eq('company_id', ctx.companyId).select('company_id').single())
+    await audit(ctx, 'lead_form.key.rotate')
+    return { write_key: secret }
+  })
+
+  app.get('/public/forms/:key', async request => {
+    const key = (request.params as { key: string }).key
+    const form = unwrap(await admin.from('lead_forms').select('company_id,title,success_message,primary_color,enabled_fields,required_fields,active,source_label').eq('public_key', key).single())
+    if (!form.active) throw new HttpError(404, 'This enquiry form is not accepting responses.')
+    const settings = unwrap(await admin.from('company_settings').select('brand_name,logo_path').eq('company_id', form.company_id).single())
+    let logo_url: string | null = null
+    if (settings.logo_path) logo_url = (await admin.storage.from('crm-private').createSignedUrl(settings.logo_path, 3600)).data?.signedUrl || null
+    return { ...form, company_id: undefined, brand_name: settings.brand_name, logo_url, turnstile_site_key: env.turnstileSiteKey || null }
+  })
+
+  app.post('/public/leads/:key', async request => {
+    const publicKey = (request.params as { key: string }).key
+    const form = unwrap(await admin.from('lead_forms').select('*').eq('public_key', publicKey).single())
+    if (!form.active) throw new HttpError(404, 'This enquiry form is not accepting responses.')
+    const bucketKey = `${publicKey}:${request.ip}`
+    const now = Date.now(); const bucket = leadBuckets.get(bucketKey)
+    if (bucket && bucket.reset > now && bucket.count >= 10) throw new HttpError(429, 'Too many enquiries. Try again in a few minutes.')
+    leadBuckets.set(bucketKey, !bucket || bucket.reset <= now ? { count: 1, reset: now + 600000 } : { ...bucket, count: bucket.count + 1 })
+    const body = z.object({ name: z.string().trim().max(120).optional(), phone: z.string().trim().max(40).optional(), email: z.string().trim().email().max(200).optional().or(z.literal('')), destination: z.string().trim().max(200).optional(), message: z.string().trim().max(3000).optional(), external_id: z.string().max(200).optional(), website: z.string().max(0).optional(), turnstile_token: z.string().optional() }).safeParse(request.body)
+    if (!body.success || body.data.website) throw new HttpError(400, 'Check the enquiry details.')
+    const supplied = request.headers['x-travcrm-lead-key'] as string | undefined
+    const serverRequest = Boolean(supplied && form.write_key_hash && timingSafeEqual(Buffer.from(keyHash(supplied)), Buffer.from(form.write_key_hash)))
+    const origin = String(request.headers.origin || '').replace(/\/$/, '')
+    const platformOrigins = env.webOrigin.split(',').map(x => x.trim().replace(/\/$/, ''))
+    if (!serverRequest && origin && !platformOrigins.includes(origin) && !(form.allowed_origins as string[]).map(x => x.replace(/\/$/, '')).includes(origin)) throw new HttpError(403, 'This website is not allowed to use the enquiry form.')
+    if (!serverRequest && !await verifyTurnstile(body.data.turnstile_token, request.ip)) throw new HttpError(400, 'Please complete the spam check.')
+    for (const field of form.required_fields as string[]) if (!body.data[field as keyof typeof body.data]) throw new HttpError(400, `${(field[0] || '').toUpperCase() + field.slice(1)} is required.`)
+    const sourceId = body.data.external_id ? `web-${body.data.external_id}` : `web-${randomUUID()}`
+    const data = { name: body.data.name || 'Website lead', phone: body.data.phone || '', email: body.data.email || '', destination: body.data.destination || '', notes: body.data.message || '', page: form.source_label, received_at: new Date().toISOString().slice(0, 10), external_id: sourceId }
+    const { error } = await admin.from('records').insert({ company_id: form.company_id, type: 'lead', title: data.name, status: 'Active', data })
+    if (error?.code === '23505') return { ok: true, message: form.success_message }
+    if (error) throw new HttpError(400, error.message)
+    return { ok: true, message: form.success_message }
   })
 
   app.post('/quotes/:id/send', async request => {
@@ -176,7 +315,7 @@ export async function registerIntegrations(app: FastifyInstance): Promise<void> 
   })
 
   app.post('/files/upload-url', async request => {
-    const ctx = requirePermission(request, 'files.write')
+    const ctx = requireAnyPermission(request, ['files.write', 'documents.write', 'settings.write'])
     const parsed = z.object({ filename: z.string().min(1).max(200), content_type: z.string().regex(/^(image\/(png|jpeg|webp)|application\/pdf)$/) }).safeParse(request.body)
     if (!parsed.success) throw new HttpError(400, 'Upload a PNG, JPEG, WebP, or PDF file.')
     const extension = ({ 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'application/pdf': 'pdf' } as Record<string, string>)[parsed.data.content_type]
