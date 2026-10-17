@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import { z } from 'zod'
-import { admin, audit, HttpError, requirePermission, unwrap } from './core.js'
+import { admin, audit, enforceLimit, HttpError, requirePermission, unwrap } from './core.js'
 import { recordPdf } from './pdf.js'
 
 const id = (value: unknown) => (value as { id: string }).id
@@ -124,6 +124,9 @@ export async function registerBookings(app: FastifyInstance): Promise<void> {
     const ctx = requirePermission(request, 'bookings.confirm')
     const quote = unwrap(await ctx.db.from('quotes').select('*').eq('company_id', ctx.companyId).eq('id', id(request.params)).single())
     if (quote.booking_id) return unwrap(await ctx.db.from('bookings').select('*').eq('company_id', ctx.companyId).eq('id', quote.booking_id).single())
+    const since = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1)).toISOString()
+    const { count } = await admin.from('bookings').select('id', { count: 'exact', head: true }).eq('company_id', ctx.companyId).gte('created_at', since)
+    await enforceLimit(ctx, 'bookings_monthly', count || 0)
     if (!quote.arrival_date) throw new HttpError(400, 'Add the travel date before confirming this quotation.')
     if (quote.itinerary?.length !== quote.days || quote.stays?.length !== quote.nights) throw new HttpError(400, 'Complete every itinerary day and overnight stay before confirming.')
     const seriesQuotes = unwrap(await ctx.db.from('quotes').select('id').eq('company_id', ctx.companyId).eq('quote_series_id', quote.quote_series_id))

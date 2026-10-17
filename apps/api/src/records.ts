@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify'
-import { admin, audit, HttpError, requirePermission, unwrap } from './core.js'
+import { admin, audit, enforceLimit, HttpError, requirePermission, unwrap } from './core.js'
 import { modules, validateRecord } from './modules.js'
 
 const params = (value: unknown) => value as { slug: string; id?: string }
@@ -24,7 +24,8 @@ function invoiceAmounts(data: Record<string, unknown>): void {
 export async function registerRecords(app: FastifyInstance): Promise<void> {
   app.get('/modules', async request => {
     const ctx = request.crm!
-    return Object.fromEntries(Object.entries(modules).filter(([, m]) => ctx.platform || ctx.permissions.includes('*') || ctx.permissions.includes(`${m.type}.read`)))
+    const featureFor = (type: string) => ['expense','invoice','hotel_payment'].includes(type) ? 'finance' : ['stay_voucher','cab_voucher'].includes(type) ? 'documents' : 'crm'
+    return Object.fromEntries(Object.entries(modules).filter(([, m]) => (ctx.platform || ctx.permissions.includes('*') || ctx.permissions.includes(`${m.type}.read`)) && (ctx.features.includes('*') || ctx.features.includes(featureFor(m.type)))))
   })
 
   app.get('/options/:slug', async request => {
@@ -128,6 +129,11 @@ export async function registerRecords(app: FastifyInstance): Promise<void> {
     const { slug } = params(request.params); const mod = modules[slug]
     if (!mod) throw new HttpError(404, 'Module not found.')
     const ctx = requirePermission(request, `${mod.type}.write`)
+    if (mod.type === 'lead') {
+      const since = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1)).toISOString()
+      const { count } = await admin.from('records').select('id', { count: 'exact', head: true }).eq('company_id', ctx.companyId).eq('type', 'lead').gte('created_at', since)
+      await enforceLimit(ctx, 'leads_monthly', count || 0)
+    }
     const { value } = await validatedData(slug, request.body, ctx)
     const item = unwrap(await ctx.db.from('records').insert({ company_id: ctx.companyId, type: mod.type, title: value.title, status: value.status, data: value.data, created_by: ctx.userId }).select('*').single())
     await audit(ctx, `${mod.type}.create`, item.id)

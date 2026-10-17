@@ -9,6 +9,7 @@ process.env.SUPABASE_SECRET_KEY ||= 'test-secret-key'
 const { priceQuote } = await import('./quotes.js')
 const { quotePdf } = await import('./pdf.js')
 const { groupBookingStays } = await import('./bookings.js')
+const { mergeEntitlements } = await import('./core.js')
 
 test('quotation totals use cents and apply GST after discount', () => {
   assert.deepEqual(priceQuote(1000, 200, 100, 5), { gst_amount: 55, total_amount: 1155 })
@@ -25,6 +26,12 @@ test('booking stay segments merge consecutive nights at the same property', () =
   assert.equal(stays.length, 2)
   assert.deepEqual(stays.map(x => [x.check_in, x.check_out]), [['2026-11-10','2026-11-12'], ['2026-11-12','2026-11-13']])
   assert.equal(stays[0]!.rooms, 2)
+})
+
+test('company plan overrides can add and remove features and replace limits', () => {
+  const value = mergeEntitlements(['crm','finance'], { team_members: 3, quotes_monthly: 100 }, { finance: false, integrations: true }, { team_members: 8 })
+  assert.deepEqual(value.features.sort(), ['crm','integrations'])
+  assert.deepEqual(value.limits, { team_members: 8, quotes_monthly: 100 })
 })
 
 test('query validation requires customer contact and keeps known fields', () => {

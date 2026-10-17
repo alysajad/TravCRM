@@ -5,7 +5,7 @@ Travel CRM for multiple companies, with a React/TypeScript frontend, a Node/Fast
 ## What is built
 
 - Full-width company workspaces, invite-only sign-in, staff, configurable roles, company settings, private files, and activity records.
-- TravCRM owner portal with customer health, SaaS revenue, subscriptions, support access, suspension, archiving, restoration, and guarded tenant erasure.
+- TravCRM owner portal with reusable plans, pricing, trials, enforced feature and usage limits, MRR and company health, subscription controls, time-limited audited support access, suspension, archiving, restoration, and guarded tenant erasure.
 - Queries, follow-ups, lead sources, clients, day plans, hotels, houseboats, room types, cabs, and supporting catalogs.
 - Numbered quotation revisions with rooming, assignee, structured INR/GST price lines, day plans, stays, optional daily transport, branded PDF, and outbound email/WhatsApp sending.
 - Explicit quotation confirmation into a controlled booking snapshot, supplier stay tracking, daily transport operations, revision history, and editable draft or locked issued stay/cab vouchers.
@@ -17,7 +17,7 @@ The interface follows the supplied dashboard reference with the #FDF2FB, #4A3A52
 
 ## Local setup
 
-1. Create a Supabase project. Run the files in `supabase/migrations` in filename order in the SQL editor. Existing installations should run only migrations they have not yet applied; booking operations require `0004_booking_operations.sql`. Keep the `crm-private` Storage bucket private.
+1. Create a Supabase project. Run the files in `supabase/migrations` in filename order in the SQL editor. Existing installations should run only migrations they have not yet applied; booking operations require `0004_booking_operations.sql`, and the SaaS control plane requires `0005_saas_control_plane.sql`. Keep the `crm-private` Storage bucket private.
 2. In Supabase Auth, disable public sign-up. Create your own user with a password in **Authentication → Users**, then run:
 
    ```sql

@@ -6,7 +6,7 @@ export const configured = Boolean(url && key && import.meta.env.VITE_API_URL)
 export const supabase = configured ? createClient(url!, key!) : null
 const base = (import.meta.env.VITE_API_URL as string | undefined) || 'http://localhost:4000/api/v1'
 
-export type Me = { userId: string; companyId: string | null; companyName: string | null; name: string; platform: boolean; permissions: string[]; availablePermissions: string[] }
+export type Me = { userId: string; companyId: string | null; companyName: string | null; name: string; platform: boolean; permissions: string[]; availablePermissions: string[]; features: string[]; limits: Record<string, number>; supportSessionId: string | null; supportExpiresAt: string | null }
 export type Field = { key: string; label: string; kind?: 'text' | 'email' | 'tel' | 'date' | 'number' | 'textarea' | 'select' | 'relation'; required?: boolean; options?: string[]; relation?: string }
 export type Module = { type: string; label: string; plural: string; titleField: string; fields: Field[] }
 export type RecordItem = { id: string; title: string; type: string; status: string; data: Record<string, any>; created_at: string }
@@ -15,7 +15,16 @@ export type Booking = { id: string; booking_number: string; source_quote_id: str
 export type Page<T> = { items: T[]; total: number; page: number; pageSize: number }
 
 export function selectedCompany() { return localStorage.getItem('travcrm-company') || '' }
-export function selectCompany(id: string, path = '/') { if (id) localStorage.setItem('travcrm-company', id); else localStorage.removeItem('travcrm-company'); window.location.assign(path) }
+export function selectCompany(id: string, path = '/', supportSession = '') {
+  if (id) {
+    localStorage.setItem('travcrm-company', id)
+    if (supportSession) localStorage.setItem('travcrm-support-session', supportSession)
+  } else {
+    localStorage.removeItem('travcrm-company')
+    localStorage.removeItem('travcrm-support-session')
+  }
+  window.location.assign(path)
+}
 
 export async function publicApi<T>(path: string, init: RequestInit = {}): Promise<T> {
   const response = await fetch(`${base}${path}`, { ...init, headers: { ...(init.body ? { 'Content-Type': 'application/json' } : {}), ...init.headers } })
@@ -31,7 +40,8 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   if (!supabase) throw new Error('Set the Supabase and API environment variables.')
   const { data } = await supabase.auth.getSession()
   if (!data.session) throw new Error('Sign in to continue.')
-  const response = await fetch(`${base}${path}`, { ...init, headers: { ...(init.body ? { 'Content-Type': 'application/json' } : {}), Authorization: `Bearer ${data.session.access_token}`, ...(selectedCompany() ? { 'X-Company-Id': selectedCompany() } : {}), ...init.headers } })
+  const company = selectedCompany(); const supportSession = localStorage.getItem('travcrm-support-session') || ''
+  const response = await fetch(`${base}${path}`, { ...init, headers: { ...(init.body ? { 'Content-Type': 'application/json' } : {}), Authorization: `Bearer ${data.session.access_token}`, ...(company ? { 'X-Company-Id': company } : {}), ...(company && supportSession ? { 'X-Support-Session': supportSession } : {}), ...init.headers } })
   if (!response.ok) {
     let message = `Request failed (${response.status}).`
     try { message = (await response.json()).error || message } catch { /* keep HTTP status */ }
@@ -55,7 +65,7 @@ export async function download(path: string, filename: string) {
 
 export async function upload(file: File) {
   if (!supabase) throw new Error('Supabase is not configured.')
-  const signed = await post<{ path: string; token: string }>('/files/upload-url', { filename: file.name, content_type: file.type })
+  const signed = await post<{ path: string; token: string }>('/files/upload-url', { filename: file.name, content_type: file.type, size: file.size })
   const { error } = await supabase.storage.from('crm-private').uploadToSignedUrl(signed.path, signed.token, file, { contentType: file.type })
   if (error) throw error
   return signed.path

@@ -2,13 +2,36 @@ import type { FastifyInstance } from 'fastify'
 import { createHash, createHmac, timingSafeEqual, randomBytes, randomUUID } from 'node:crypto'
 import nodemailer from 'nodemailer'
 import { z } from 'zod'
-import { admin, audit, decrypt, encrypt, env, HttpError, requireAnyPermission, requirePermission, unwrap } from './core.js'
+import { admin, audit, companyEntitlements, decrypt, encrypt, env, HttpError, requireAnyPermission, requirePermission, unwrap } from './core.js'
 import { quotePdf, recordPdf } from './pdf.js'
 
 const leadBuckets = new Map<string, { count: number; reset: number }>()
 const leadFields = ['name','phone','email','destination','message'] as const
 const leadFormSchema = z.object({ title: z.string().trim().min(2).max(120), success_message: z.string().trim().min(2).max(500), primary_color: z.string().regex(/^#[0-9a-fA-F]{6}$/), enabled_fields: z.array(z.enum(leadFields)).min(1), required_fields: z.array(z.enum(leadFields)), allowed_origins: z.array(z.string().url()).max(20), source_label: z.string().trim().min(2).max(80), active: z.boolean() })
 const keyHash = (value: string) => createHash('sha256').update(value).digest('hex')
+
+async function ensureLeadCapacity(companyId: string): Promise<void> {
+  const { limits } = await companyEntitlements(companyId)
+  const limit = limits.leads_monthly
+  if (typeof limit !== 'number' || limit < 0) return
+  const since = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1)).toISOString()
+  const { count } = await admin.from('records').select('id', { count: 'exact', head: true }).eq('company_id', companyId).eq('type', 'lead').gte('created_at', since)
+  if ((count || 0) >= limit) throw new HttpError(403, `This company has reached its leads monthly plan limit (${limit}).`)
+}
+
+async function storageBytes(path: string): Promise<number> {
+  let total = 0
+  for (let offset = 0; ; offset += 100) {
+    const { data, error } = await admin.storage.from('crm-private').list(path, { limit: 100, offset })
+    if (error) throw new HttpError(502, 'Could not inspect company storage usage.')
+    for (const item of data || []) {
+      if (item.id) total += Number((item.metadata as { size?: number } | null)?.size || 0)
+      else total += await storageBytes(`${path}/${item.name}`)
+    }
+    if (!data || data.length < 100) break
+  }
+  return total
+}
 
 type Smtp = { host: string; port: number; secure: boolean; user: string; password: string; from: string }
 type Whatsapp = { phone_number_id: string; access_token: string; template_name: string; voucher_template_name: string; language: string }
@@ -78,6 +101,7 @@ async function handleLead(entry: Record<string, any>): Promise<void> {
   const pageId = String(entry.id || '')
   const { data: integration } = await admin.from('integration_accounts').select('company_id,ciphertext').eq('kind', 'facebook').eq('external_id', pageId).maybeSingle()
   if (!integration) return
+  await ensureLeadCapacity(integration.company_id)
   const credentials = decrypt<Facebook>(integration.ciphertext)
   for (const change of entry.changes || []) {
     if (change.field !== 'leadgen' || !change.value?.leadgen_id) continue
@@ -225,6 +249,7 @@ export async function registerIntegrations(app: FastifyInstance): Promise<void> 
     const publicKey = (request.params as { key: string }).key
     const form = unwrap(await admin.from('lead_forms').select('*').eq('public_key', publicKey).single())
     if (!form.active) throw new HttpError(404, 'This enquiry form is not accepting responses.')
+    await ensureLeadCapacity(form.company_id)
     const bucketKey = `${publicKey}:${request.ip}`
     const now = Date.now(); const bucket = leadBuckets.get(bucketKey)
     if (bucket && bucket.reset > now && bucket.count >= 10) throw new HttpError(429, 'Too many enquiries. Try again in a few minutes.')
@@ -345,8 +370,11 @@ export async function registerIntegrations(app: FastifyInstance): Promise<void> 
 
   app.post('/files/upload-url', async request => {
     const ctx = requireAnyPermission(request, ['files.write', 'documents.write', 'settings.write'])
-    const parsed = z.object({ filename: z.string().min(1).max(200), content_type: z.string().regex(/^(image\/(png|jpeg|webp)|application\/pdf)$/) }).safeParse(request.body)
+    const parsed = z.object({ filename: z.string().min(1).max(200), content_type: z.string().regex(/^(image\/(png|jpeg|webp)|application\/pdf)$/), size: z.coerce.number().int().positive().max(25 * 1024 * 1024) }).safeParse(request.body)
     if (!parsed.success) throw new HttpError(400, 'Upload a PNG, JPEG, WebP, or PDF file.')
+    const { limits } = await companyEntitlements(ctx.companyId)
+    const storageLimit = limits.storage_mb
+    if (typeof storageLimit === 'number' && storageLimit >= 0 && await storageBytes(ctx.companyId) + parsed.data.size > storageLimit * 1024 * 1024) throw new HttpError(403, `This company has reached its storage plan limit (${storageLimit} MB).`)
     const extension = ({ 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'application/pdf': 'pdf' } as Record<string, string>)[parsed.data.content_type]
     const path = `${ctx.companyId}/uploads/${randomUUID()}.${extension}`
     const signed = unwrap(await admin.storage.from('crm-private').createSignedUploadUrl(path))

@@ -29,6 +29,10 @@ export type Context = {
   name: string
   platform: boolean
   permissions: string[]
+  features: string[]
+  limits: Record<string, number>
+  supportSessionId: string | null
+  supportExpiresAt: string | null
   db: SupabaseClient
 }
 
@@ -61,6 +65,55 @@ export function requireAnyPermission(request: FastifyRequest, permissions: strin
   return ctx
 }
 
+type Entitlements = { features: string[]; limits: Record<string, number>; subscriptionStatus?: string; currentPeriodEnd?: string | null; cancelAtPeriodEnd?: boolean }
+
+export function mergeEntitlements(planFeatures: string[], planLimits: Record<string, number>, featureOverrides: Record<string, boolean> = {}, limitOverrides: Record<string, number> = {}): Entitlements {
+  const features = new Set(planFeatures)
+  for (const [feature, enabled] of Object.entries(featureOverrides)) enabled ? features.add(feature) : features.delete(feature)
+  return { features: [...features], limits: { ...planLimits, ...limitOverrides } }
+}
+
+function related<T>(value: T | T[] | null | undefined): T | null {
+  return Array.isArray(value) ? value[0] || null : value || null
+}
+
+export async function companyEntitlements(companyId: string): Promise<Entitlements> {
+  const { data, error } = await admin.from('company_subscriptions')
+    .select('limit_overrides,feature_overrides,subscription_status,current_period_end,cancel_at_period_end,subscription_plans(features,limits)')
+    .eq('company_id', companyId).maybeSingle()
+  if (error) throw new HttpError(500, 'Could not load company plan access.')
+  if (!data) return { features: ['*'], limits: {} }
+  const plan = related(data.subscription_plans as { features: string[]; limits: Record<string, number> } | { features: string[]; limits: Record<string, number> }[] | null)
+  return { ...mergeEntitlements(plan?.features || [], plan?.limits || {}, (data.feature_overrides || {}) as Record<string, boolean>, (data.limit_overrides || {}) as Record<string, number>), subscriptionStatus: data.subscription_status, currentPeriodEnd: data.current_period_end, cancelAtPeriodEnd: data.cancel_at_period_end }
+}
+
+export function requireFeature(ctx: Context, feature: string): void {
+  if (!ctx.companyId || ctx.features.includes('*') || ctx.features.includes(feature)) return
+  throw new HttpError(403, `${feature.replaceAll('_', ' ')} is not included in this company plan.`)
+}
+
+export async function enforceLimit(ctx: Context & { companyId: string }, key: string, current: number): Promise<void> {
+  const limit = ctx.limits[key]
+  if (typeof limit === 'number' && limit >= 0 && current >= limit) throw new HttpError(403, `This company has reached its ${key.replaceAll('_', ' ')} plan limit (${limit}).`)
+}
+
+export function enforceRouteFeature(request: FastifyRequest): void {
+  const ctx = requireContext(request)
+  if (!ctx.companyId) return
+  const path = request.url.split('?')[0] || ''
+  const rules: [RegExp, string][] = [
+    [/^\/api\/v1\/(quotes|quote-options)(\/|$)/, 'quotations'],
+    [/^\/api\/v1\/(bookings|booking-stays|booking-transport|booking-documents)(\/|$)/, 'bookings'],
+    [/^\/api\/v1\/(payments|ledger|hotel-ledger)(\/|$)/, 'finance'],
+    [/^\/api\/v1\/records\/(expenses|invoices|hotel-payments)(\/|$)/, 'finance'],
+    [/^\/api\/v1\/records\/(stay-vouchers|cab-vouchers)(\/|$)/, 'documents'],
+    [/^\/api\/v1\/(records|options|assignees|leads)(\/|$)/, 'crm'],
+    [/^\/api\/v1\/(integrations|lead-form)(\/|$)/, 'integrations']
+  ]
+  const match = rules.find(([pattern]) => pattern.test(path))
+  if (match) requireFeature(ctx, match[1])
+}
+
 export async function authenticate(request: FastifyRequest): Promise<void> {
   const token = request.headers.authorization?.replace(/^Bearer\s+/i, '')
   if (!token) throw new HttpError(401, 'Sign in to continue.')
@@ -78,17 +131,28 @@ export async function authenticate(request: FastifyRequest): Promise<void> {
   if (!isPlatform && (!membership || !membership.active || !company || !['trial', 'active'].includes(company.status) || trialExpired)) throw new HttpError(403, trialExpired ? 'Your TravCRM trial has ended. Contact your administrator.' : 'This company workspace is not active.')
   let companyId: string | null = membership?.company_id ?? null
   let companyName: string | null = company?.name ?? null
+  let supportSessionId: string | null = null
+  let supportExpiresAt: string | null = null
   if (isPlatform && typeof request.headers['x-company-id'] === 'string') {
     const selected = request.headers['x-company-id']
     const { data: company } = await admin.from('companies').select('id,name,status').eq('id', selected).maybeSingle()
     if (!company || company.status === 'archived') throw new HttpError(404, 'Company workspace is archived.')
+    const requestedSession = typeof request.headers['x-support-session'] === 'string' ? request.headers['x-support-session'] : ''
+    const { data: session } = requestedSession ? await admin.from('platform_support_sessions').select('id,expires_at').eq('id', requestedSession).eq('platform_admin_id', userId).eq('company_id', company.id).is('revoked_at', null).gt('expires_at', new Date().toISOString()).maybeSingle() : { data: null }
+    if (!session) throw new HttpError(403, 'Start a support session from the owner portal to open this workspace.')
     companyId = company.id
     companyName = company.name
+    supportSessionId = session.id
+    supportExpiresAt = session.expires_at
   }
+  const entitlements = companyId ? await companyEntitlements(companyId) : { features: ['*'], limits: {} }
+  const subscriptionEnded = entitlements.subscriptionStatus === 'cancelled' && (!entitlements.cancelAtPeriodEnd || !entitlements.currentPeriodEnd || entitlements.currentPeriodEnd < new Date().toISOString().slice(0, 10))
+  if (!isPlatform && subscriptionEnded) throw new HttpError(403, 'This TravCRM subscription has ended. Contact your administrator.')
   const roles = Array.isArray(membership?.roles) ? membership.roles[0] : membership?.roles
   request.crm = {
     userId, companyId, companyName, name: membership?.name || String(claimData.claims.email || 'User'),
     platform: isPlatform, permissions: isPlatform ? ['*'] : roles?.permissions || [],
+    features: entitlements.features, limits: entitlements.limits, supportSessionId, supportExpiresAt,
     db: createClient(env.url, env.anon, { global: { headers: { Authorization: `Bearer ${token}` } }, auth: { persistSession: false, autoRefreshToken: false } })
   }
 }

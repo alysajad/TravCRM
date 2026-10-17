@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import { z } from 'zod'
-import { admin, audit, HttpError, requirePermission, unwrap } from './core.js'
+import { admin, audit, enforceLimit, HttpError, requirePermission, unwrap } from './core.js'
 import { quotePdf } from './pdf.js'
 import { statuses } from './modules.js'
 
@@ -106,6 +106,9 @@ export async function registerQuotes(app: FastifyInstance): Promise<void> {
 
   app.post('/quotes', async request => {
     const { ctx, row } = await prepare(request, request.body)
+    const since = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1)).toISOString()
+    const { count } = await admin.from('quotes').select('id', { count: 'exact', head: true }).eq('company_id', ctx.companyId).gte('created_at', since)
+    await enforceLimit(ctx, 'quotes_monthly', count || 0)
     const { data: quoteNumber, error } = await admin.rpc('next_document_number', { p_company_id: ctx.companyId, p_kind: 'quote' })
     if (error) throw new HttpError(400, error.message)
     const quote = unwrap(await ctx.db.from('quotes').insert({ ...row, quote_number: quoteNumber, created_by: ctx.userId }).select('*').single())

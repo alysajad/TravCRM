@@ -1,11 +1,11 @@
 import type { FastifyInstance } from 'fastify'
 import { z } from 'zod'
-import { admin, audit, env, HttpError, platformAudit, requireAnyPermission, requireContext, requirePermission, unwrap } from './core.js'
+import { admin, audit, enforceLimit, env, HttpError, platformAudit, requireAnyPermission, requireContext, requirePermission, unwrap } from './core.js'
 import { modules } from './modules.js'
 import { quotePdf, recordPdf } from './pdf.js'
 
 const id = (v: unknown) => (v as { id: string }).id
-const companyInput = z.object({ name: z.string().trim().min(2).max(120), slug: z.string().regex(/^[a-z0-9-]{3,40}$/), admin_email: z.email(), admin_name: z.string().trim().min(2).max(120), trial_days: z.coerce.number().int().min(0).max(365).default(14) })
+const companyInput = z.object({ name: z.string().trim().min(2).max(120), slug: z.string().regex(/^[a-z0-9-]{3,40}$/), admin_email: z.email(), admin_name: z.string().trim().min(2).max(120), plan_id: z.uuid().optional(), trial_days: z.coerce.number().int().min(0).max(365).optional() })
 const roleInput = z.object({ name: z.string().trim().min(2).max(80), permissions: z.array(z.string()).default([]) })
 const settingsInput = z.object({ brand_name: z.string().max(120).nullable().optional(), phone: z.string().max(50).nullable().optional(), email: z.string().max(200).nullable().optional(), address: z.string().max(2000).nullable().optional(), gstin: z.string().max(30).nullable().optional(), bank_details: z.string().max(2000).nullable().optional(), document_color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(), document_secondary_color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(), document_template: z.enum(['elegant','modern','compact','journey','expedition','brochure']).optional(), document_cover_path: z.string().max(500).nullable().optional(), document_config: z.object({ sections: z.array(z.enum(['itinerary','accommodation','inclusions','exclusions','price','payment','terms'])), labels: z.record(z.string(), z.string()).default({}) }).optional(), terms: z.string().max(5000).nullable().optional(), cancellation_policy: z.string().max(5000).nullable().optional(), signature_path: z.string().max(500).nullable().optional(), company_footer: z.string().max(500).nullable().optional(), website: z.string().max(300).nullable().optional(), logo_path: z.string().max(500).nullable().optional(), social_links: z.record(z.string(), z.string()).optional(), quote_prefix: z.string().trim().min(1).max(8).regex(/^[A-Za-z0-9-]+$/).optional(), booking_prefix: z.string().trim().min(1).max(8).regex(/^[A-Za-z0-9-]+$/).optional(), stay_voucher_prefix: z.string().trim().min(1).max(8).regex(/^[A-Za-z0-9-]+$/).optional(), cab_voucher_prefix: z.string().trim().min(1).max(8).regex(/^[A-Za-z0-9-]+$/).optional() })
 const allPermissions = ['company.read','settings.write','documents.read','documents.write','integrations.read','integrations.write','roles.read','roles.write','users.read','users.write','files.read','files.write','quotes.read','quotes.write','quotes.revise','bookings.read','bookings.write','bookings.confirm','booking_documents.read','booking_documents.write','booking_documents.issue','payments.read','payments.write','messages.read','messages.write','audit.read', ...Object.values(modules).flatMap(x => [`${x.type}.read`, `${x.type}.write`])]
@@ -29,14 +29,20 @@ export async function registerAdmin(app: FastifyInstance): Promise<void> {
     const parsed = companyInput.safeParse(request.body)
     if (!parsed.success) throw new HttpError(400, parsed.error.issues[0]?.message || 'Check company details.')
     const value = parsed.data
-    const trialEnd = value.trial_days ? new Date(Date.now() + value.trial_days * 86400000).toISOString().slice(0, 10) : null
-    const company = unwrap(await admin.from('companies').insert({ name: value.name, slug: value.slug, status: value.trial_days ? 'trial' : 'active', trial_ends_at: trialEnd }).select('*').single())
+    const [{ data: defaults }, { data: selectedPlan }] = await Promise.all([
+      admin.from('platform_settings').select('default_trial_days,company_signup_enabled').eq('singleton', true).single(),
+      value.plan_id ? admin.from('subscription_plans').select('*').eq('id', value.plan_id).eq('active', true).single() : admin.from('subscription_plans').select('*').eq('active', true).order('display_order').limit(1).single()
+    ])
+    if (defaults && !defaults.company_signup_enabled) throw new HttpError(403, 'Company onboarding is currently disabled in platform settings.')
+    if (!selectedPlan) throw new HttpError(400, 'Choose an active subscription plan.')
+    const trialDays = value.trial_days ?? selectedPlan.trial_days ?? defaults?.default_trial_days ?? 14
+    const trialEnd = trialDays ? new Date(Date.now() + trialDays * 86400000).toISOString().slice(0, 10) : null
+    const company = unwrap(await admin.from('companies').insert({ name: value.name, slug: value.slug, status: trialDays ? 'trial' : 'active', trial_ends_at: trialEnd }).select('*').single())
     let invitedId: string | undefined
     try {
       const role = unwrap(await admin.from('roles').insert({ company_id: company.id, name: 'Company admin', permissions: ['*'] }).select('*').single())
       unwrap(await admin.from('company_settings').insert({ company_id: company.id, brand_name: value.name }).select('*').single())
-      const prices = unwrap(await admin.from('platform_settings').select('monthly_price').eq('singleton', true).single())
-      unwrap(await admin.from('company_subscriptions').insert({ company_id: company.id, billing_cycle: 'monthly', price: prices.monthly_price, payment_status: value.trial_days ? 'trial' : 'due' }).select('*').single())
+      unwrap(await admin.from('company_subscriptions').insert({ company_id: company.id, plan_id: selectedPlan.id, billing_cycle: 'monthly', price: selectedPlan.monthly_price, payment_status: trialDays ? 'trial' : 'due', subscription_status: trialDays ? 'trialing' : 'active', current_period_start: new Date().toISOString().slice(0, 10), current_period_end: trialEnd }).select('*').single())
       const { data: invited, error } = await admin.auth.admin.inviteUserByEmail(value.admin_email, { redirectTo: `${env.appUrl.replace(/\/$/, '')}/set-password` })
       if (error || !invited.user) throw new Error(error?.message || 'Could not invite company admin.')
       invitedId = invited.user.id
@@ -58,6 +64,8 @@ export async function registerAdmin(app: FastifyInstance): Promise<void> {
 
   app.post('/users', async request => {
     const ctx = requirePermission(request, 'users.write')
+    const { count } = await admin.from('memberships').select('user_id', { count: 'exact', head: true }).eq('company_id', ctx.companyId).eq('active', true)
+    await enforceLimit(ctx, 'team_members', count || 0)
     const parsed = z.object({ email: z.email(), name: z.string().trim().min(2), role_id: z.uuid() }).safeParse(request.body)
     if (!parsed.success) throw new HttpError(400, 'Enter a valid name, email, and role.')
     const { email, name, role_id } = parsed.data

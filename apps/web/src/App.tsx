@@ -20,54 +20,56 @@ const IntegrationsPage = lazy(() => import('./pages/Admin').then(m => ({ default
 const AuditPage = lazy(() => import('./pages/Admin').then(m => ({ default: m.AuditPage })))
 const PlatformOverview = lazy(() => import('./pages/Platform').then(m => ({ default: m.PlatformOverview })))
 const PlatformCompanyDetail = lazy(() => import('./pages/Platform').then(m => ({ default: m.PlatformCompanyDetail })))
+const PlatformPlans = lazy(() => import('./pages/Platform').then(m => ({ default: m.PlatformPlans })))
 const PlatformSettings = lazy(() => import('./pages/Platform').then(m => ({ default: m.PlatformSettings })))
 const PlatformAudit = lazy(() => import('./pages/Platform').then(m => ({ default: m.PlatformAudit })))
 const PublicLeadForm = lazy(() => import('./pages/PublicForm'))
 
-type NavItem = { label: string; path: string; icon: LucideIcon; permission: string }
+type NavItem = { label: string; path: string; icon: LucideIcon; permission: string; feature?: string }
 const groups: { label: string; items: NavItem[] }[] = [
   { label: 'Workspace', items: [
     { label: 'Overview', path: '/', icon: LayoutDashboard, permission: 'query.read' },
-    { label: 'Queries', path: '/records/queries', icon: Compass, permission: 'query.read' },
-    { label: 'Quotations', path: '/quotes', icon: FileText, permission: 'quotes.read' },
-    { label: 'Bookings', path: '/bookings', icon: BriefcaseBusiness, permission: 'bookings.read' },
-    { label: 'Follow-ups', path: '/records/follow-ups', icon: Bell, permission: 'follow_up.read' },
-    { label: 'Leads', path: '/records/leads', icon: Users, permission: 'lead.read' }
+    { label: 'Queries', path: '/records/queries', icon: Compass, permission: 'query.read', feature: 'crm' },
+    { label: 'Quotations', path: '/quotes', icon: FileText, permission: 'quotes.read', feature: 'quotations' },
+    { label: 'Bookings', path: '/bookings', icon: BriefcaseBusiness, permission: 'bookings.read', feature: 'bookings' },
+    { label: 'Follow-ups', path: '/records/follow-ups', icon: Bell, permission: 'follow_up.read', feature: 'crm' },
+    { label: 'Leads', path: '/records/leads', icon: Users, permission: 'lead.read', feature: 'crm' }
   ] },
   { label: 'Travel library', items: [
-    { label: 'Day plans', path: '/records/day-plans', icon: Compass, permission: 'day_plan.read' },
-    { label: 'Hotels & houseboats', path: '/records/hotels', icon: Hotel, permission: 'hotel.read' },
-    { label: 'Cabs', path: '/records/cabs', icon: Compass, permission: 'cab.read' },
-    { label: 'Stay vouchers', path: '/records/stay-vouchers', icon: FileText, permission: 'stay_voucher.read' },
-    { label: 'Cab vouchers', path: '/records/cab-vouchers', icon: FileText, permission: 'cab_voucher.read' }
+    { label: 'Day plans', path: '/records/day-plans', icon: Compass, permission: 'day_plan.read', feature: 'crm' },
+    { label: 'Hotels & houseboats', path: '/records/hotels', icon: Hotel, permission: 'hotel.read', feature: 'crm' },
+    { label: 'Cabs', path: '/records/cabs', icon: Compass, permission: 'cab.read', feature: 'crm' },
+    { label: 'Stay vouchers', path: '/records/stay-vouchers', icon: FileText, permission: 'stay_voucher.read', feature: 'documents' },
+    { label: 'Cab vouchers', path: '/records/cab-vouchers', icon: FileText, permission: 'cab_voucher.read', feature: 'documents' }
   ] },
   { label: 'Finance', items: [
-    { label: 'Ledger', path: '/ledger', icon: BarChart3, permission: 'payments.read' },
-    { label: 'Hotel ledger', path: '/hotel-ledger', icon: Hotel, permission: 'hotel_payment.read' },
-    { label: 'Hotel payments', path: '/records/hotel-payments', icon: Wallet, permission: 'hotel_payment.read' },
-    { label: 'Payments', path: '/payments', icon: Wallet, permission: 'payments.read' },
-    { label: 'Invoices', path: '/records/invoices', icon: ReceiptText, permission: 'invoice.read' },
-    { label: 'Expenses', path: '/records/expenses', icon: Wallet, permission: 'expense.read' }
+    { label: 'Ledger', path: '/ledger', icon: BarChart3, permission: 'payments.read', feature: 'finance' },
+    { label: 'Hotel ledger', path: '/hotel-ledger', icon: Hotel, permission: 'hotel_payment.read', feature: 'finance' },
+    { label: 'Hotel payments', path: '/records/hotel-payments', icon: Wallet, permission: 'hotel_payment.read', feature: 'finance' },
+    { label: 'Payments', path: '/payments', icon: Wallet, permission: 'payments.read', feature: 'finance' },
+    { label: 'Invoices', path: '/records/invoices', icon: ReceiptText, permission: 'invoice.read', feature: 'finance' },
+    { label: 'Expenses', path: '/records/expenses', icon: Wallet, permission: 'expense.read', feature: 'finance' }
   ] },
   { label: 'Manage', items: [
-    { label: 'Clients', path: '/records/clients', icon: Users, permission: 'client.read' },
-    { label: 'Lead sources', path: '/records/lead-sources', icon: Compass, permission: 'lead_source.read' },
-    { label: 'Hotel categories', path: '/records/hotel-categories', icon: Hotel, permission: 'hotel_category.read' },
-    { label: 'Room types', path: '/records/room-types', icon: Hotel, permission: 'room_type.read' },
-    { label: 'Voucher inclusions', path: '/records/voucher-inclusions', icon: FileText, permission: 'voucher_inclusion.read' },
-    { label: 'Partners', path: '/records/partners', icon: Building2, permission: 'partner.read' },
-    { label: 'Other catalog', path: '/records/other-catalog', icon: Settings2, permission: 'other_catalog.read' },
+    { label: 'Clients', path: '/records/clients', icon: Users, permission: 'client.read', feature: 'crm' },
+    { label: 'Lead sources', path: '/records/lead-sources', icon: Compass, permission: 'lead_source.read', feature: 'crm' },
+    { label: 'Hotel categories', path: '/records/hotel-categories', icon: Hotel, permission: 'hotel_category.read', feature: 'crm' },
+    { label: 'Room types', path: '/records/room-types', icon: Hotel, permission: 'room_type.read', feature: 'crm' },
+    { label: 'Voucher inclusions', path: '/records/voucher-inclusions', icon: FileText, permission: 'voucher_inclusion.read', feature: 'crm' },
+    { label: 'Partners', path: '/records/partners', icon: Building2, permission: 'partner.read', feature: 'crm' },
+    { label: 'Other catalog', path: '/records/other-catalog', icon: Settings2, permission: 'other_catalog.read', feature: 'crm' },
     { label: 'Team', path: '/users', icon: Users, permission: 'users.read' },
     { label: 'Roles', path: '/roles', icon: Shield, permission: 'roles.read' },
     { label: 'Company settings', path: '/settings', icon: Settings2, permission: 'company.read' },
-    { label: 'Connections', path: '/integrations', icon: Compass, permission: 'integrations.read' },
+    { label: 'Connections', path: '/integrations', icon: Compass, permission: 'integrations.read', feature: 'integrations' },
     { label: 'Activity', path: '/audit', icon: BarChart3, permission: 'audit.read' }
   ] }
 ]
 const platformGroups: { label: string; items: NavItem[] }[] = [{ label: 'Platform', items: [
   { label: 'Owner overview', path: '/platform', icon: LayoutDashboard, permission: '*' },
   { label: 'Companies', path: '/companies', icon: Building2, permission: '*' },
-  { label: 'Product pricing', path: '/platform/settings', icon: CircleDollarSign, permission: '*' },
+  { label: 'Plans & pricing', path: '/platform/plans', icon: CircleDollarSign, permission: '*' },
+  { label: 'Platform settings', path: '/platform/settings', icon: Settings2, permission: '*' },
   { label: 'Platform activity', path: '/platform/audit', icon: Activity, permission: '*' }
 ] }]
 
@@ -89,9 +91,9 @@ function AppShell({ me, children }: { me: Me; children: React.ReactNode }) {
   useEffect(() => setOpen(false), [location.pathname])
   const platformOnly = me.platform && !me.companyId
   const visibleGroups = platformOnly ? platformGroups : groups
-  const can = (p: string) => me.platform || me.permissions.includes('*') || me.permissions.includes(p)
+  const can = (item: NavItem) => (me.platform || me.permissions.includes('*') || me.permissions.includes(item.permission)) && (!item.feature || !me.features || me.features.includes('*') || me.features.includes(item.feature))
   const title = [...groups.flatMap(g => g.items), ...platformGroups.flatMap(g => g.items)].find(x => x.path === location.pathname)?.label || (location.pathname.includes('/platform/companies/') ? 'Company support' : location.pathname.includes('/quotes/') ? 'Quotation' : location.pathname.includes('/bookings/') ? 'Booking workspace' : 'Workspace')
-  return <div className="app-frame"><aside className={`sidebar ${open ? 'open' : ''}`}><div className="sidebar-head"><Link to={platformOnly ? '/platform' : '/'} className="brand"><span className="brand-mark small"><Compass size={21}/></span><span>Trav<span>CRM</span></span></Link><button className="icon-button mobile-only" onClick={() => setOpen(false)} aria-label="Close navigation"><X size={20}/></button></div><div className="company-chip"><span className="company-symbol">{(me.companyName || 'T').slice(0, 1).toUpperCase()}</span><span><strong>{me.companyName || 'TravCRM'}</strong><small>{platformOnly ? 'Owner portal' : me.platform ? 'Support workspace' : 'Company workspace'}</small></span><ChevronDown size={15}/></div><nav aria-label="Main navigation">{visibleGroups.map(group => { const items = group.items.filter(x => can(x.permission)); return items.length ? <div className="nav-group" key={group.label}><p>{group.label}</p>{items.map(item => <NavLink key={item.path} to={item.path} end={item.path === '/' || item.path === '/platform'} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}><item.icon size={18}/><span>{item.label}</span></NavLink>)}</div> : null })}{me.platform && me.companyId && <div className="nav-group"><p>Platform</p><button className="nav-link nav-button" onClick={() => selectCompany('', '/platform')}><Building2 size={18}/><span>Back to owner portal</span></button></div>}</nav><div className="sidebar-bottom"><span className="avatar">{me.name.slice(0, 1).toUpperCase()}</span><span className="user-details"><strong>{me.name}</strong><small>Signed in</small></span><button className="icon-button" title="Sign out" aria-label="Sign out" onClick={() => supabase?.auth.signOut()}><LogOut size={18}/></button></div></aside>{open && <button className="sidebar-scrim" aria-label="Close navigation" onClick={() => setOpen(false)}/>}<div className="main-area">{me.platform && me.companyId && <div className="support-banner"><Shield size={15}/>You are viewing <strong>{me.companyName}</strong> as a TravCRM platform administrator.<button onClick={() => selectCompany('', '/platform')}>Exit workspace</button></div>}<header className="topbar"><button className="icon-button mobile-only" aria-label="Open navigation" onClick={() => setOpen(true)}><Menu size={22}/></button><div className="topbar-title"><span className="eyebrow">{platformOnly ? 'TRAVCRM / PLATFORM' : `OPERATIONS / ${me.companyName || 'PLATFORM'}`}</span><strong>{title}</strong></div><div className="topbar-actions"><span className="today">{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>{!platformOnly && <><Link className="icon-button" to="/records/queries" title="Find queries" aria-label="Find queries"><Search size={17}/></Link><Link className="icon-button" to="/records/follow-ups" title="Follow-ups" aria-label="Follow-ups"><Bell size={17}/></Link></>}<span className="avatar top-avatar" title={me.name}>{me.name.slice(0, 1).toUpperCase()}</span></div></header><main className="content">{children}</main></div></div>
+  return <div className="app-frame"><aside className={`sidebar ${open ? 'open' : ''}`}><div className="sidebar-head"><Link to={platformOnly ? '/platform' : '/'} className="brand"><span className="brand-mark small"><Compass size={21}/></span><span>Trav<span>CRM</span></span></Link><button className="icon-button mobile-only" onClick={() => setOpen(false)} aria-label="Close navigation"><X size={20}/></button></div><div className="company-chip"><span className="company-symbol">{(me.companyName || 'T').slice(0, 1).toUpperCase()}</span><span><strong>{me.companyName || 'TravCRM'}</strong><small>{platformOnly ? 'Owner portal' : me.platform ? 'Support workspace' : 'Company workspace'}</small></span><ChevronDown size={15}/></div><nav aria-label="Main navigation">{visibleGroups.map(group => { const items = group.items.filter(can); return items.length ? <div className="nav-group" key={group.label}><p>{group.label}</p>{items.map(item => <NavLink key={item.path} to={item.path} end={item.path === '/' || item.path === '/platform'} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}><item.icon size={18}/><span>{item.label}</span></NavLink>)}</div> : null })}{me.platform && me.companyId && <div className="nav-group"><p>Platform</p><button className="nav-link nav-button" onClick={() => selectCompany('', '/platform')}><Building2 size={18}/><span>Back to owner portal</span></button></div>}</nav><div className="sidebar-bottom"><span className="avatar">{me.name.slice(0, 1).toUpperCase()}</span><span className="user-details"><strong>{me.name}</strong><small>Signed in</small></span><button className="icon-button" title="Sign out" aria-label="Sign out" onClick={() => supabase?.auth.signOut()}><LogOut size={18}/></button></div></aside>{open && <button className="sidebar-scrim" aria-label="Close navigation" onClick={() => setOpen(false)}/>}<div className="main-area">{me.platform && me.companyId && <div className="support-banner"><Shield size={15}/>Support session for <strong>{me.companyName}</strong>{me.supportExpiresAt && <span>until {new Date(me.supportExpiresAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span>}<button onClick={() => selectCompany('', '/platform')}>Exit workspace</button></div>}<header className="topbar"><button className="icon-button mobile-only" aria-label="Open navigation" onClick={() => setOpen(true)}><Menu size={22}/></button><div className="topbar-title"><span className="eyebrow">{platformOnly ? 'TRAVCRM / PLATFORM' : `OPERATIONS / ${me.companyName || 'PLATFORM'}`}</span><strong>{title}</strong></div><div className="topbar-actions"><span className="today">{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>{!platformOnly && <><Link className="icon-button" to="/records/queries" title="Find queries" aria-label="Find queries"><Search size={17}/></Link><Link className="icon-button" to="/records/follow-ups" title="Follow-ups" aria-label="Follow-ups"><Bell size={17}/></Link></>}<span className="avatar top-avatar" title={me.name}>{me.name.slice(0, 1).toUpperCase()}</span></div></header><main className="content">{children}</main></div></div>
 }
 
 export default function App() {
@@ -113,5 +115,5 @@ export default function App() {
   if (location.pathname === '/set-password') return <SetPassword/>
   if (error) return <div className="choice-page"><div className="choice-card"><h1>Account access</h1><p className="form-error">{error}</p><button className="button secondary" onClick={() => { setError(''); api<Me>('/me').then(setMe).catch(e => setError(e.message)) }}>Try again</button><button className="text-button" onClick={() => selectCompany('')}>Choose another company</button><button className="text-button" onClick={() => supabase?.auth.signOut()}>Sign out</button></div></div>
   if (!me) return <div className="loading-screen">Loading your workspace…</div>
-  return <AppShell me={me}><Suspense fallback={<div className="loading-screen page-loading">Opening section…</div>}><Routes><Route path="/" element={me.platform && !me.companyId ? <Navigate to="/platform"/> : <DashboardPage me={me}/>}/><Route path="/platform" element={<PlatformOverview/>}/><Route path="/platform/companies/:id" element={<PlatformCompanyDetail/>}/><Route path="/platform/settings" element={<PlatformSettings/>}/><Route path="/platform/audit" element={<PlatformAudit/>}/><Route path="/records/:slug" element={<EntityPage me={me}/>}/><Route path="/quotes" element={<QuotesPage me={me}/>}/><Route path="/quotes/new" element={<QuoteEditor/>}/><Route path="/quotes/:id/edit" element={<QuoteEditor/>}/><Route path="/bookings" element={<BookingsPage me={me}/>}/><Route path="/bookings/:id" element={<BookingDetail me={me}/>}/><Route path="/ledger" element={<LedgerPage/>}/><Route path="/hotel-ledger" element={<HotelLedgerPage/>}/><Route path="/payments" element={<PaymentsPage/>}/><Route path="/users" element={<UsersPage me={me}/>}/><Route path="/roles" element={<RolesPage me={me}/>}/><Route path="/settings" element={<SettingsPage/>}/><Route path="/integrations" element={<IntegrationsPage/>}/><Route path="/audit" element={<AuditPage/>}/><Route path="/companies" element={<CompaniesPage me={me}/>}/><Route path="*" element={<Navigate to={me.platform && !me.companyId ? '/platform' : '/'}/>}/></Routes></Suspense></AppShell>
+  return <AppShell me={me}><Suspense fallback={<div className="loading-screen page-loading">Opening section…</div>}><Routes><Route path="/" element={me.platform && !me.companyId ? <Navigate to="/platform"/> : <DashboardPage me={me}/>}/><Route path="/platform" element={<PlatformOverview/>}/><Route path="/platform/companies/:id" element={<PlatformCompanyDetail/>}/><Route path="/platform/plans" element={<PlatformPlans/>}/><Route path="/platform/settings" element={<PlatformSettings/>}/><Route path="/platform/audit" element={<PlatformAudit/>}/><Route path="/records/:slug" element={<EntityPage me={me}/>}/><Route path="/quotes" element={<QuotesPage me={me}/>}/><Route path="/quotes/new" element={<QuoteEditor/>}/><Route path="/quotes/:id/edit" element={<QuoteEditor/>}/><Route path="/bookings" element={<BookingsPage me={me}/>}/><Route path="/bookings/:id" element={<BookingDetail me={me}/>}/><Route path="/ledger" element={<LedgerPage/>}/><Route path="/hotel-ledger" element={<HotelLedgerPage/>}/><Route path="/payments" element={<PaymentsPage/>}/><Route path="/users" element={<UsersPage me={me}/>}/><Route path="/roles" element={<RolesPage me={me}/>}/><Route path="/settings" element={<SettingsPage/>}/><Route path="/integrations" element={<IntegrationsPage/>}/><Route path="/audit" element={<AuditPage/>}/><Route path="/companies" element={<CompaniesPage me={me}/>}/><Route path="*" element={<Navigate to={me.platform && !me.companyId ? '/platform' : '/'}/>}/></Routes></Suspense></AppShell>
 }

@@ -1,7 +1,7 @@
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import rawBody from 'fastify-raw-body'
-import { authenticate, env, HttpError } from './core.js'
+import { authenticate, enforceRouteFeature, env, HttpError } from './core.js'
 import { registerAdmin } from './admin.js'
 import { registerRecords } from './records.js'
 import { registerQuotes } from './quotes.js'
@@ -25,6 +25,7 @@ await app.register(async api => {
   api.addHook('onRequest', async request => {
     if (request.url.startsWith('/api/v1/webhooks/meta') || request.url.startsWith('/api/v1/integrations/meta/oauth/callback') || request.url.startsWith('/api/v1/public/')) return
     await authenticate(request)
+    enforceRouteFeature(request)
   })
   await registerAdmin(api)
   await registerRecords(api)
