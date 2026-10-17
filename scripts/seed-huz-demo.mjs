@@ -92,7 +92,8 @@ async function main() {
     ...(logoPath ? { logo_path: logoPath } : {}),
   }
   if (migrationApplied) Object.assign(settings, {
-    document_template: 'modern',
+    document_template: 'journey',
+    ...(kashmirPath ? { document_cover_path: kashmirPath } : {}),
     document_secondary_color: '#A5D8FF',
     document_config: { sections: ['itinerary', 'accommodation', 'inclusions', 'exclusions', 'price', 'payment', 'terms'], labels: { document_title: 'Your Kashmir Journey', itinerary: 'Your day-by-day experience', accommodation: 'Handpicked stays' } },
     terms: 'Rates are valid for the dates shown and remain subject to availability until the booking advance is received. Hotel check-in and transport timings follow local operating conditions.',

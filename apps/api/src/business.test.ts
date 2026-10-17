@@ -28,3 +28,13 @@ test('quotation PDF renders company branding and Indian-script client details', 
   assert.equal(document.getPageCount(), 1)
   assert.ok(bytes.length > 1000)
 })
+
+test('visual itinerary templates render without external images', async () => {
+  const quote = { id: '12345678-0000-0000-0000-000000000000', client_name: 'Aisha Khan', destination: 'Kashmir', adults: 2, children: 0, days: 2, nights: 1, arrival_date: '2026-11-11', pickup: 'Srinagar Airport', itinerary: [{ day: 1, name: 'Arrival and Shikara welcome', description: 'Private airport pickup, hotel check-in, and a sunset Shikara ride on Dal Lake.' }, { day: 2, name: 'Gulmarg alpine day', description: 'A scenic mountain drive, Gondola experience, meadow walk, and return transfer.' }], stays: [{ night: 1, name: 'The Chinar Retreat', room_type: 'Deluxe Room' }], inclusions: 'Hotel, breakfast, dinner, and private transfers.', exclusions: 'Flights and personal expenses.', base_amount: 50000, child_amount: 0, discount_amount: 1000, gst_percent: 5, gst_amount: 2450, total_amount: 51450 }
+  for (const document_template of ['journey','expedition','brochure']) {
+    const bytes = await quotePdf(quote, { brand_name: 'Huz Travels', document_template, document_color: '#C084FC', document_secondary_color: '#A5D8FF' }, 'Travel company')
+    const document = await PDFDocument.load(bytes)
+    assert.ok(document.getPageCount() >= 2, `${document_template} should render itinerary and detail pages`)
+    assert.ok(bytes.length > 1000)
+  }
+})

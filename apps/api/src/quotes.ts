@@ -55,8 +55,8 @@ async function prepare(request: Parameters<typeof requirePermission>[0], raw: un
     if (map.get(stay.hotel_id)?.type !== 'hotel') throw new HttpError(400, 'A selected hotel is unavailable.')
     if (stay.room_type_id && map.get(stay.room_type_id)?.type !== 'room_type') throw new HttpError(400, 'A selected room type is unavailable.')
   }
-  const itinerary = value.itinerary.map((x, i) => ({ day: i + 1, day_plan_id: x.day_plan_id, name: map.get(x.day_plan_id)!.title, description: map.get(x.day_plan_id)!.data?.description || '' }))
-  const stays = value.stays.map((x, i) => ({ night: i + 1, hotel_id: x.hotel_id, name: map.get(x.hotel_id)!.title, room_type_id: x.room_type_id || null, room_type: x.room_type_id ? map.get(x.room_type_id)?.title : null }))
+  const itinerary = value.itinerary.map((x, i) => ({ day: i + 1, day_plan_id: x.day_plan_id, name: map.get(x.day_plan_id)!.title, description: map.get(x.day_plan_id)!.data?.description || '', image_path: map.get(x.day_plan_id)!.data?.image_path || null }))
+  const stays = value.stays.map((x, i) => ({ night: i + 1, hotel_id: x.hotel_id, name: map.get(x.hotel_id)!.title, room_type_id: x.room_type_id || null, room_type: x.room_type_id ? map.get(x.room_type_id)?.title : null, image_path: map.get(x.hotel_id)!.data?.image_path || null }))
   return { ctx, row: { ...value, company_id: ctx.companyId, itinerary, stays, ...priceQuote(value.base_amount, value.child_amount, value.discount_amount, value.gst_percent) } }
 }
 
