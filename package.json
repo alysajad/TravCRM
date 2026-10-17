@@ -1,0 +1,12 @@
+{
+  "name": "travcrm",
+  "private": true,
+  "type": "module",
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev": "npm run dev --workspace @travcrm/api & npm run dev --workspace @travcrm/web",
+    "build": "npm run build --workspace @travcrm/api && npm run build --workspace @travcrm/web",
+    "check": "npm run check --workspace @travcrm/api && npm run check --workspace @travcrm/web",
+    "test": "npm run test --workspace @travcrm/api"
+  }
+}

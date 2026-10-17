@@ -1,0 +1,5 @@
+export { default as DashboardPage } from './Dashboard'
+export { EntityPage } from './Entity'
+export { QuotesPage, QuoteEditor } from './Sales'
+export { LedgerPage, HotelLedgerPage, PaymentsPage } from './Finance'
+export { CompaniesPage, UsersPage, RolesPage, SettingsPage, IntegrationsPage, AuditPage } from './Admin'
