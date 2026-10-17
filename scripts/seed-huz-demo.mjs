@@ -73,6 +73,7 @@ async function main() {
 
   const migrationProbe = await db.from('platform_settings').select('singleton').limit(1)
   const migrationApplied = !migrationProbe.error
+  const currentSettings = unwrap(await db.from('company_settings').select('document_cover_path').eq('company_id', company.id).single(), 'find company settings')
   const logoPath = await uploadIfPresent(company.id, '/tmp/huz-logo.png', `${company.id}/branding/huz-travels-logo.png`)
   const signaturePath = await uploadIfPresent(company.id, '/tmp/huz-signature.png', `${company.id}/branding/authorised-signature.png`)
   const kashmirPath = await uploadIfPresent(company.id, '/tmp/huz-kashmir.png', `${company.id}/library/kashmir-demo.png`)
@@ -93,9 +94,9 @@ async function main() {
   }
   if (migrationApplied) Object.assign(settings, {
     document_template: 'journey',
-    ...(kashmirPath ? { document_cover_path: kashmirPath } : {}),
+    ...(kashmirPath && !currentSettings.document_cover_path ? { document_cover_path: kashmirPath } : {}),
     document_secondary_color: '#A5D8FF',
-    document_config: { sections: ['itinerary', 'accommodation', 'inclusions', 'exclusions', 'price', 'payment', 'terms'], labels: { document_title: 'Your Kashmir Journey', itinerary: 'Your day-by-day experience', accommodation: 'Handpicked stays' } },
+    document_config: { sections: ['itinerary', 'accommodation', 'inclusions', 'exclusions', 'price', 'payment', 'terms'], labels: { document_title: 'Your Himalayan Journey', itinerary: 'Your day-by-day experience', accommodation: 'Handpicked stays' } },
     terms: 'Rates are valid for the dates shown and remain subject to availability until the booking advance is received. Hotel check-in and transport timings follow local operating conditions.',
     cancellation_policy: '30 days or more before arrival: 15% fee. 15–29 days: 35% fee. 7–14 days: 60% fee. Within 7 days: non-refundable. Supplier-specific rules may also apply.',
     company_footer: 'Crafted with care in Kashmir · Emergency support: +91 99060 12345',

@@ -1,5 +1,5 @@
 import 'regenerator-runtime/runtime.js'
-import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFImage, type PDFPage } from 'pdf-lib'
+import { PDFDocument, StandardFonts, clip, endPath, popGraphicsState, pushGraphicsState, rectangle, rgb, type PDFFont, type PDFImage, type PDFPage } from 'pdf-lib'
 import fontkit from '@pdf-lib/fontkit'
 import { readFile } from 'node:fs/promises'
 import { admin } from './core.js'
@@ -131,7 +131,17 @@ class Document {
       this.page.drawSvgPath(`M 0 0 L ${width * .35} ${height * .55} L ${width * .52} ${height * .28} L ${width} ${height * .7} L ${width} 0 Z`, { x, y, color: ink, opacity: .18 })
       return
     }
-    this.page.drawImage(image, { x, y, width, height })
+    const scale = Math.max(width / image.width, height / image.height)
+    const renderedWidth = image.width * scale
+    const renderedHeight = image.height * scale
+    this.page.pushOperators(pushGraphicsState(), rectangle(x, y, width, height), clip(), endPath())
+    this.page.drawImage(image, {
+      x: x + (width - renderedWidth) / 2,
+      y: y + (height - renderedHeight) / 2,
+      width: renderedWidth,
+      height: renderedHeight,
+    })
+    this.page.pushOperators(popGraphicsState())
   }
 
   async logo(settings: Json, x: number, y: number, width = 72, height = 45) {
@@ -223,6 +233,11 @@ const sectionsFor = (settings: Json): string[] => Array.isArray(settings.documen
   ? settings.document_config.sections
   : ['itinerary','accommodation','inclusions','exclusions','price','payment','terms']
 
+const coverFor = (quote: Json, settings: Json) => quote.cover_image_path
+  || quote.itinerary?.find((day: Json) => day.image_path)?.image_path
+  || settings.document_cover_path
+  || quote.stays?.find((stay: Json) => stay.image_path)?.image_path
+
 async function detailPages(d: Document, quote: Json, settings: Json, title = 'Trip details') {
   const label = labelsFor(settings)
   const sections = sectionsFor(settings).filter(section => section !== 'itinerary')
@@ -284,7 +299,7 @@ async function journeyPdf(d: Document, quote: Json, settings: Json) {
 
 async function expeditionPdf(d: Document, quote: Json, settings: Json) {
   const label = labelsFor(settings)
-  const cover = settings.document_cover_path || quote.itinerary?.find((day: Json) => day.image_path)?.image_path || quote.stays?.find((stay: Json) => stay.image_path)?.image_path
+  const cover = coverFor(quote, settings)
   await d.picture(cover, 0, 430, pageWidth, 412)
   d.page.drawRectangle({ x: 0, y: 430, width: pageWidth, height: 412, color: ink, opacity: .30 })
   d.wrap(quote.destination, 52, 708, 490, { size: 34, lineHeight: 40, display: true, tone: rgb(1, 1, 1), maxLines: 2 })
@@ -313,7 +328,7 @@ async function expeditionPdf(d: Document, quote: Json, settings: Json) {
 
 async function brochurePdf(d: Document, quote: Json, settings: Json) {
   const label = labelsFor(settings)
-  const cover = settings.document_cover_path || quote.itinerary?.find((day: Json) => day.image_path)?.image_path || quote.stays?.find((stay: Json) => stay.image_path)?.image_path
+  const cover = coverFor(quote, settings)
   d.page.drawRectangle({ x: 0, y: 796, width: pageWidth, height: 46, color: d.brandColor })
   d.page.drawSvgPath('M 0 0 L 145 0 L 74 150 L 0 104 Z', { x: 0, y: 642, color: d.brandColor, opacity: .36 })
   await d.logo(settings, 35, 735, 105, 52)
