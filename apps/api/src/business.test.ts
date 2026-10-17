@@ -8,11 +8,23 @@ process.env.SUPABASE_ANON_KEY ||= 'test-publishable-key'
 process.env.SUPABASE_SECRET_KEY ||= 'test-secret-key'
 const { priceQuote } = await import('./quotes.js')
 const { quotePdf } = await import('./pdf.js')
+const { groupBookingStays } = await import('./bookings.js')
 
 test('quotation totals use cents and apply GST after discount', () => {
   assert.deepEqual(priceQuote(1000, 200, 100, 5), { gst_amount: 55, total_amount: 1155 })
   assert.deepEqual(priceQuote(10.1, 0.2, 0.1, 18), { gst_amount: 1.84, total_amount: 12.04 })
   assert.throws(() => priceQuote(10, 0, 11, 5), /Discount cannot exceed/)
+})
+
+test('booking stay segments merge consecutive nights at the same property', () => {
+  const stays = groupBookingStays({ arrival_date: '2026-11-10', rooms: 2, extra_beds: 1, children_without_bed: 1, inclusions: 'Breakfast', stays: [
+    { hotel_id: 'a', name: 'Lake Hotel', room_type_id: 'deluxe', room_type: 'Deluxe' },
+    { hotel_id: 'a', name: 'Lake Hotel', room_type_id: 'deluxe', room_type: 'Deluxe' },
+    { hotel_id: 'b', name: 'Mountain Camp', room_type_id: 'tent', room_type: 'Tent' }
+  ] })
+  assert.equal(stays.length, 2)
+  assert.deepEqual(stays.map(x => [x.check_in, x.check_out]), [['2026-11-10','2026-11-12'], ['2026-11-12','2026-11-13']])
+  assert.equal(stays[0]!.rooms, 2)
 })
 
 test('query validation requires customer contact and keeps known fields', () => {

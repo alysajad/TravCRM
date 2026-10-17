@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, CalendarDays, CirclePlus, Clock3, FileText, MessageSquareText, Sparkles } from 'lucide-react'
-import { api, date, type Me, type RecordItem } from '../api'
+import { api, date, money, type Me, type RecordItem } from '../api'
 import { Empty, ErrorNotice, PageHeading } from './Entity'
 
 type Dashboard = {
@@ -9,6 +9,14 @@ type Dashboard = {
   totalQueries: number
   totalQuotes: number
   dueFollowups: number
+  todayFollowups: number
+  missedFollowups: number
+  todayArrivals: number
+  tomorrowArrivals: number
+  activeBookings: number
+  pendingHotelConfirmations: number
+  unpaidBalance: number
+  upcomingBookings: { id: string; booking_number: string; client_name: string; destination: string; arrival_date: string; status: string }[]
   arrivals: RecordItem[]
   followups: RecordItem[]
 }
@@ -42,8 +50,11 @@ export default function DashboardPage({ me }: { me: Me }) {
   const metrics = [
     { label: 'Total queries', value: data?.totalQueries, icon: MessageSquareText, hint: 'All enquiries', className: 'violet', path: '/records/queries', permission: 'query.read' },
     { label: 'Quotations', value: data?.totalQuotes, icon: FileText, hint: 'Trips prepared', className: 'white', path: '/quotes', permission: 'quotes.read' },
-    { label: 'Confirmed trips', value: data?.counts.Confirmed, icon: Sparkles, hint: 'Ready to travel', className: 'white', path: '/records/queries?status=Confirmed', permission: 'query.read' },
-    { label: 'Follow-ups due', value: data?.dueFollowups, icon: Clock3, hint: 'Needs your attention', className: 'sky', path: '/records/follow-ups', permission: 'follow_up.read' }
+    { label: 'Active bookings', value: data?.activeBookings, icon: Sparkles, hint: 'Confirmed and travelling', className: 'white', path: '/bookings', permission: 'bookings.read' },
+    { label: 'Today arrivals', value: data?.todayArrivals, icon: CalendarDays, hint: `${data?.tomorrowArrivals || 0} arriving tomorrow`, className: 'sky', path: '/bookings', permission: 'bookings.read' },
+    { label: 'Pending hotels', value: data?.pendingHotelConfirmations, icon: Clock3, hint: 'Supplier confirmations', className: 'white', path: '/bookings', permission: 'bookings.read' },
+    { label: 'Outstanding', value: money(data?.unpaidBalance), icon: FileText, hint: 'Across active bookings', className: 'white', path: '/ledger', permission: 'payments.read' },
+    { label: 'Follow-ups due', value: data?.dueFollowups, icon: Clock3, hint: `${data?.missedFollowups || 0} missed · ${data?.todayFollowups || 0} today`, className: 'white', path: '/records/follow-ups', permission: 'follow_up.read' }
   ].filter(metric => can(metric.permission))
 
   return <div className="dashboard-page">
@@ -85,7 +96,7 @@ export default function DashboardPage({ me }: { me: Me }) {
 
     <section className="dashboard-panel arrival-panel">
       <div className="dashboard-panel-head"><div><span className="eyebrow">COMING UP</span><h2>Expected arrivals</h2><p>Trips scheduled from your current queries</p></div><CalendarDays size={20}/></div>
-      {data?.arrivals.length ? <div className="arrival-list">{data.arrivals.map(item => <Link className="work-row" to="/records/queries" key={item.id}><span className="work-date sky-date">{item.data.arrival_date ? new Date(item.data.arrival_date).getDate() : '—'}</span><span className="work-copy"><strong>{item.title}</strong><small>{item.data.destination || 'Destination not set'} · {date(item.data.arrival_date)}</small></span><ArrowRight size={16}/></Link>)}</div> : <Empty title="No upcoming arrivals" description="Add an arrival date to a query to see it here."/>}
+      {data?.upcomingBookings?.length ? <div className="arrival-list">{data.upcomingBookings.map(item => <Link className="work-row" to={`/bookings/${item.id}`} key={item.id}><span className="work-date sky-date">{new Date(item.arrival_date).getDate()}</span><span className="work-copy"><strong>{item.client_name}</strong><small>{item.destination} · {date(item.arrival_date)} · {item.booking_number}</small></span><ArrowRight size={16}/></Link>)}</div> : <Empty title="No upcoming bookings" description="Confirmed trips will appear here."/>}
     </section>
   </div>
 }

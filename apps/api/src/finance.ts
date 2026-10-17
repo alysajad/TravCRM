@@ -80,6 +80,7 @@ export async function registerFinance(app: FastifyInstance): Promise<void> {
       return [status, count || 0] as const
     }))
     const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' })
+    const tomorrowDate = new Date(`${today}T00:00:00Z`); tomorrowDate.setUTCDate(tomorrowDate.getUTCDate() + 1); const tomorrow = tomorrowDate.toISOString().slice(0, 10)
     const arrivals = unwrap(await ctx.db.from('records').select('id,title,status,data').eq('company_id', ctx.companyId).eq('type', 'query').gte('data->>arrival_date', today).order('data->>arrival_date').limit(5))
     const canReadFollowups = ctx.platform || ctx.permissions.includes('*') || ctx.permissions.includes('follow_up.read')
     const followups = canReadFollowups ? unwrap(await ctx.db.from('records').select('id,title,status,data').eq('company_id', ctx.companyId).eq('type', 'follow_up').eq('status', 'Active').lte('data->>due_date', today).order('data->>due_date').limit(5)) : []
@@ -88,7 +89,27 @@ export async function registerFinance(app: FastifyInstance): Promise<void> {
       : { count: 0, error: null }
     if (dueError) throw new HttpError(400, dueError.message)
     const { count: quoteCount } = ctx.platform || ctx.permissions.includes('*') || ctx.permissions.includes('quotes.read') ? await ctx.db.from('quotes').select('id', { count: 'exact', head: true }).eq('company_id', ctx.companyId) : { count: 0 }
-    return { counts: Object.fromEntries(counts), totalQueries: counts.reduce((sum, [, value]) => sum + value, 0), totalQuotes: quoteCount || 0, dueFollowups: dueFollowups || 0, arrivals, followups }
+    const canReadBookings = ctx.platform || ctx.permissions.includes('*') || ctx.permissions.includes('bookings.read')
+    let bookingMetrics = { todayArrivals: 0, tomorrowArrivals: 0, activeBookings: 0, pendingHotelConfirmations: 0, unpaidBalance: 0, upcomingBookings: [] as any[] }
+    if (canReadBookings) {
+      const [todayResult, tomorrowResult, activeResult, pendingResult, upcomingResult, bookingResult, quoteSeriesResult, paymentResult] = await Promise.all([
+        ctx.db.from('bookings').select('id', { count: 'exact', head: true }).eq('company_id', ctx.companyId).eq('arrival_date', today).neq('status', 'cancelled'),
+        ctx.db.from('bookings').select('id', { count: 'exact', head: true }).eq('company_id', ctx.companyId).eq('arrival_date', tomorrow).neq('status', 'cancelled'),
+        ctx.db.from('bookings').select('id', { count: 'exact', head: true }).eq('company_id', ctx.companyId).in('status', ['confirmed','in_progress']),
+        ctx.db.from('booking_stays').select('id', { count: 'exact', head: true }).eq('company_id', ctx.companyId).eq('confirmation_status', 'pending'),
+        ctx.db.from('bookings').select('id,booking_number,client_name,destination,arrival_date,status').eq('company_id', ctx.companyId).gte('arrival_date', today).neq('status', 'cancelled').order('arrival_date').limit(6),
+        ctx.db.from('bookings').select('quote_series_id,total_amount').eq('company_id', ctx.companyId).neq('status', 'cancelled').limit(10000),
+        ctx.db.from('quotes').select('id,quote_series_id').eq('company_id', ctx.companyId).limit(10000),
+        ctx.db.from('payments').select('quote_id,amount').eq('company_id', ctx.companyId).limit(10000)
+      ])
+      for (const result of [todayResult, tomorrowResult, activeResult, pendingResult, upcomingResult, bookingResult, quoteSeriesResult, paymentResult]) if (result.error) throw new HttpError(400, result.error.message)
+      const seriesByQuote = new Map((quoteSeriesResult.data || []).map(row => [row.id, row.quote_series_id])); const paid = new Map<string, number>()
+      for (const row of paymentResult.data || []) { const series = seriesByQuote.get(row.quote_id); if (series) paid.set(series, number((paid.get(series) || 0) + number(row.amount))) }
+      bookingMetrics = { todayArrivals: todayResult.count || 0, tomorrowArrivals: tomorrowResult.count || 0, activeBookings: activeResult.count || 0, pendingHotelConfirmations: pendingResult.count || 0, unpaidBalance: number((bookingResult.data || []).reduce((sum, row) => sum + Math.max(0, number(row.total_amount) - (paid.get(row.quote_series_id) || 0)), 0)), upcomingBookings: upcomingResult.data || [] }
+    }
+    const missedFollowups = canReadFollowups ? followups.filter(row => String(row.data?.due_date || '') < today).length : 0
+    const todayFollowups = canReadFollowups ? followups.filter(row => row.data?.due_date === today).length : 0
+    return { counts: Object.fromEntries(counts), totalQueries: counts.reduce((sum, [, value]) => sum + value, 0), totalQuotes: quoteCount || 0, dueFollowups: dueFollowups || 0, todayFollowups, missedFollowups, arrivals, followups, ...bookingMetrics }
   })
 
   app.get('/records/:slug/:id/pdf', async (request, reply) => {

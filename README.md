@@ -7,7 +7,8 @@ Travel CRM for multiple companies, with a React/TypeScript frontend, a Node/Fast
 - Full-width company workspaces, invite-only sign-in, staff, configurable roles, company settings, private files, and activity records.
 - TravCRM owner portal with customer health, SaaS revenue, subscriptions, support access, suspension, archiving, restoration, and guarded tenant erasure.
 - Queries, follow-ups, lead sources, clients, day plans, hotels, houseboats, room types, cabs, and supporting catalogs.
-- Quotation builder with one day plan per day and one hotel per night, server-calculated INR/GST totals, duplicate/edit/delete, branded PDF, and outbound email/WhatsApp sending.
+- Numbered quotation revisions with rooming, assignee, structured INR/GST price lines, day plans, stays, optional daily transport, branded PDF, and outbound email/WhatsApp sending.
+- Explicit quotation confirmation into a controlled booking snapshot, supplier stay tracking, daily transport operations, revision history, and editable draft or locked issued stay/cab vouchers.
 - Recorded client and hotel payments, client and hotel ledgers, invoices with a GST percentage calculation, expenses, stay and cab vouchers, and PDFs.
 - Meta OAuth lead-ad intake, branded hosted website forms, secure website lead endpoints, and per-company SMTP and WhatsApp connections.
 - Six company-controlled PDF layouts, including photo timelines, expedition booklets and tour brochures, with day-plan imagery, a cover image, section order, policies, signature, colors, and a discreet TravCRM footer.
@@ -16,7 +17,7 @@ The interface follows the supplied dashboard reference with the #FDF2FB, #4A3A52
 
 ## Local setup
 
-1. Create a Supabase project. Run the files in `supabase/migrations` in filename order in the SQL editor. Existing installations should run only migrations they have not yet applied; the SaaS owner portal requires `0002_saas_management.sql` and the visual itinerary themes require `0003_itinerary_templates.sql`. Keep the `crm-private` Storage bucket private.
+1. Create a Supabase project. Run the files in `supabase/migrations` in filename order in the SQL editor. Existing installations should run only migrations they have not yet applied; booking operations require `0004_booking_operations.sql`. Keep the `crm-private` Storage bucket private.
 2. In Supabase Auth, disable public sign-up. Create your own user with a password in **Authentication → Users**, then run:
 
    ```sql
@@ -28,6 +29,8 @@ The interface follows the supplied dashboard reference with the #FDF2FB, #4A3A52
 5. Run `npm install` and `npm run dev`. Open `http://localhost:5173`, sign in, create a company, and select it. Invited users set their passwords through the email link; the login screen also supports password resets. Add day plans and hotels before preparing a quotation. Invite staff from **Team** and assign roles from **Roles**.
 
 The API listens on port 4000 by default. `GET /health` is its health endpoint. Run `npm run check`, `npm run test`, and `npm run build` before deployment.
+
+After applying migration `0004`, existing quotations receive document numbers automatically. To add booking-operation examples to the existing Huz demo workspace, run `node --env-file=apps/api/.env scripts/seed-huz-bookings.mjs`. The script is idempotent and uses the existing demo customers.
 
 ## External connections
 

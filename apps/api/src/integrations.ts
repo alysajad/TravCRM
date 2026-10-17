@@ -45,7 +45,7 @@ async function storedPdf(companyId: string, relativePath: string, bytes: Uint8Ar
 
 async function sendEmail(account: Smtp, recipient: string, quote: Record<string, any>, pdf: Uint8Array): Promise<string> {
   const transport = nodemailer.createTransport({ host: account.host, port: account.port, secure: account.secure, auth: { user: account.user, pass: account.password }, connectionTimeout: 15000, greetingTimeout: 15000, socketTimeout: 15000 })
-  const response = await transport.sendMail({ from: account.from, to: recipient, subject: `Your ${quote.destination} travel quotation`, text: `Hello ${quote.client_name},\n\nYour ${quote.destination} travel quotation is attached.\n\nPlease contact us if you have questions.`, attachments: [{ filename: `quotation-${quote.id.slice(0, 8)}.pdf`, content: Buffer.from(pdf), contentType: 'application/pdf' }] })
+  const response = await transport.sendMail({ from: account.from, to: recipient, subject: `Your ${quote.destination} travel quotation`, text: `Hello ${quote.client_name},\n\nYour ${quote.destination} travel quotation is attached.\n\nPlease contact us if you have questions.`, attachments: [{ filename: `${quote.quote_number || `quotation-${quote.id.slice(0, 8)}`}-R${quote.quote_revision || 1}.pdf`, content: Buffer.from(pdf), contentType: 'application/pdf' }] })
   return response.messageId
 }
 
@@ -264,7 +264,7 @@ export async function registerIntegrations(app: FastifyInstance): Promise<void> 
       const document = await storedQuotePdf(ctx.companyId, quote, settings, ctx.companyName || 'Travel company')
       const providerId = parsed.data.channel === 'email'
         ? await sendEmail(await account<Smtp>(ctx.companyId, 'smtp'), recipient, quote, document.bytes)
-        : await (async () => { const sender = await account<Whatsapp>(ctx.companyId, 'whatsapp'); return sendWhatsapp(sender, recipient, quote.client_name, document.url, sender.template_name, `quotation-${quote.id.slice(0, 8)}.pdf`) })()
+        : await (async () => { const sender = await account<Whatsapp>(ctx.companyId, 'whatsapp'); return sendWhatsapp(sender, recipient, quote.client_name, document.url, sender.template_name, `${quote.quote_number || `quotation-${quote.id.slice(0, 8)}`}-R${quote.quote_revision || 1}.pdf`) })()
       const sent = unwrap(await ctx.db.from('messages').update({ status: 'sent', provider_id: providerId, sent_at: new Date().toISOString() }).eq('id', message.id).select('*').single())
       if (quote.status === 'Draft') await ctx.db.from('quotes').update({ status: 'Quoted' }).eq('company_id', ctx.companyId).eq('id', quote.id)
       if (quote.query_id) await admin.from('records').update({ status: 'Quoted' }).eq('company_id', ctx.companyId).eq('type', 'query').eq('id', quote.query_id)
@@ -307,6 +307,35 @@ export async function registerIntegrations(app: FastifyInstance): Promise<void> 
       const providerId = await sendWhatsapp(sender, recipient, String(record.data.guest_name), url, sender.voucher_template_name, filename)
       const sent = unwrap(await ctx.db.from('messages').update({ status: 'sent', provider_id: providerId, sent_at: new Date().toISOString() }).eq('id', message.id).select('*').single())
       await audit(ctx, `messages.${type}.send`, message.id)
+      return sent
+    } catch (error) {
+      await ctx.db.from('messages').update({ status: 'failed', error: (error as Error).message.slice(0, 1000) }).eq('id', message.id)
+      throw new HttpError(502, `Message failed: ${(error as Error).message}`)
+    }
+  })
+
+  app.post('/booking-documents/:id/send', async request => {
+    const ctx = requirePermission(request, 'messages.write')
+    requirePermission(request, 'booking_documents.read')
+    const documentId = (request.params as { id: string }).id
+    const parsed = z.object({ request_key: z.uuid() }).safeParse(request.body)
+    if (!parsed.success) throw new HttpError(400, 'Request key is required.')
+    const document = unwrap(await ctx.db.from('booking_documents').select('*').eq('company_id', ctx.companyId).eq('id', documentId).single())
+    if (document.status !== 'issued') throw new HttpError(409, 'Issue this voucher before sending it.')
+    const recipient = String(document.payload?.guest_phone || '')
+    if (!recipient) throw new HttpError(400, 'Add the guest phone number to this voucher first.')
+    const { data: previous } = await ctx.db.from('messages').select('*').eq('company_id', ctx.companyId).eq('request_key', parsed.data.request_key).maybeSingle()
+    if (previous) return previous
+    const message = unwrap(await ctx.db.from('messages').insert({ company_id: ctx.companyId, booking_document_id: document.id, channel: 'whatsapp', recipient, request_key: parsed.data.request_key, created_by: ctx.userId }).select('*').single())
+    try {
+      const sender = await account<Whatsapp>(ctx.companyId, 'whatsapp')
+      if (!sender.voucher_template_name) throw new Error('Set an approved voucher template in Connections.')
+      const settings = unwrap(await admin.from('company_settings').select('*').eq('company_id', ctx.companyId).single())
+      const bytes = await recordPdf(document.type, { id: document.id, document_number: document.document_number, data: document.payload }, settings, ctx.companyName || 'Travel company')
+      const url = await storedPdf(ctx.companyId, `booking-vouchers/${document.id}.pdf`, bytes)
+      const providerId = await sendWhatsapp(sender, recipient, String(document.payload.guest_name || 'Traveller'), url, sender.voucher_template_name, `${document.document_number}.pdf`)
+      const sent = unwrap(await ctx.db.from('messages').update({ status: 'sent', provider_id: providerId, sent_at: new Date().toISOString() }).eq('id', message.id).select('*').single())
+      await audit(ctx, `messages.${document.type}.send`, message.id, { booking_document: document.id })
       return sent
     } catch (error) {
       await ctx.db.from('messages').update({ status: 'failed', error: (error as Error).message.slice(0, 1000) }).eq('id', message.id)

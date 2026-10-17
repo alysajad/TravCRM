@@ -251,7 +251,9 @@ async function detailPages(d: Document, quote: Json, settings: Json, title = 'Tr
     if (section === 'exclusions' && quote.exclusions) { d.heading(label('exclusions', 'Exclusions')); d.paragraph(quote.exclusions) }
     if (section === 'price') {
       d.heading(label('price', 'Price summary'))
-      d.line('Package cost', money(quote.base_amount)); d.line('Child cost', money(quote.child_amount)); d.line('Discount', `- ${money(quote.discount_amount)}`); d.line(`GST (${quote.gst_percent}%)`, money(quote.gst_amount)); d.line('Total', money(quote.total_amount), 12, true)
+      if (quote.price_lines?.length) for (const line of quote.price_lines) d.line(`${line.label}${Number(line.quantity) !== 1 ? ` × ${line.quantity}` : ''}`, money(line.amount ?? Number(line.quantity) * Number(line.unit_amount)))
+      else { d.line('Package cost', money(quote.base_amount)); d.line('Child cost', money(quote.child_amount)) }
+      d.line('Discount', `- ${money(quote.discount_amount)}`); d.line(`GST (${quote.gst_percent}%)`, money(quote.gst_amount)); d.line('Total', money(quote.total_amount), 12, true)
     }
     if (section === 'payment' && settings.bank_details) { d.heading(label('payment', 'Payment details')); d.paragraph(settings.bank_details) }
     if (section === 'terms' && (settings.terms || settings.cancellation_policy)) {
@@ -358,7 +360,7 @@ async function brochurePdf(d: Document, quote: Json, settings: Json) {
 async function standardPdf(d: Document, quote: Json, settings: Json, fallbackName: string) {
   const label = labelsFor(settings)
   const sections = sectionsFor(settings)
-  await d.header(settings.brand_name || fallbackName, label('document_title', 'Travel quotation'), `#${quote.id.slice(0, 8).toUpperCase()}`, settings)
+  await d.header(settings.brand_name || fallbackName, label('document_title', 'Travel quotation'), quote.quote_number ? `${quote.quote_number} · R${quote.quote_revision || 1}` : `#${quote.id.slice(0, 8).toUpperCase()}`, settings)
   d.line('Prepared for', quote.client_name, 11, true)
   d.line('Destination', quote.destination); d.line('Travelers', `${quote.adults} adults, ${quote.children} children`); d.line('Duration', `${quote.days} days / ${quote.nights} nights`)
   if (quote.arrival_date) d.line('Arrival', quote.arrival_date)
@@ -373,7 +375,7 @@ async function standardPdf(d: Document, quote: Json, settings: Json, fallbackNam
     if (section === 'accommodation' && quote.stays?.length) { d.heading(label('accommodation', 'Accommodation')); for (const stay of quote.stays) d.line(`Night ${stay.night}`, `${stay.name}${stay.room_type ? ` / ${stay.room_type}` : ''}`) }
     if (section === 'inclusions' && quote.inclusions) { d.heading(label('inclusions', 'Inclusions')); d.paragraph(quote.inclusions) }
     if (section === 'exclusions' && quote.exclusions) { d.heading(label('exclusions', 'Exclusions')); d.paragraph(quote.exclusions) }
-    if (section === 'price') { d.heading(label('price', 'Price summary')); d.line('Package cost', money(quote.base_amount)); d.line('Child cost', money(quote.child_amount)); d.line('Discount', `- ${money(quote.discount_amount)}`); d.line(`GST (${quote.gst_percent}%)`, money(quote.gst_amount)); d.line('Total', money(quote.total_amount), 12, true) }
+    if (section === 'price') { d.heading(label('price', 'Price summary')); if (quote.price_lines?.length) for (const line of quote.price_lines) d.line(`${line.label}${Number(line.quantity) !== 1 ? ` × ${line.quantity}` : ''}`, money(line.amount ?? Number(line.quantity) * Number(line.unit_amount))); else { d.line('Package cost', money(quote.base_amount)); d.line('Child cost', money(quote.child_amount)) } d.line('Discount', `- ${money(quote.discount_amount)}`); d.line(`GST (${quote.gst_percent}%)`, money(quote.gst_amount)); d.line('Total', money(quote.total_amount), 12, true) }
     if (section === 'payment' && settings.bank_details) { d.heading(label('payment', 'Payment details')); d.paragraph(settings.bank_details) }
     if (section === 'terms' && (settings.terms || settings.cancellation_policy)) { d.heading(label('terms', 'Terms & policies')); if (settings.terms) d.paragraph(settings.terms); if (settings.cancellation_policy) { d.line('Cancellation', '', 10, true); d.paragraph(settings.cancellation_policy) } }
   }
@@ -394,13 +396,15 @@ export async function quotePdf(input: Json, settings: Json, fallbackName: string
 export async function recordPdf(type: string, record: Json, settings: Json, companyName: string): Promise<Uint8Array> {
   const d = new Document(); await d.init(settings)
   const title = type === 'invoice' ? 'Invoice' : type === 'stay_voucher' ? 'Stay voucher' : 'Cab voucher'
-  await d.header(settings.brand_name || companyName, title, `#${record.id.slice(0, 8).toUpperCase()}`, { ...settings, document_template: ['elegant','modern','compact'].includes(settings.document_template) ? settings.document_template : 'modern' })
+  await d.header(settings.brand_name || companyName, title, record.document_number || `#${record.id.slice(0, 8).toUpperCase()}`, { ...settings, document_template: ['elegant','modern','compact'].includes(settings.document_template) ? settings.document_template : 'modern' })
   const data = record.data || {}
   for (const [key, value] of Object.entries(data)) {
-    if (key === 'items' || key === 'items_parsed' || key === 'subtotal' || key === 'gst_amount' || key === 'total' || key === 'demo_seed') continue
+    if (key === 'items' || key === 'items_parsed' || key === 'subtotal' || key === 'gst_amount' || key === 'total' || key === 'demo_seed' || key === 'routes' || key === 'inclusions') continue
     if (value === null || value === undefined || value === '') continue
     d.line(key.replace(/_/g, ' ').replace(/^./, x => x.toUpperCase()), String(value))
   }
+  if (data.routes?.length) { d.heading('Daily transport plan'); for (const route of data.routes) d.line(`Day ${route.day} · ${route.service_date}`, [route.destination, route.pickup && `Pickup: ${route.pickup}`, route.dropoff && `Drop: ${route.dropoff}`].filter(Boolean).join(' · ')) }
+  if (data.inclusions) { d.heading('Inclusions'); d.paragraph(String(data.inclusions)) }
   if (type === 'invoice') { d.heading('Items'); for (const item of data.items_parsed || []) d.line(`${item.description}  x${item.quantity}`, money(item.amount)); d.heading('Totals'); d.line('Subtotal', money(data.subtotal)); d.line('GST', money(data.gst_amount)); d.line('Grand total', money(data.total), 12, true) }
   if (settings.terms) { d.heading('Terms & policies'); d.paragraph(settings.terms) }
   await d.signature(settings)

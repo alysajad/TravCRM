@@ -73,6 +73,8 @@ async function main() {
 
   const migrationProbe = await db.from('platform_settings').select('singleton').limit(1)
   const migrationApplied = !migrationProbe.error
+  const bookingMigrationProbe = await db.from('company_settings').select('quote_prefix').eq('company_id', company.id).maybeSingle()
+  const bookingMigrationApplied = !bookingMigrationProbe.error
   const currentSettings = unwrap(await db.from('company_settings').select('document_cover_path').eq('company_id', company.id).single(), 'find company settings')
   const logoPath = await uploadIfPresent(company.id, '/tmp/huz-logo.png', `${company.id}/branding/huz-travels-logo.png`)
   const signaturePath = await uploadIfPresent(company.id, '/tmp/huz-signature.png', `${company.id}/branding/authorised-signature.png`)
@@ -217,6 +219,7 @@ async function main() {
     created_at: s.created,
     updated_at: s.created,
   }))
+  if (bookingMigrationApplied) for (const quote of quotePayload) quote.quote_number = unwrap(await db.rpc('next_document_number', { p_company_id: company.id, p_kind: 'quote' }), 'number demo quotation')
   const quotes = unwrap(await db.from('quotes').insert(quotePayload).select('*'), 'insert demo quotations')
   inserted.quoteIds.push(...quotes.map(row => row.id))
 

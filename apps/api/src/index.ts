@@ -8,6 +8,7 @@ import { registerQuotes } from './quotes.js'
 import { registerFinance } from './finance.js'
 import { registerIntegrations } from './integrations.js'
 import { registerPlatform } from './platform.js'
+import { registerBookings } from './bookings.js'
 
 const app = Fastify({ logger: true, bodyLimit: 1024 * 1024 })
 await app.register(cors, { origin: env.webOrigin.split(',').map(x => x.trim()), methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'], allowedHeaders: ['Content-Type', 'Authorization', 'X-Company-Id'] })
@@ -28,6 +29,7 @@ await app.register(async api => {
   await registerAdmin(api)
   await registerRecords(api)
   await registerQuotes(api)
+  await registerBookings(api)
   await registerFinance(api)
   await registerIntegrations(api)
   await registerPlatform(api)

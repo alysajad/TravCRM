@@ -5,16 +5,22 @@ import { quotePdf } from './pdf.js'
 import { statuses } from './modules.js'
 
 const idSchema = z.uuid()
+const priceLineInput = z.object({ category: z.enum(['package','hotel','transport','activity','supplement','custom']).default('custom'), label: z.string().trim().min(1).max(200), quantity: z.coerce.number().positive().max(10000), unit_amount: z.coerce.number().min(0).max(999999999) })
+const transportDayInput = z.object({ destination: z.string().max(300).optional(), hotel: z.string().max(300).optional(), pickup: z.string().max(300).optional(), dropoff: z.string().max(300).optional() })
 const quoteInput = z.object({
   query_id: idSchema.optional().nullable(),
   client_name: z.string().trim().min(1).max(200), email: z.email().optional().or(z.literal('')),
   phone: z.string().max(50).optional(), status: z.enum(statuses.quote as [string, ...string[]]).default('Draft'),
   destination: z.string().trim().min(1).max(200), days: z.coerce.number().int().min(1).max(60),
   adults: z.coerce.number().int().min(0).max(100), children: z.coerce.number().int().min(0).max(100),
+  rooms: z.coerce.number().int().min(0).max(100).default(1), extra_beds: z.coerce.number().int().min(0).max(100).default(0), children_without_bed: z.coerce.number().int().min(0).max(100).default(0),
+  booking_date: z.string().optional().nullable(), assignee_id: idSchema.optional().nullable(), pricing_mode: z.enum(['total_package','per_person']).default('total_package'),
   arrival_date: z.string().optional().nullable(), pickup: z.string().max(300).optional(), dropoff: z.string().max(300).optional(),
   flights: z.string().max(2000).optional(), inclusions: z.string().max(10000).optional(), exclusions: z.string().max(10000).optional(),
   base_amount: z.coerce.number().min(0).max(999999999), child_amount: z.coerce.number().min(0).max(999999999),
   discount_amount: z.coerce.number().min(0).max(999999999), gst_percent: z.coerce.number().min(0).max(100),
+  price_lines: z.array(priceLineInput).max(50).default([]),
+  transport: z.object({ included: z.boolean().default(false), cab_id: idSchema.optional().nullable(), vehicle_type: z.string().max(100).optional(), vehicle_number: z.string().max(100).optional(), driver_name: z.string().max(200).optional(), driver_phone: z.string().max(50).optional(), days: z.array(transportDayInput).max(60).default([]) }).default({ included: false, days: [] }),
   itinerary: z.array(z.object({ day_plan_id: idSchema })),
   stays: z.array(z.object({ hotel_id: idSchema, room_type_id: idSchema.optional().nullable() }))
 })
@@ -39,14 +45,22 @@ async function prepare(request: Parameters<typeof requirePermission>[0], raw: un
   value.child_amount = Math.round(value.child_amount * 100) / 100
   value.discount_amount = Math.round(value.discount_amount * 100) / 100
   value.gst_percent = Math.round(value.gst_percent * 100) / 100
+  value.price_lines = value.price_lines.map(line => ({ ...line, quantity: round(line.quantity), unit_amount: round(line.unit_amount), amount: round(line.quantity * line.unit_amount) })) as typeof value.price_lines
+  if (value.price_lines.length) { value.base_amount = round(value.price_lines.reduce((sum, line) => sum + Number((line as any).amount), 0)); value.child_amount = 0 }
   if (value.adults + value.children < 1) throw new HttpError(400, 'Add at least one traveler.')
+  if (value.status === 'Confirmed') throw new HttpError(400, 'Use Confirm & create booking to confirm a quotation.')
   if (value.itinerary.length !== value.days) throw new HttpError(400, 'Choose one day plan for each day.')
   if (value.stays.length !== value.days - 1) throw new HttpError(400, 'Choose one hotel for each night.')
   if (value.query_id) {
     const { data } = await ctx.db.from('records').select('id').eq('company_id', ctx.companyId).eq('type', 'query').eq('id', value.query_id).maybeSingle()
     if (!data) throw new HttpError(400, 'The linked query is not in this company.')
   }
-  const ids = [...new Set([...value.itinerary.map(x => x.day_plan_id), ...value.stays.flatMap(x => [x.hotel_id, ...(x.room_type_id ? [x.room_type_id] : [])])])]
+  if (value.assignee_id) {
+    const { data } = await admin.from('memberships').select('user_id').eq('company_id', ctx.companyId).eq('user_id', value.assignee_id).eq('active', true).maybeSingle()
+    if (!data) throw new HttpError(400, 'The assignee is not in this company.')
+  }
+  if (value.transport.included && value.transport.days.length !== value.days) throw new HttpError(400, 'Add one transport route for every trip day.')
+  const ids = [...new Set([...value.itinerary.map(x => x.day_plan_id), ...value.stays.flatMap(x => [x.hotel_id, ...(x.room_type_id ? [x.room_type_id] : [])]), ...(value.transport.cab_id ? [value.transport.cab_id] : [])])]
   const { data: records, error } = await ctx.db.from('records').select('id,type,title,data').eq('company_id', ctx.companyId).in('id', ids)
   if (error) throw new HttpError(400, error.message)
   const map = new Map((records || []).map(x => [x.id, x]))
@@ -56,9 +70,14 @@ async function prepare(request: Parameters<typeof requirePermission>[0], raw: un
     if (stay.room_type_id && map.get(stay.room_type_id)?.type !== 'room_type') throw new HttpError(400, 'A selected room type is unavailable.')
   }
   const itinerary = value.itinerary.map((x, i) => ({ day: i + 1, day_plan_id: x.day_plan_id, name: map.get(x.day_plan_id)!.title, description: map.get(x.day_plan_id)!.data?.description || '', image_path: map.get(x.day_plan_id)!.data?.image_path || null }))
-  const stays = value.stays.map((x, i) => ({ night: i + 1, hotel_id: x.hotel_id, name: map.get(x.hotel_id)!.title, room_type_id: x.room_type_id || null, room_type: x.room_type_id ? map.get(x.room_type_id)?.title : null, image_path: map.get(x.hotel_id)!.data?.image_path || null }))
-  return { ctx, row: { ...value, company_id: ctx.companyId, itinerary, stays, ...priceQuote(value.base_amount, value.child_amount, value.discount_amount, value.gst_percent) } }
+  if (value.transport.cab_id && map.get(value.transport.cab_id)?.type !== 'cab') throw new HttpError(400, 'The selected cab is unavailable.')
+  const stays = value.stays.map((x, i) => ({ night: i + 1, hotel_id: x.hotel_id, name: map.get(x.hotel_id)!.title, property_type: map.get(x.hotel_id)!.data?.property_type || 'Hotel', room_type_id: x.room_type_id || null, room_type: x.room_type_id ? map.get(x.room_type_id)?.title : null, image_path: map.get(x.hotel_id)!.data?.image_path || null }))
+  const cab = value.transport.cab_id ? map.get(value.transport.cab_id) : null
+  const transport = { ...value.transport, vehicle_type: value.transport.vehicle_type || cab?.data?.type || cab?.title || '', vehicle_number: value.transport.vehicle_number || cab?.data?.registration || '', driver_name: value.transport.driver_name || cab?.data?.driver_name || '', driver_phone: value.transport.driver_phone || cab?.data?.driver_phone || '' }
+  return { ctx, row: { ...value, company_id: ctx.companyId, itinerary, stays, transport, ...priceQuote(value.base_amount, value.child_amount, value.discount_amount, value.gst_percent) } }
 }
+
+const round = (value: unknown) => Math.round(Number(value || 0) * 100) / 100
 
 const path = (v: unknown) => v as { id: string }
 const listQuery = (v: unknown) => v as { page?: string; status?: string; q?: string }
@@ -66,7 +85,7 @@ const listQuery = (v: unknown) => v as { page?: string; status?: string; q?: str
 export async function registerQuotes(app: FastifyInstance): Promise<void> {
   app.get('/quote-options', async request => {
     const ctx = requirePermission(request, 'quotes.read')
-    return unwrap(await ctx.db.from('quotes').select('id,client_name,destination,total_amount').eq('company_id', ctx.companyId).order('created_at', { ascending: false }).limit(1000))
+    return unwrap(await ctx.db.from('quotes').select('id,quote_number,quote_revision,client_name,destination,total_amount').eq('company_id', ctx.companyId).order('created_at', { ascending: false }).limit(1000))
   })
   app.get('/quotes', async request => {
     const ctx = requirePermission(request, 'quotes.read')
@@ -87,14 +106,19 @@ export async function registerQuotes(app: FastifyInstance): Promise<void> {
 
   app.post('/quotes', async request => {
     const { ctx, row } = await prepare(request, request.body)
-    const quote = unwrap(await ctx.db.from('quotes').insert({ ...row, created_by: ctx.userId }).select('*').single())
+    const { data: quoteNumber, error } = await admin.rpc('next_document_number', { p_company_id: ctx.companyId, p_kind: 'quote' })
+    if (error) throw new HttpError(400, error.message)
+    const quote = unwrap(await ctx.db.from('quotes').insert({ ...row, quote_number: quoteNumber, created_by: ctx.userId }).select('*').single())
     await audit(ctx, 'quotes.create', quote.id)
     return quote
   })
 
   app.patch('/quotes/:id', async request => {
-    const { ctx, row } = await prepare(request, request.body)
     const id = path(request.params).id
+    const ctx = requirePermission(request, 'quotes.write')
+    const existing = unwrap(await ctx.db.from('quotes').select('locked_at').eq('company_id', ctx.companyId).eq('id', id).single())
+    if (existing.locked_at) throw new HttpError(409, 'Confirmed quotations are locked. Create a revision to make changes.')
+    const prepared = await prepare(request, request.body); const row = prepared.row
     const quote = unwrap(await ctx.db.from('quotes').update({ ...row, updated_at: new Date().toISOString() }).eq('company_id', ctx.companyId).eq('id', id).select('*').single())
     await audit(ctx, 'quotes.update', id)
     return quote
@@ -103,8 +127,10 @@ export async function registerQuotes(app: FastifyInstance): Promise<void> {
   app.post('/quotes/:id/duplicate', async request => {
     const ctx = requirePermission(request, 'quotes.write')
     const source = unwrap(await ctx.db.from('quotes').select('*').eq('company_id', ctx.companyId).eq('id', path(request.params).id).single())
-    const { id, created_at, updated_at, nights, created_by, ...copy } = source
-    const quote = unwrap(await ctx.db.from('quotes').insert({ ...copy, status: 'Draft', created_by: ctx.userId }).select('*').single())
+    const { data: quoteNumber, error } = await admin.rpc('next_document_number', { p_company_id: ctx.companyId, p_kind: 'quote' })
+    if (error) throw new HttpError(400, error.message)
+    const { id, created_at, updated_at, nights, created_by, quote_number, quote_revision, quote_series_id, supersedes_quote_id, booking_id, locked_at, ...copy } = source
+    const quote = unwrap(await ctx.db.from('quotes').insert({ ...copy, quote_number: quoteNumber, status: 'Draft', created_by: ctx.userId }).select('*').single())
     await audit(ctx, 'quotes.duplicate', quote.id, { source: id })
     return quote
   })
@@ -112,6 +138,8 @@ export async function registerQuotes(app: FastifyInstance): Promise<void> {
   app.delete('/quotes/:id', async request => {
     const ctx = requirePermission(request, 'quotes.write')
     const id = path(request.params).id
+    const existing = unwrap(await ctx.db.from('quotes').select('locked_at').eq('company_id', ctx.companyId).eq('id', id).single())
+    if (existing.locked_at) throw new HttpError(409, 'Confirmed quotations are part of the booking audit trail and cannot be deleted.')
     const { count } = await ctx.db.from('payments').select('id', { count: 'exact', head: true }).eq('company_id', ctx.companyId).eq('quote_id', id)
     if (count) throw new HttpError(409, 'This quote has payments. Remove or correct them first.')
     unwrap(await ctx.db.from('quotes').delete().eq('company_id', ctx.companyId).eq('id', id).select('id').single())
@@ -124,7 +152,7 @@ export async function registerQuotes(app: FastifyInstance): Promise<void> {
     const quote = unwrap(await ctx.db.from('quotes').select('*').eq('company_id', ctx.companyId).eq('id', path(request.params).id).single())
     const settings = unwrap(await admin.from('company_settings').select('*').eq('company_id', ctx.companyId).single())
     const pdf = await quotePdf(quote, settings, ctx.companyName || 'Travel company')
-    reply.header('Content-Type', 'application/pdf').header('Content-Disposition', `attachment; filename="quotation-${quote.id.slice(0, 8)}.pdf"`)
+    reply.header('Content-Type', 'application/pdf').header('Content-Disposition', `attachment; filename="${quote.quote_number || `quotation-${quote.id.slice(0, 8)}`}-R${quote.quote_revision || 1}.pdf"`)
     return reply.send(Buffer.from(pdf))
   })
 }
