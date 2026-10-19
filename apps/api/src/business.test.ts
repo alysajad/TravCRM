@@ -1,5 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { readFile } from 'node:fs/promises'
 import { PDFDocument } from 'pdf-lib'
 import { modules, validateRecord } from './modules.js'
 
@@ -12,6 +13,44 @@ const { groupBookingStays } = await import('./bookings.js')
 const { mergeEntitlements } = await import('./core.js')
 const { operationLocalTime } = await import('./operations.js')
 const { normalizeEmail, normalizePhone, matchClientContacts, latestTimeline } = await import('./clients.js')
+const { normalizeCatalogText, seasonForMonth } = await import('./catalog.js')
+
+test('travel catalog has stable unique keys and the promised regional counts', async () => {
+  const read = async (name: string) => JSON.parse(await readFile(new URL(`../../../catalog/${name}.json`, import.meta.url), 'utf8')) as Array<Record<string, any>>
+  const [locations, templates, hotels] = await Promise.all([read('locations'), read('itinerary-templates'), read('hotels')])
+  assert.equal(new Set(locations.map(row => row.catalog_key)).size, locations.length)
+  assert.equal(new Set(hotels.map(row => row.catalog_key)).size, 500)
+  const propertyKeys = hotels.map(row => `${normalizeCatalogText(row.canonical_name)}|${row.location_id}`)
+  assert.equal(new Set(propertyKeys).size, 500)
+  assert.ok(hotels.every(row => !/\b\d{3}$/.test(row.canonical_name)))
+  assert.ok(hotels.every(row => /^https:\/\//.test(row.source_url) && /^\d{4}-\d{2}-\d{2}$/.test(row.verified_on)))
+  assert.equal(hotels.filter(row => row.region === 'Kashmir').length, 400)
+  assert.equal(hotels.filter(row => row.region === 'Ladakh').length, 100)
+  assert.deepEqual({
+    srinagar: hotels.filter(row => row.location_id === 'srinagar').length,
+    pahalgam: hotels.filter(row => row.location_id === 'pahalgam').length,
+    gulmarg_tangmarg: hotels.filter(row => ['gulmarg','tangmarg'].includes(row.location_id)).length,
+    sonamarg_ganderbal: hotels.filter(row => ['sonamarg','ganderbal'].includes(row.location_id)).length,
+    kashmir_other: hotels.filter(row => row.region === 'Kashmir' && !['srinagar','pahalgam','gulmarg','tangmarg','sonamarg','ganderbal'].includes(row.location_id)).length
+  }, { srinagar: 210, pahalgam: 65, gulmarg_tangmarg: 40, sonamarg_ganderbal: 30, kashmir_other: 55 })
+  assert.deepEqual({
+    leh: hotels.filter(row => row.location_id === 'leh').length,
+    nubra_turtuk: hotels.filter(row => ['nubra','turtuk'].includes(row.location_id)).length,
+    pangong: hotels.filter(row => row.location_id === 'pangong').length,
+    kargil_drass: hotels.filter(row => ['kargil','drass'].includes(row.location_id)).length,
+    ladakh_other: hotels.filter(row => row.region === 'Ladakh' && !['leh','nubra','turtuk','pangong','kargil','drass'].includes(row.location_id)).length
+  }, { leh: 55, nubra_turtuk: 20, pangong: 8, kargil_drass: 10, ladakh_other: 7 })
+  assert.ok(locations.find(row => row.catalog_key === 'sonamarg')?.aliases.includes('Sonmarg'))
+  assert.ok(locations.find(row => row.catalog_key === 'pahalgam')?.aliases.includes('Pahalgham'))
+  assert.deepEqual(Object.fromEntries(['Kashmir','Ladakh','Combined'].map(region => [region, templates.filter(row => row.region === region).length])), { Kashmir: 27, Ladakh: 9, Combined: 4 })
+  assert.ok(templates.every(row => row.days.length === row.duration))
+  assert.ok(templates.filter(row => row.duration === 7).every(row => row.days.length === 7))
+  assert.ok(templates.filter(row => row.duration === 7).every(row => row.days.slice(0, -1).filter((day: Record<string, any>) => day.overnight_location_id).length === 6))
+  assert.equal(normalizeCatalogText('Pahalgham'), 'pahalgham')
+  assert.equal(seasonForMonth(12), 'winter')
+  assert.equal(seasonForMonth(7), 'summer')
+  assert.equal(seasonForMonth(9), 'autumn')
+})
 
 test('quotation totals use cents and apply GST after discount', () => {
   assert.deepEqual(priceQuote(1000, 200, 100, 5), { gst_amount: 55, total_amount: 1155 })

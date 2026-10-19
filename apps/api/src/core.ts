@@ -104,6 +104,7 @@ export function enforceRouteFeature(request: FastifyRequest): void {
   const path = request.url.split('?')[0] || ''
   const rules: [RegExp, string][] = [
     [/^\/api\/v1\/(quotes|quote-options)(\/|$)/, 'quotations'],
+    [/^\/api\/v1\/catalog(\/|$)/, 'quotations'],
     [/^\/api\/v1\/(bookings|booking-stays|booking-transport|booking-documents|booking-tasks|booking-travellers|traveller-documents|booking-services|operations|operation-templates|reminder-rules|notifications)(\/|$)/, 'bookings'],
     [/^\/api\/v1\/(payments|ledger|hotel-ledger)(\/|$)/, 'finance'],
     [/^\/api\/v1\/records\/(expenses|invoices|hotel-payments)(\/|$)/, 'finance'],

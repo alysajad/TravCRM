@@ -10,7 +10,7 @@ export type Me = { userId: string; companyId: string | null; companyName: string
 export type Field = { key: string; label: string; kind?: 'text' | 'email' | 'tel' | 'date' | 'number' | 'textarea' | 'select' | 'relation'; required?: boolean; options?: string[]; relation?: string }
 export type Module = { type: string; label: string; plural: string; titleField: string; fields: Field[] }
 export type RecordItem = { id: string; title: string; type: string; status: string; data: Record<string, any>; created_at: string; client_link_status?: 'linked' | 'needs_review' }
-export type Quote = { id: string; client_id?: string; client_link_status?: 'linked' | 'needs_review'; quote_number: string; quote_revision: number; booking_id?: string; locked_at?: string; client_name: string; email?: string; phone?: string; status: string; destination: string; days: number; nights: number; adults: number; children: number; rooms: number; extra_beds: number; children_without_bed: number; booking_date?: string; assignee_id?: string; pricing_mode: 'total_package' | 'per_person'; price_lines: { category: string; label: string; quantity: number; unit_amount: number; amount?: number }[]; transport: Record<string, any>; arrival_date?: string; pickup?: string; dropoff?: string; flights?: string; inclusions?: string; exclusions?: string; base_amount: number; child_amount: number; discount_amount: number; gst_percent: number; gst_amount: number; total_amount: number; query_id?: string; itinerary: { day_plan_id: string; name: string; description: string }[]; stays: { hotel_id: string; name: string; room_type_id?: string; room_type?: string }[]; created_at: string }
+export type Quote = { id: string; client_id?: string; client_link_status?: 'linked' | 'needs_review'; quote_number: string; quote_revision: number; booking_id?: string; locked_at?: string; client_name: string; email?: string; phone?: string; status: string; destination: string; days: number; nights: number; adults: number; children: number; rooms: number; extra_beds: number; children_without_bed: number; booking_date?: string; assignee_id?: string; pricing_mode: 'total_package' | 'per_person'; price_lines: { category: string; label: string; quantity: number; unit_amount: number; amount?: number }[]; transport: Record<string, any>; arrival_date?: string; pickup?: string; dropoff?: string; flights?: string; inclusions?: string; exclusions?: string; base_amount: number; child_amount: number; discount_amount: number; gst_percent: number; gst_amount: number; total_amount: number; query_id?: string; itinerary: { source?: 'catalog' | 'company' | 'custom'; day_plan_id?: string; name: string; description: string; location_id?: string; location?: string; image_path?: string }[]; stays: { source?: 'catalog' | 'company' | 'custom'; hotel_id?: string; name: string; location_id?: string; location?: string; property_type?: string; room_type_id?: string; room_type?: string; image_path?: string }[]; created_at: string }
 export type Booking = { id: string; client_id?: string; booking_number: string; source_quote_id: string; source_quote_revision: number; revision: number; status: 'confirmed' | 'in_progress' | 'completed' | 'cancelled'; client_name: string; email?: string; phone?: string; destination: string; arrival_date: string; departure_date: string; adults: number; children: number; rooms: number; total_amount: number; snapshot: Quote; confirmed_at: string; operations?: { tasks_total: number; tasks_done: number; suppliers_total: number; suppliers_ready: number; missing_documents: number }; stays?: any[]; transport?: any[]; documents?: any[]; revisions?: any[]; payments?: any[] }
 export type Page<T> = { items: T[]; total: number; page: number; pageSize: number }
 
@@ -63,10 +63,24 @@ export async function download(path: string, filename: string) {
   URL.revokeObjectURL(href)
 }
 
-export async function upload(file: File) {
+async function optimizedPhoto(file: File) {
+  if (!['image/jpeg', 'image/png'].includes(file.type) || typeof createImageBitmap === 'undefined') return file
+  const image = await createImageBitmap(file, { imageOrientation: 'from-image' })
+  const scale = Math.min(1, 2200 / image.width, 1467 / image.height)
+  if (scale === 1 && file.type === 'image/jpeg' && file.size < 2 * 1024 * 1024) { image.close(); return file }
+  const canvas = document.createElement('canvas'); canvas.width = Math.round(image.width * scale); canvas.height = Math.round(image.height * scale)
+  const context = canvas.getContext('2d')
+  if (!context) { image.close(); return file }
+  context.drawImage(image, 0, 0, canvas.width, canvas.height); image.close()
+  const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', .86))
+  return blob ? new File([blob], file.name.replace(/\.[^.]+$/, '') + '.jpg', { type: 'image/jpeg' }) : file
+}
+
+export async function upload(file: File, options: { photo?: boolean } = {}) {
   if (!supabase) throw new Error('Supabase is not configured.')
-  const signed = await post<{ path: string; token: string }>('/files/upload-url', { filename: file.name, content_type: file.type, size: file.size })
-  const { error } = await supabase.storage.from('crm-private').uploadToSignedUrl(signed.path, signed.token, file, { contentType: file.type })
+  const prepared = options.photo ? await optimizedPhoto(file) : file
+  const signed = await post<{ path: string; token: string }>('/files/upload-url', { filename: prepared.name, content_type: prepared.type, size: prepared.size })
+  const { error } = await supabase.storage.from('crm-private').uploadToSignedUrl(signed.path, signed.token, prepared, { contentType: prepared.type })
   if (error) throw error
   return signed.path
 }

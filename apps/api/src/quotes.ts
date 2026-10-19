@@ -8,6 +8,14 @@ import { resolveClientLink } from './clients.js'
 const idSchema = z.uuid()
 const priceLineInput = z.object({ category: z.enum(['package','hotel','transport','activity','supplement','custom']).default('custom'), label: z.string().trim().min(1).max(200), quantity: z.coerce.number().positive().max(10000), unit_amount: z.coerce.number().min(0).max(999999999) })
 const transportDayInput = z.object({ destination: z.string().max(300).optional(), hotel: z.string().max(300).optional(), pickup: z.string().max(300).optional(), dropoff: z.string().max(300).optional() })
+const dayChoiceInput = z.object({
+  source: z.enum(['catalog','company','custom']).optional(), day_plan_id: idSchema.optional().nullable(),
+  name: z.string().trim().max(200).optional(), description: z.string().max(10000).optional(), location_id: idSchema.optional().nullable(), location: z.string().max(200).optional(), image_path: z.string().max(1000).optional().nullable()
+})
+const stayChoiceInput = z.object({
+  source: z.enum(['catalog','company','custom']).optional(), hotel_id: idSchema.optional().nullable(), room_type_id: idSchema.optional().nullable(),
+  name: z.string().trim().max(200).optional(), location_id: idSchema.optional().nullable(), location: z.string().max(200).optional(), property_type: z.string().max(100).optional(), room_type: z.string().max(100).optional(), image_path: z.string().max(1000).optional().nullable()
+})
 const quoteInput = z.object({
   query_id: idSchema.optional().nullable(),
   client_id: idSchema.optional().nullable(),
@@ -23,8 +31,8 @@ const quoteInput = z.object({
   discount_amount: z.coerce.number().min(0).max(999999999), gst_percent: z.coerce.number().min(0).max(100),
   price_lines: z.array(priceLineInput).max(50).default([]),
   transport: z.object({ included: z.boolean().default(false), cab_id: idSchema.optional().nullable(), vehicle_type: z.string().max(100).optional(), vehicle_number: z.string().max(100).optional(), driver_name: z.string().max(200).optional(), driver_phone: z.string().max(50).optional(), days: z.array(transportDayInput).max(60).default([]) }).default({ included: false, days: [] }),
-  itinerary: z.array(z.object({ day_plan_id: idSchema })),
-  stays: z.array(z.object({ hotel_id: idSchema, room_type_id: idSchema.optional().nullable() }))
+  itinerary: z.array(dayChoiceInput),
+  stays: z.array(stayChoiceInput)
 })
 
 export function priceQuote(base: number, child: number, discount: number, gstPercent: number) {
@@ -66,18 +74,46 @@ async function prepare(request: Parameters<typeof requirePermission>[0], raw: un
     if (!data) throw new HttpError(400, 'The assignee is not in this company.')
   }
   if (value.transport.included && value.transport.days.length !== value.days) throw new HttpError(400, 'Add one transport route for every trip day.')
-  const ids = [...new Set([...value.itinerary.map(x => x.day_plan_id), ...value.stays.flatMap(x => [x.hotel_id, ...(x.room_type_id ? [x.room_type_id] : [])]), ...(value.transport.cab_id ? [value.transport.cab_id] : [])])]
-  const { data: records, error } = await ctx.db.from('records').select('id,type,title,data').eq('company_id', ctx.companyId).in('id', ids)
-  if (error) throw new HttpError(400, error.message)
+  const companyDayIds = value.itinerary.filter(x => (x.source || 'company') === 'company').flatMap(x => x.day_plan_id ? [x.day_plan_id] : [])
+  const catalogDayIds = value.itinerary.filter(x => x.source === 'catalog').flatMap(x => x.day_plan_id ? [x.day_plan_id] : [])
+  const companyHotelIds = value.stays.filter(x => (x.source || 'company') === 'company').flatMap(x => x.hotel_id ? [x.hotel_id] : [])
+  const catalogHotelIds = value.stays.filter(x => x.source === 'catalog').flatMap(x => x.hotel_id ? [x.hotel_id] : [])
+  const recordIds = [...new Set([...companyDayIds, ...companyHotelIds, ...value.stays.flatMap(x => x.room_type_id ? [x.room_type_id] : []), ...(value.transport.cab_id ? [value.transport.cab_id] : [])])]
+  const [{ data: records, error }, catalogDaysResult, catalogHotelsResult, overridesResult] = await Promise.all([
+    recordIds.length ? ctx.db.from('records').select('id,type,title,data').eq('company_id', ctx.companyId).in('id', recordIds) : Promise.resolve({ data: [], error: null }),
+    catalogDayIds.length ? admin.from('catalog_day_plans').select('*,catalog_locations(name)').in('id', catalogDayIds) : Promise.resolve({ data: [], error: null }),
+    catalogHotelIds.length ? admin.from('catalog_hotels').select('*,catalog_locations(name)').in('id', catalogHotelIds) : Promise.resolve({ data: [], error: null }),
+    catalogHotelIds.length ? ctx.db.from('company_hotel_overrides').select('*').eq('company_id', ctx.companyId).in('catalog_hotel_id', catalogHotelIds) : Promise.resolve({ data: [], error: null })
+  ])
+  if (error || catalogDaysResult.error || catalogHotelsResult.error || overridesResult.error) throw new HttpError(400, error?.message || catalogDaysResult.error?.message || catalogHotelsResult.error?.message || overridesResult.error?.message || 'A selected catalog item is unavailable.')
   const map = new Map((records || []).map(x => [x.id, x]))
-  for (const day of value.itinerary) if (map.get(day.day_plan_id)?.type !== 'day_plan') throw new HttpError(400, 'A selected day plan is unavailable.')
+  const catalogDays = new Map((catalogDaysResult.data || []).map(x => [x.id, x]))
+  const catalogHotels = new Map((catalogHotelsResult.data || []).map(x => [x.id, x]))
+  const overrides = new Map((overridesResult.data || []).map(x => [x.catalog_hotel_id, x]))
+  for (const day of value.itinerary) {
+    const source = day.source || 'company'
+    if (source === 'company' && (!day.day_plan_id || map.get(day.day_plan_id)?.type !== 'day_plan')) throw new HttpError(400, 'A selected day plan is unavailable.')
+    if (source === 'catalog' && (!day.day_plan_id || !catalogDays.has(day.day_plan_id))) throw new HttpError(400, 'A selected catalog day plan is unavailable.')
+    if (source === 'custom' && (!day.name || !day.description || !day.location)) throw new HttpError(400, 'Custom days need a title, description and location.')
+    if (source === 'custom' && day.image_path && !day.image_path.startsWith(`${ctx.companyId}/`)) throw new HttpError(400, 'Custom day images must belong to this company.')
+  }
   for (const stay of value.stays) {
-    if (map.get(stay.hotel_id)?.type !== 'hotel') throw new HttpError(400, 'A selected hotel is unavailable.')
+    const source = stay.source || 'company'
+    if (source === 'company' && (!stay.hotel_id || map.get(stay.hotel_id)?.type !== 'hotel')) throw new HttpError(400, 'A selected hotel is unavailable.')
+    if (source === 'catalog' && (!stay.hotel_id || !catalogHotels.has(stay.hotel_id) || overrides.get(stay.hotel_id)?.hidden)) throw new HttpError(400, 'A selected catalog hotel is unavailable.')
+    if (source === 'custom' && (!stay.name || !stay.location)) throw new HttpError(400, 'Custom stays need a property name and location.')
+    if (source === 'custom' && stay.image_path && !stay.image_path.startsWith(`${ctx.companyId}/`)) throw new HttpError(400, 'Custom stay images must belong to this company.')
     if (stay.room_type_id && map.get(stay.room_type_id)?.type !== 'room_type') throw new HttpError(400, 'A selected room type is unavailable.')
   }
-  const itinerary = value.itinerary.map((x, i) => ({ day: i + 1, day_plan_id: x.day_plan_id, name: map.get(x.day_plan_id)!.title, description: map.get(x.day_plan_id)!.data?.description || '', image_path: map.get(x.day_plan_id)!.data?.image_path || null }))
+  const itinerary = value.itinerary.map((x, i) => {
+    const source = x.source || 'company'; const company = x.day_plan_id ? map.get(x.day_plan_id) : null; const catalog = x.day_plan_id ? catalogDays.get(x.day_plan_id) : null
+    return { day: i + 1, source, day_plan_id: x.day_plan_id || null, name: source === 'custom' ? x.name : source === 'catalog' ? catalog?.title : company?.title, description: source === 'custom' ? x.description : source === 'catalog' ? catalog?.description : company?.data?.description || '', location_id: x.location_id || catalog?.location_id || null, location: x.location || (catalog?.catalog_locations as any)?.name || company?.data?.location || '', image_path: source === 'custom' ? x.image_path || null : source === 'catalog' ? catalog?.image_path || null : company?.data?.image_path || null }
+  })
   if (value.transport.cab_id && map.get(value.transport.cab_id)?.type !== 'cab') throw new HttpError(400, 'The selected cab is unavailable.')
-  const stays = value.stays.map((x, i) => ({ night: i + 1, hotel_id: x.hotel_id, name: map.get(x.hotel_id)!.title, property_type: map.get(x.hotel_id)!.data?.property_type || 'Hotel', room_type_id: x.room_type_id || null, room_type: x.room_type_id ? map.get(x.room_type_id)?.title : null, image_path: map.get(x.hotel_id)!.data?.image_path || null }))
+  const stays = value.stays.map((x, i) => {
+    const source = x.source || 'company'; const company = x.hotel_id ? map.get(x.hotel_id) : null; const catalog = x.hotel_id ? catalogHotels.get(x.hotel_id) : null; const override = x.hotel_id ? overrides.get(x.hotel_id) : null
+    return { night: i + 1, source, hotel_id: x.hotel_id || null, name: source === 'custom' ? x.name : source === 'catalog' ? catalog?.canonical_name : company?.title, location_id: x.location_id || catalog?.location_id || null, location: x.location || (catalog?.catalog_locations as any)?.name || company?.data?.location || '', property_type: source === 'custom' ? x.property_type || 'Hotel' : source === 'catalog' ? catalog?.property_type : company?.data?.property_type || 'Hotel', room_type_id: x.room_type_id || null, room_type: x.room_type_id ? map.get(x.room_type_id)?.title : x.room_type || null, image_path: source === 'custom' ? x.image_path || null : source === 'catalog' ? override?.image_path || null : company?.data?.image_path || null }
+  })
   const cab = value.transport.cab_id ? map.get(value.transport.cab_id) : null
   const transport = { ...value.transport, vehicle_type: value.transport.vehicle_type || cab?.data?.type || cab?.title || '', vehicle_number: value.transport.vehicle_number || cab?.data?.registration || '', driver_name: value.transport.driver_name || cab?.data?.driver_name || '', driver_phone: value.transport.driver_phone || cab?.data?.driver_phone || '' }
   return { ctx, row: { ...value, company_id: ctx.companyId, itinerary, stays, transport, ...priceQuote(value.base_amount, value.child_amount, value.discount_amount, value.gst_percent) }, clientLinkStatus: clientLink.status }

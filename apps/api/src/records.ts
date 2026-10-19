@@ -33,16 +33,21 @@ export async function registerRecords(app: FastifyInstance): Promise<void> {
     const { slug } = params(request.params); const mod = modules[slug]
     if (!mod) throw new HttpError(404, 'Module not found.')
     const ctx = requirePermission(request, `${mod.type}.read`)
-    let builder = ctx.db.from('records').select('id,title,data').eq('company_id', ctx.companyId).eq('type', mod.type)
+    let builder = ctx.db.from('records').select('id,title,status,data').eq('company_id', ctx.companyId).eq('type', mod.type)
     if (mod.type !== 'query') builder = builder.eq('status', 'Active')
-    const { data, error } = await builder.order('title').limit(1000)
+    const { q = '' } = query(request.query)
+    if (q.trim()) builder = builder.ilike('title', `%${q.trim().replace(/[%_,()]/g, '')}%`)
+    const { data, error } = await builder.order('title').limit(50)
     if (error) throw new HttpError(400, error.message)
     return mod.type === 'query' ? (data || []).map(row => ({ ...row, title: row.data?.client_id ? row.title : `${row.title} · Needs client link`, client_link_status: row.data?.client_id ? 'linked' : 'needs_review' })) : data
   })
 
   app.get('/assignees', async request => {
     const ctx = requirePermission(request, 'query.read')
-    return unwrap(await admin.from('memberships').select('user_id,name').eq('company_id', ctx.companyId).eq('active', true).order('name'))
+    const { q = '' } = query(request.query)
+    let builder = admin.from('memberships').select('user_id,name').eq('company_id', ctx.companyId).eq('active', true).order('name').limit(50)
+    if (q.trim()) builder = builder.ilike('name', `%${q.trim().replace(/[%_,()]/g, '')}%`)
+    return unwrap(await builder)
   })
 
   app.get('/records/:slug/export.csv', async (request, reply) => {

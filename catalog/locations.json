@@ -1,0 +1,219 @@
+[
+  {
+    "catalog_key": "srinagar",
+    "name": "Srinagar",
+    "region": "Kashmir",
+    "aliases": [
+      "Srinagar City"
+    ],
+    "locality": "Srinagar"
+  },
+  {
+    "catalog_key": "pahalgam",
+    "name": "Pahalgam",
+    "region": "Kashmir",
+    "aliases": [
+      "Pahalgham"
+    ],
+    "locality": "Pahalgam"
+  },
+  {
+    "catalog_key": "gulmarg",
+    "name": "Gulmarg",
+    "region": "Kashmir",
+    "aliases": [],
+    "locality": "Gulmarg"
+  },
+  {
+    "catalog_key": "tangmarg",
+    "name": "Tangmarg",
+    "region": "Kashmir",
+    "aliases": [],
+    "locality": "Tangmarg"
+  },
+  {
+    "catalog_key": "sonamarg",
+    "name": "Sonamarg",
+    "region": "Kashmir",
+    "aliases": [
+      "Sonmarg"
+    ],
+    "locality": "Sonamarg"
+  },
+  {
+    "catalog_key": "ganderbal",
+    "name": "Ganderbal",
+    "region": "Kashmir",
+    "aliases": [],
+    "locality": "Ganderbal"
+  },
+  {
+    "catalog_key": "manasbal",
+    "name": "Manasbal",
+    "region": "Kashmir",
+    "aliases": [],
+    "locality": "Manasbal"
+  },
+  {
+    "catalog_key": "gurez",
+    "name": "Gurez",
+    "region": "Kashmir",
+    "aliases": [],
+    "locality": "Gurez"
+  },
+  {
+    "catalog_key": "yusmarg",
+    "name": "Yusmarg",
+    "region": "Kashmir",
+    "aliases": [
+      "Yousmarg"
+    ],
+    "locality": "Yusmarg"
+  },
+  {
+    "catalog_key": "doodhpathri",
+    "name": "Doodhpathri",
+    "region": "Kashmir",
+    "aliases": [
+      "Doodpathri"
+    ],
+    "locality": "Doodhpathri"
+  },
+  {
+    "catalog_key": "lolab",
+    "name": "Lolab Valley",
+    "region": "Kashmir",
+    "aliases": [
+      "Lolab"
+    ],
+    "locality": "Lolab Valley"
+  },
+  {
+    "catalog_key": "bangus",
+    "name": "Bangus Valley",
+    "region": "Kashmir",
+    "aliases": [
+      "Bungus"
+    ],
+    "locality": "Bangus Valley"
+  },
+  {
+    "catalog_key": "kupwara",
+    "name": "Kupwara",
+    "region": "Kashmir",
+    "aliases": [],
+    "locality": "Kupwara"
+  },
+  {
+    "catalog_key": "kokernag",
+    "name": "Kokernag",
+    "region": "Kashmir",
+    "aliases": [],
+    "locality": "Kokernag"
+  },
+  {
+    "catalog_key": "verinag",
+    "name": "Verinag",
+    "region": "Kashmir",
+    "aliases": [],
+    "locality": "Verinag"
+  },
+  {
+    "catalog_key": "daksum",
+    "name": "Daksum",
+    "region": "Kashmir",
+    "aliases": [
+      "Daksun"
+    ],
+    "locality": "Daksum"
+  },
+  {
+    "catalog_key": "aharbal",
+    "name": "Aharbal",
+    "region": "Kashmir",
+    "aliases": [],
+    "locality": "Aharbal"
+  },
+  {
+    "catalog_key": "leh",
+    "name": "Leh",
+    "region": "Ladakh",
+    "aliases": [
+      "Leh City"
+    ],
+    "locality": "Leh"
+  },
+  {
+    "catalog_key": "nubra",
+    "name": "Nubra Valley",
+    "region": "Ladakh",
+    "aliases": [
+      "Nubra",
+      "Diskit",
+      "Hunder"
+    ],
+    "locality": "Nubra Valley"
+  },
+  {
+    "catalog_key": "turtuk",
+    "name": "Turtuk",
+    "region": "Ladakh",
+    "aliases": [],
+    "locality": "Turtuk"
+  },
+  {
+    "catalog_key": "pangong",
+    "name": "Pangong",
+    "region": "Ladakh",
+    "aliases": [
+      "Pangong Tso"
+    ],
+    "locality": "Pangong"
+  },
+  {
+    "catalog_key": "kargil",
+    "name": "Kargil",
+    "region": "Ladakh",
+    "aliases": [],
+    "locality": "Kargil"
+  },
+  {
+    "catalog_key": "drass",
+    "name": "Drass",
+    "region": "Ladakh",
+    "aliases": [
+      "Dras"
+    ],
+    "locality": "Drass"
+  },
+  {
+    "catalog_key": "hanle",
+    "name": "Hanle",
+    "region": "Ladakh",
+    "aliases": [],
+    "locality": "Hanle"
+  },
+  {
+    "catalog_key": "tso-moriri",
+    "name": "Tso Moriri",
+    "region": "Ladakh",
+    "aliases": [
+      "Tsomoriri"
+    ],
+    "locality": "Tso Moriri"
+  },
+  {
+    "catalog_key": "lamayuru",
+    "name": "Lamayuru",
+    "region": "Ladakh",
+    "aliases": [],
+    "locality": "Lamayuru"
+  },
+  {
+    "catalog_key": "zanskar",
+    "name": "Zanskar",
+    "region": "Ladakh",
+    "aliases": [],
+    "locality": "Zanskar"
+  }
+]

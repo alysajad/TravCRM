@@ -1,0 +1,3592 @@
+[
+  {
+    "catalog_key": "kashmir-3-classic-1",
+    "title": "Srinagar and Gulmarg express",
+    "region": "Kashmir",
+    "duration": 3,
+    "theme": "classic",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Gulmarg → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-3-classic-1-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-3-classic-1-day-2",
+        "title": "Srinagar to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Srinagar",
+        "location_id": "gulmarg",
+        "route_destination": "Srinagar → Gulmarg",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-3-classic-1-day-3",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Gulmarg → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-3-honeymoon-2",
+    "title": "Dal Lake honeymoon escape",
+    "region": "Kashmir",
+    "duration": 3,
+    "theme": "honeymoon",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Pahalgam → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-3-honeymoon-2-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-3-honeymoon-2-day-2",
+        "title": "Srinagar to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Srinagar → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-3-honeymoon-2-day-3",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Pahalgam → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-3-family-3",
+    "title": "Easy Kashmir family break",
+    "region": "Kashmir",
+    "duration": 3,
+    "theme": "family",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Gulmarg → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-3-family-3-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-3-family-3-day-2",
+        "title": "Srinagar to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Srinagar",
+        "location_id": "gulmarg",
+        "route_destination": "Srinagar → Gulmarg",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-3-family-3-day-3",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Gulmarg → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-4-classic-1",
+    "title": "Kashmir highlights circuit",
+    "region": "Kashmir",
+    "duration": 4,
+    "theme": "classic",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Gulmarg → Pahalgam → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-4-classic-1-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-4-classic-1-day-2",
+        "title": "Srinagar to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Srinagar",
+        "location_id": "gulmarg",
+        "route_destination": "Srinagar → Gulmarg",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-4-classic-1-day-3",
+        "title": "Gulmarg to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Gulmarg → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-4-classic-1-day-4",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Pahalgam → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-4-honeymoon-2",
+    "title": "Pahalgam riverside honeymoon",
+    "region": "Kashmir",
+    "duration": 4,
+    "theme": "honeymoon",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Pahalgam → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-4-honeymoon-2-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-4-honeymoon-2-day-2",
+        "title": "Srinagar to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Srinagar → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-4-honeymoon-2-day-3",
+        "title": "Pahalgam at an easy pace",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Pahalgam → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-4-honeymoon-2-day-4",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Pahalgam → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-4-family-3",
+    "title": "Gardens and gondola family trip",
+    "region": "Kashmir",
+    "duration": 4,
+    "theme": "family",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Gulmarg → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-4-family-3-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-4-family-3-day-2",
+        "title": "Srinagar to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Srinagar",
+        "location_id": "gulmarg",
+        "route_destination": "Srinagar → Gulmarg",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-4-family-3-day-3",
+        "title": "Gulmarg to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Gulmarg → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-4-family-3-day-4",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-5-classic-1",
+    "title": "Srinagar, Gulmarg and Pahalgam",
+    "region": "Kashmir",
+    "duration": 5,
+    "theme": "classic",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Gulmarg → Pahalgam → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-5-classic-1-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-5-classic-1-day-2",
+        "title": "Srinagar to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Srinagar",
+        "location_id": "gulmarg",
+        "route_destination": "Srinagar → Gulmarg",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-5-classic-1-day-3",
+        "title": "Gulmarg to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Gulmarg → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-5-classic-1-day-4",
+        "title": "Pahalgam at an easy pace",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Pahalgam → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-5-classic-1-day-5",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Pahalgam → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-5-honeymoon-2",
+    "title": "Meadows and pine honeymoon",
+    "region": "Kashmir",
+    "duration": 5,
+    "theme": "honeymoon",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Pahalgam → Gulmarg → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-5-honeymoon-2-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-5-honeymoon-2-day-2",
+        "title": "Srinagar to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Srinagar → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-5-honeymoon-2-day-3",
+        "title": "Pahalgam at an easy pace",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Pahalgam → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-5-honeymoon-2-day-4",
+        "title": "Pahalgam to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Pahalgam → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-5-honeymoon-2-day-5",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Gulmarg → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-5-family-3",
+    "title": "Kashmir family sampler",
+    "region": "Kashmir",
+    "duration": 5,
+    "theme": "family",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Gulmarg → Srinagar → Pahalgam → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-5-family-3-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-5-family-3-day-2",
+        "title": "Srinagar to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Srinagar",
+        "location_id": "gulmarg",
+        "route_destination": "Srinagar → Gulmarg",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-5-family-3-day-3",
+        "title": "Gulmarg to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Gulmarg → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-5-family-3-day-4",
+        "title": "Srinagar to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Srinagar → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-5-family-3-day-5",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Pahalgam → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-5-winter-4",
+    "title": "Snowy Gulmarg winter week",
+    "region": "Kashmir",
+    "duration": 5,
+    "theme": "winter",
+    "season_tags": [
+      "winter"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Gulmarg → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-5-winter-4-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-5-winter-4-day-2",
+        "title": "Srinagar to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Srinagar → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-5-winter-4-day-3",
+        "title": "Gulmarg at an easy pace",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Gulmarg → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-5-winter-4-day-4",
+        "title": "Gulmarg to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Gulmarg → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-5-winter-4-day-5",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-6-classic-1",
+    "title": "Grand Kashmir trio",
+    "region": "Kashmir",
+    "duration": 6,
+    "theme": "classic",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Sonamarg → Gulmarg → Pahalgam → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-6-classic-1-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-6-classic-1-day-2",
+        "title": "Srinagar to Sonamarg",
+        "description": "• Drive beside the Sindh River towards Sonamarg\n• Allow time for a meadow walk and seasonal viewpoints\n• Overnight in Srinagar",
+        "location_id": "sonamarg",
+        "route_destination": "Srinagar → Sonamarg",
+        "overnight_location_id": "srinagar",
+        "warning": "Access is seasonal and remains subject to weather, road and local authority advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-6-classic-1-day-3",
+        "title": "Sonamarg to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Srinagar",
+        "location_id": "gulmarg",
+        "route_destination": "Sonamarg → Gulmarg",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-6-classic-1-day-4",
+        "title": "Gulmarg to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Gulmarg → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-6-classic-1-day-5",
+        "title": "Pahalgam at an easy pace",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Pahalgam → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-6-classic-1-day-6",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Pahalgam → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-6-honeymoon-2",
+    "title": "Two-valley honeymoon",
+    "region": "Kashmir",
+    "duration": 6,
+    "theme": "honeymoon",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Pahalgam → Gulmarg → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-6-honeymoon-2-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-6-honeymoon-2-day-2",
+        "title": "Srinagar to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Srinagar → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-6-honeymoon-2-day-3",
+        "title": "Pahalgam at an easy pace",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Pahalgam → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-6-honeymoon-2-day-4",
+        "title": "Pahalgam to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Pahalgam → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-6-honeymoon-2-day-5",
+        "title": "Gulmarg to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Gulmarg → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-6-honeymoon-2-day-6",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-6-family-3",
+    "title": "Relaxed Kashmir for families",
+    "region": "Kashmir",
+    "duration": 6,
+    "theme": "family",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Gulmarg → Srinagar → Pahalgam → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-6-family-3-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-6-family-3-day-2",
+        "title": "Srinagar to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Srinagar",
+        "location_id": "gulmarg",
+        "route_destination": "Srinagar → Gulmarg",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-6-family-3-day-3",
+        "title": "Gulmarg to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Gulmarg → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-6-family-3-day-4",
+        "title": "Srinagar to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Srinagar → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-6-family-3-day-5",
+        "title": "Pahalgam to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Pahalgam → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-6-family-3-day-6",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-6-winter-4",
+    "title": "Winter valleys and old Srinagar",
+    "region": "Kashmir",
+    "duration": 6,
+    "theme": "winter",
+    "season_tags": [
+      "winter"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Gulmarg → Srinagar → Pahalgam → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-6-winter-4-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-6-winter-4-day-2",
+        "title": "Srinagar to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Srinagar → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-6-winter-4-day-3",
+        "title": "Gulmarg at an easy pace",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Gulmarg → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-6-winter-4-day-4",
+        "title": "Gulmarg to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Gulmarg → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-6-winter-4-day-5",
+        "title": "Srinagar to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Srinagar → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-6-winter-4-day-6",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Pahalgam → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-7-classic-1",
+    "title": "Complete Kashmir classics",
+    "region": "Kashmir",
+    "duration": 7,
+    "theme": "classic",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Sonamarg → Gulmarg → Pahalgam → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-7-classic-1-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-7-classic-1-day-2",
+        "title": "Srinagar to Sonamarg",
+        "description": "• Drive beside the Sindh River towards Sonamarg\n• Allow time for a meadow walk and seasonal viewpoints\n• Overnight in Srinagar",
+        "location_id": "sonamarg",
+        "route_destination": "Srinagar → Sonamarg",
+        "overnight_location_id": "srinagar",
+        "warning": "Access is seasonal and remains subject to weather, road and local authority advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-7-classic-1-day-3",
+        "title": "Sonamarg to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Sonamarg → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-7-classic-1-day-4",
+        "title": "Gulmarg to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Gulmarg → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-7-classic-1-day-5",
+        "title": "Pahalgam at an easy pace",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Pahalgam → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-7-classic-1-day-6",
+        "title": "Pahalgam to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Pahalgam → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "kashmir-7-classic-1-day-7",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-7-honeymoon-2",
+    "title": "Lakes, pines and private moments",
+    "region": "Kashmir",
+    "duration": 7,
+    "theme": "honeymoon",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Pahalgam → Gulmarg → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-7-honeymoon-2-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-7-honeymoon-2-day-2",
+        "title": "Srinagar to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Srinagar → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-7-honeymoon-2-day-3",
+        "title": "Pahalgam at an easy pace",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Pahalgam → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-7-honeymoon-2-day-4",
+        "title": "Pahalgam to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Pahalgam → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-7-honeymoon-2-day-5",
+        "title": "Gulmarg at an easy pace",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Gulmarg → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-7-honeymoon-2-day-6",
+        "title": "Gulmarg to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Gulmarg → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "kashmir-7-honeymoon-2-day-7",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-7-family-3",
+    "title": "Seven-day family Kashmir",
+    "region": "Kashmir",
+    "duration": 7,
+    "theme": "family",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Gulmarg → Srinagar → Sonamarg → Pahalgam → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-7-family-3-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-7-family-3-day-2",
+        "title": "Srinagar to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Srinagar",
+        "location_id": "gulmarg",
+        "route_destination": "Srinagar → Gulmarg",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-7-family-3-day-3",
+        "title": "Gulmarg to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Gulmarg → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-7-family-3-day-4",
+        "title": "Srinagar to Sonamarg",
+        "description": "• Drive beside the Sindh River towards Sonamarg\n• Allow time for a meadow walk and seasonal viewpoints\n• Overnight in Srinagar",
+        "location_id": "sonamarg",
+        "route_destination": "Srinagar → Sonamarg",
+        "overnight_location_id": "srinagar",
+        "warning": "Access is seasonal and remains subject to weather, road and local authority advice."
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-7-family-3-day-5",
+        "title": "Sonamarg to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Sonamarg → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-7-family-3-day-6",
+        "title": "Pahalgam to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Pahalgam → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "kashmir-7-family-3-day-7",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-7-winter-4",
+    "title": "Seven-day snow and valley journey",
+    "region": "Kashmir",
+    "duration": 7,
+    "theme": "winter",
+    "season_tags": [
+      "winter"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Gulmarg → Srinagar → Pahalgam → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-7-winter-4-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-7-winter-4-day-2",
+        "title": "Srinagar to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Srinagar → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-7-winter-4-day-3",
+        "title": "Gulmarg at an easy pace",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Gulmarg → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-7-winter-4-day-4",
+        "title": "Gulmarg to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Gulmarg → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-7-winter-4-day-5",
+        "title": "Srinagar to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Srinagar → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-7-winter-4-day-6",
+        "title": "Pahalgam to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Pahalgam → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "kashmir-7-winter-4-day-7",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-8-classic-1",
+    "title": "Kashmir grand circle",
+    "region": "Kashmir",
+    "duration": 8,
+    "theme": "classic",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Sonamarg → Gulmarg → Pahalgam → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-8-classic-1-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-8-classic-1-day-2",
+        "title": "Srinagar to Sonamarg",
+        "description": "• Drive beside the Sindh River towards Sonamarg\n• Allow time for a meadow walk and seasonal viewpoints\n• Overnight in Srinagar",
+        "location_id": "sonamarg",
+        "route_destination": "Srinagar → Sonamarg",
+        "overnight_location_id": "srinagar",
+        "warning": "Access is seasonal and remains subject to weather, road and local authority advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-8-classic-1-day-3",
+        "title": "Sonamarg to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Sonamarg → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-8-classic-1-day-4",
+        "title": "Gulmarg at an easy pace",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Gulmarg → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-8-classic-1-day-5",
+        "title": "Gulmarg to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Gulmarg → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-8-classic-1-day-6",
+        "title": "Pahalgam at an easy pace",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Pahalgam → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "kashmir-8-classic-1-day-7",
+        "title": "Pahalgam to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Pahalgam → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "kashmir-8-classic-1-day-8",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-8-honeymoon-2",
+    "title": "Slow Kashmir honeymoon",
+    "region": "Kashmir",
+    "duration": 8,
+    "theme": "honeymoon",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Pahalgam → Gulmarg → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-8-honeymoon-2-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-8-honeymoon-2-day-2",
+        "title": "Srinagar at an easy pace",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-8-honeymoon-2-day-3",
+        "title": "Srinagar to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Srinagar → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-8-honeymoon-2-day-4",
+        "title": "Pahalgam at an easy pace",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Pahalgam → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-8-honeymoon-2-day-5",
+        "title": "Pahalgam to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Pahalgam → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-8-honeymoon-2-day-6",
+        "title": "Gulmarg at an easy pace",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Gulmarg → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "kashmir-8-honeymoon-2-day-7",
+        "title": "Gulmarg to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Gulmarg → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "kashmir-8-honeymoon-2-day-8",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-8-family-3",
+    "title": "Kashmir discovery for families",
+    "region": "Kashmir",
+    "duration": 8,
+    "theme": "family",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Gulmarg → Srinagar → Sonamarg → Pahalgam → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-8-family-3-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-8-family-3-day-2",
+        "title": "Srinagar to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Srinagar",
+        "location_id": "gulmarg",
+        "route_destination": "Srinagar → Gulmarg",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-8-family-3-day-3",
+        "title": "Gulmarg to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Gulmarg → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-8-family-3-day-4",
+        "title": "Srinagar to Sonamarg",
+        "description": "• Drive beside the Sindh River towards Sonamarg\n• Allow time for a meadow walk and seasonal viewpoints\n• Overnight in Srinagar",
+        "location_id": "sonamarg",
+        "route_destination": "Srinagar → Sonamarg",
+        "overnight_location_id": "srinagar",
+        "warning": "Access is seasonal and remains subject to weather, road and local authority advice."
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-8-family-3-day-5",
+        "title": "Sonamarg to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Sonamarg → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-8-family-3-day-6",
+        "title": "Pahalgam at an easy pace",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Pahalgam → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "kashmir-8-family-3-day-7",
+        "title": "Pahalgam to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Pahalgam → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "kashmir-8-family-3-day-8",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-8-winter-4",
+    "title": "Aharbal and meadow backroads",
+    "region": "Kashmir",
+    "duration": 8,
+    "theme": "offbeat",
+    "season_tags": [
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Yusmarg → Aharbal → Pahalgam → Doodhpathri → Gulmarg → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-8-winter-4-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-8-winter-4-day-2",
+        "title": "Srinagar to Yusmarg",
+        "description": "• Explore the quiet Yusmarg meadow\n• Take an easy forest or Doodhganga walk\n• Overnight in Srinagar",
+        "location_id": "yusmarg",
+        "route_destination": "Srinagar → Yusmarg",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-8-winter-4-day-3",
+        "title": "Yusmarg to Aharbal",
+        "description": "• Visit Aharbal waterfall and the Veshu gorge\n• Use marked viewpoints and allow for road conditions\n• Overnight in Srinagar",
+        "location_id": "aharbal",
+        "route_destination": "Yusmarg → Aharbal",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-8-winter-4-day-4",
+        "title": "Aharbal to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Aharbal → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-8-winter-4-day-5",
+        "title": "Pahalgam to Doodhpathri",
+        "description": "• Cross village roads to the Doodhpathri meadows\n• Walk beside the Shaliganga and return before dusk\n• Overnight in Srinagar",
+        "location_id": "doodhpathri",
+        "route_destination": "Pahalgam → Doodhpathri",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-8-winter-4-day-6",
+        "title": "Doodhpathri to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Doodhpathri → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "kashmir-8-winter-4-day-7",
+        "title": "Gulmarg to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Gulmarg → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "kashmir-8-winter-4-day-8",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-9-classic-1",
+    "title": "Nine-day Kashmir panorama",
+    "region": "Kashmir",
+    "duration": 9,
+    "theme": "classic",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Sonamarg → Gulmarg → Pahalgam → Doodhpathri → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-9-classic-1-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-9-classic-1-day-2",
+        "title": "Srinagar to Sonamarg",
+        "description": "• Drive beside the Sindh River towards Sonamarg\n• Allow time for a meadow walk and seasonal viewpoints\n• Overnight in Srinagar",
+        "location_id": "sonamarg",
+        "route_destination": "Srinagar → Sonamarg",
+        "overnight_location_id": "srinagar",
+        "warning": "Access is seasonal and remains subject to weather, road and local authority advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-9-classic-1-day-3",
+        "title": "Sonamarg to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Sonamarg → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-9-classic-1-day-4",
+        "title": "Gulmarg at an easy pace",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Gulmarg → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-9-classic-1-day-5",
+        "title": "Gulmarg to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Gulmarg → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-9-classic-1-day-6",
+        "title": "Pahalgam at an easy pace",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Pahalgam → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "kashmir-9-classic-1-day-7",
+        "title": "Pahalgam to Doodhpathri",
+        "description": "• Cross village roads to the Doodhpathri meadows\n• Walk beside the Shaliganga and return before dusk\n• Overnight in Srinagar",
+        "location_id": "doodhpathri",
+        "route_destination": "Pahalgam → Doodhpathri",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "kashmir-9-classic-1-day-8",
+        "title": "Doodhpathri to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Doodhpathri → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 9,
+        "catalog_key": "kashmir-9-classic-1-day-9",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-9-honeymoon-2",
+    "title": "Nine-day slow Kashmir honeymoon",
+    "region": "Kashmir",
+    "duration": 9,
+    "theme": "honeymoon",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Pahalgam → Gulmarg → Doodhpathri → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-9-honeymoon-2-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-9-honeymoon-2-day-2",
+        "title": "Srinagar at an easy pace",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-9-honeymoon-2-day-3",
+        "title": "Srinagar to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Srinagar → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-9-honeymoon-2-day-4",
+        "title": "Pahalgam at an easy pace",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Pahalgam → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-9-honeymoon-2-day-5",
+        "title": "Pahalgam to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Pahalgam → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-9-honeymoon-2-day-6",
+        "title": "Gulmarg at an easy pace",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Gulmarg → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "kashmir-9-honeymoon-2-day-7",
+        "title": "Gulmarg to Doodhpathri",
+        "description": "• Cross village roads to the Doodhpathri meadows\n• Walk beside the Shaliganga and return before dusk\n• Overnight in Srinagar",
+        "location_id": "doodhpathri",
+        "route_destination": "Gulmarg → Doodhpathri",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "kashmir-9-honeymoon-2-day-8",
+        "title": "Doodhpathri to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Doodhpathri → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 9,
+        "catalog_key": "kashmir-9-honeymoon-2-day-9",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-9-family-3",
+    "title": "Nine-day Kashmir family discovery",
+    "region": "Kashmir",
+    "duration": 9,
+    "theme": "family",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Gulmarg → Srinagar → Sonamarg → Pahalgam → Yusmarg → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-9-family-3-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-9-family-3-day-2",
+        "title": "Srinagar to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Srinagar",
+        "location_id": "gulmarg",
+        "route_destination": "Srinagar → Gulmarg",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-9-family-3-day-3",
+        "title": "Gulmarg to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Gulmarg → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-9-family-3-day-4",
+        "title": "Srinagar to Sonamarg",
+        "description": "• Drive beside the Sindh River towards Sonamarg\n• Allow time for a meadow walk and seasonal viewpoints\n• Overnight in Srinagar",
+        "location_id": "sonamarg",
+        "route_destination": "Srinagar → Sonamarg",
+        "overnight_location_id": "srinagar",
+        "warning": "Access is seasonal and remains subject to weather, road and local authority advice."
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-9-family-3-day-5",
+        "title": "Sonamarg to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Sonamarg → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-9-family-3-day-6",
+        "title": "Pahalgam at an easy pace",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Pahalgam → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "kashmir-9-family-3-day-7",
+        "title": "Pahalgam to Yusmarg",
+        "description": "• Explore the quiet Yusmarg meadow\n• Take an easy forest or Doodhganga walk\n• Overnight in Srinagar",
+        "location_id": "yusmarg",
+        "route_destination": "Pahalgam → Yusmarg",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "kashmir-9-family-3-day-8",
+        "title": "Yusmarg to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Yusmarg → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 9,
+        "catalog_key": "kashmir-9-family-3-day-9",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-10-classic-1",
+    "title": "Ten-day Kashmir in full",
+    "region": "Kashmir",
+    "duration": 10,
+    "theme": "classic",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Sonamarg → Gulmarg → Pahalgam → Doodhpathri → Yusmarg → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-10-classic-1-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-10-classic-1-day-2",
+        "title": "Srinagar to Sonamarg",
+        "description": "• Drive beside the Sindh River towards Sonamarg\n• Allow time for a meadow walk and seasonal viewpoints\n• Overnight in Srinagar",
+        "location_id": "sonamarg",
+        "route_destination": "Srinagar → Sonamarg",
+        "overnight_location_id": "srinagar",
+        "warning": "Access is seasonal and remains subject to weather, road and local authority advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-10-classic-1-day-3",
+        "title": "Sonamarg to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Sonamarg → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-10-classic-1-day-4",
+        "title": "Gulmarg at an easy pace",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Gulmarg → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-10-classic-1-day-5",
+        "title": "Gulmarg to Pahalgam",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Gulmarg → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-10-classic-1-day-6",
+        "title": "Pahalgam at an easy pace",
+        "description": "• Follow the Lidder valley into Pahalgam\n• Choose a local valley excursion with the driver\n• Overnight in Pahalgam",
+        "location_id": "pahalgam",
+        "route_destination": "Pahalgam → Pahalgam",
+        "overnight_location_id": "pahalgam",
+        "warning": ""
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "kashmir-10-classic-1-day-7",
+        "title": "Pahalgam to Doodhpathri",
+        "description": "• Cross village roads to the Doodhpathri meadows\n• Walk beside the Shaliganga and return before dusk\n• Overnight in Srinagar",
+        "location_id": "doodhpathri",
+        "route_destination": "Pahalgam → Doodhpathri",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "kashmir-10-classic-1-day-8",
+        "title": "Doodhpathri to Yusmarg",
+        "description": "• Explore the quiet Yusmarg meadow\n• Take an easy forest or Doodhganga walk\n• Overnight in Srinagar",
+        "location_id": "yusmarg",
+        "route_destination": "Doodhpathri → Yusmarg",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 9,
+        "catalog_key": "kashmir-10-classic-1-day-9",
+        "title": "Yusmarg to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Yusmarg → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 10,
+        "catalog_key": "kashmir-10-classic-1-day-10",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "kashmir-10-honeymoon-2",
+    "title": "Kashmir hidden valleys expedition",
+    "region": "Kashmir",
+    "duration": 10,
+    "theme": "offbeat",
+    "season_tags": [
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar",
+    "route_label": "Srinagar → Gurez → Manasbal → Lolab Valley → Bangus Valley → Gulmarg → Aharbal → Srinagar",
+    "warnings": [
+      "Mountain roads, sightseeing and remote-valley access remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "kashmir-10-honeymoon-2-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "kashmir-10-honeymoon-2-day-2",
+        "title": "Srinagar to Gurez",
+        "description": "• Follow the Razdan Pass road when open\n• Explore Dawar and the Kishanganga riverside\n• Overnight in Gurez",
+        "location_id": "gurez",
+        "route_destination": "Srinagar → Gurez",
+        "overnight_location_id": "gurez",
+        "warning": "Access is seasonal and remains subject to weather, road and local authority advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "kashmir-10-honeymoon-2-day-3",
+        "title": "Gurez at an easy pace",
+        "description": "• Follow the Razdan Pass road when open\n• Explore Dawar and the Kishanganga riverside\n• Overnight in Gurez",
+        "location_id": "gurez",
+        "route_destination": "Gurez → Gurez",
+        "overnight_location_id": "gurez",
+        "warning": "Access is seasonal and remains subject to weather, road and local authority advice."
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "kashmir-10-honeymoon-2-day-4",
+        "title": "Gurez to Manasbal",
+        "description": "• Pause at Manasbal Lake and its lotus gardens\n• Continue through the north Kashmir countryside\n• Overnight in Srinagar",
+        "location_id": "manasbal",
+        "route_destination": "Gurez → Manasbal",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "kashmir-10-honeymoon-2-day-5",
+        "title": "Manasbal to Lolab Valley",
+        "description": "• Explore Lalpora and the wooded Lolab Valley\n• Keep local drives flexible for permits and road advice\n• Overnight in Lolab Valley",
+        "location_id": "lolab",
+        "route_destination": "Manasbal → Lolab Valley",
+        "overnight_location_id": "lolab",
+        "warning": ""
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "kashmir-10-honeymoon-2-day-6",
+        "title": "Lolab Valley to Bangus Valley",
+        "description": "• Make a weather-dependent excursion towards Bangus\n• Confirm local access before departure\n• Overnight in Kupwara",
+        "location_id": "bangus",
+        "route_destination": "Lolab Valley → Bangus Valley",
+        "overnight_location_id": "kupwara",
+        "warning": "Access is seasonal and remains subject to weather, road and local authority advice."
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "kashmir-10-honeymoon-2-day-7",
+        "title": "Bangus Valley to Gulmarg",
+        "description": "• Travel the pine-lined road into Gulmarg\n• Keep Gondola or meadow time flexible for weather\n• Overnight in Gulmarg",
+        "location_id": "gulmarg",
+        "route_destination": "Bangus Valley → Gulmarg",
+        "overnight_location_id": "gulmarg",
+        "warning": ""
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "kashmir-10-honeymoon-2-day-8",
+        "title": "Gulmarg to Aharbal",
+        "description": "• Visit Aharbal waterfall and the Veshu gorge\n• Use marked viewpoints and allow for road conditions\n• Overnight in Srinagar",
+        "location_id": "aharbal",
+        "route_destination": "Gulmarg → Aharbal",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 9,
+        "catalog_key": "kashmir-10-honeymoon-2-day-9",
+        "title": "Aharbal to Srinagar",
+        "description": "• Walk through a Mughal garden and the old city\n• Take a relaxed Shikara ride when conditions permit\n• Overnight in Srinagar",
+        "location_id": "srinagar",
+        "route_destination": "Aharbal → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 10,
+        "catalog_key": "kashmir-10-honeymoon-2-day-10",
+        "title": "Departure from Srinagar",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "srinagar",
+        "route_destination": "Srinagar → departure",
+        "overnight_location_id": null,
+        "warning": ""
+      }
+    ]
+  },
+  {
+    "catalog_key": "ladakh-6-classic-1",
+    "title": "Essential Ladakh with acclimatization",
+    "region": "Ladakh",
+    "duration": 6,
+    "theme": "classic",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Leh",
+    "route_label": "Leh → Nubra Valley → Pangong → Leh",
+    "warnings": [
+      "Acclimatization is essential; altitude symptoms must never be ignored.",
+      "High-pass roads and lake routes remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "ladakh-6-classic-1-day-1",
+        "title": "Arrive and settle in Leh",
+        "description": "• Meet the team on arrival in Leh\n• Transfer to the stay and complete check-in\n• Rest for acclimatization; avoid strenuous sightseeing",
+        "location_id": "leh",
+        "route_destination": "Arrival → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "ladakh-6-classic-1-day-2",
+        "title": "Leh at an easy pace",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Leh → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "ladakh-6-classic-1-day-3",
+        "title": "Leh to Nubra Valley",
+        "description": "• Cross to Nubra over the current open route\n• Explore Diskit and the Hunder landscape\n• Overnight in Nubra Valley",
+        "location_id": "nubra",
+        "route_destination": "Leh → Nubra Valley",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "ladakh-6-classic-1-day-4",
+        "title": "Nubra Valley to Pangong",
+        "description": "• Travel to Pangong over the advised seasonal route\n• Settle early and limit exertion beside the lake\n• Overnight in Pangong",
+        "location_id": "pangong",
+        "route_destination": "Nubra Valley → Pangong",
+        "overnight_location_id": "pangong",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "ladakh-6-classic-1-day-5",
+        "title": "Pangong to Leh",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Pangong → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "ladakh-6-classic-1-day-6",
+        "title": "Departure from Leh",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "leh",
+        "route_destination": "Leh → departure",
+        "overnight_location_id": null,
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      }
+    ]
+  },
+  {
+    "catalog_key": "ladakh-7-classic-1",
+    "title": "Leh, Nubra and Pangong circuit",
+    "region": "Ladakh",
+    "duration": 7,
+    "theme": "classic",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Leh",
+    "route_label": "Leh → Nubra Valley → Turtuk → Pangong → Leh",
+    "warnings": [
+      "Acclimatization is essential; altitude symptoms must never be ignored.",
+      "High-pass roads and lake routes remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "ladakh-7-classic-1-day-1",
+        "title": "Arrive and settle in Leh",
+        "description": "• Meet the team on arrival in Leh\n• Transfer to the stay and complete check-in\n• Rest for acclimatization; avoid strenuous sightseeing",
+        "location_id": "leh",
+        "route_destination": "Arrival → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "ladakh-7-classic-1-day-2",
+        "title": "Leh at an easy pace",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Leh → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "ladakh-7-classic-1-day-3",
+        "title": "Leh to Nubra Valley",
+        "description": "• Cross to Nubra over the current open route\n• Explore Diskit and the Hunder landscape\n• Overnight in Nubra Valley",
+        "location_id": "nubra",
+        "route_destination": "Leh → Nubra Valley",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "ladakh-7-classic-1-day-4",
+        "title": "Nubra Valley to Turtuk",
+        "description": "• Follow the Shyok valley road to Turtuk\n• Walk through the village with respect for local homes\n• Overnight in Nubra Valley",
+        "location_id": "turtuk",
+        "route_destination": "Nubra Valley → Turtuk",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "ladakh-7-classic-1-day-5",
+        "title": "Turtuk to Pangong",
+        "description": "• Travel to Pangong over the advised seasonal route\n• Settle early and limit exertion beside the lake\n• Overnight in Pangong",
+        "location_id": "pangong",
+        "route_destination": "Turtuk → Pangong",
+        "overnight_location_id": "pangong",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "ladakh-7-classic-1-day-6",
+        "title": "Pangong to Leh",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Pangong → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "ladakh-7-classic-1-day-7",
+        "title": "Departure from Leh",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "leh",
+        "route_destination": "Leh → departure",
+        "overnight_location_id": null,
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      }
+    ]
+  },
+  {
+    "catalog_key": "ladakh-7-offbeat-2",
+    "title": "Sham Valley and Nubra backroads",
+    "region": "Ladakh",
+    "duration": 7,
+    "theme": "offbeat",
+    "season_tags": [
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Leh",
+    "route_label": "Leh → Lamayuru → Nubra Valley → Turtuk → Leh",
+    "warnings": [
+      "Acclimatization is essential; altitude symptoms must never be ignored.",
+      "High-pass roads and lake routes remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "ladakh-7-offbeat-2-day-1",
+        "title": "Arrive and settle in Leh",
+        "description": "• Meet the team on arrival in Leh\n• Transfer to the stay and complete check-in\n• Rest for acclimatization; avoid strenuous sightseeing",
+        "location_id": "leh",
+        "route_destination": "Arrival → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "ladakh-7-offbeat-2-day-2",
+        "title": "Leh at an easy pace",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Leh → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "ladakh-7-offbeat-2-day-3",
+        "title": "Leh to Lamayuru",
+        "description": "• Drive the Srinagar–Leh highway to Lamayuru\n• Visit the monastery and moonland viewpoints\n• Overnight in Lamayuru",
+        "location_id": "lamayuru",
+        "route_destination": "Leh → Lamayuru",
+        "overnight_location_id": "lamayuru",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "ladakh-7-offbeat-2-day-4",
+        "title": "Lamayuru to Nubra Valley",
+        "description": "• Cross to Nubra over the current open route\n• Explore Diskit and the Hunder landscape\n• Overnight in Nubra Valley",
+        "location_id": "nubra",
+        "route_destination": "Lamayuru → Nubra Valley",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "ladakh-7-offbeat-2-day-5",
+        "title": "Nubra Valley to Turtuk",
+        "description": "• Follow the Shyok valley road to Turtuk\n• Walk through the village with respect for local homes\n• Overnight in Nubra Valley",
+        "location_id": "turtuk",
+        "route_destination": "Nubra Valley → Turtuk",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "ladakh-7-offbeat-2-day-6",
+        "title": "Turtuk to Leh",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Turtuk → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "ladakh-7-offbeat-2-day-7",
+        "title": "Departure from Leh",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "leh",
+        "route_destination": "Leh → departure",
+        "overnight_location_id": null,
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      }
+    ]
+  },
+  {
+    "catalog_key": "ladakh-8-classic-1",
+    "title": "Classic Ladakh at an easy pace",
+    "region": "Ladakh",
+    "duration": 8,
+    "theme": "classic",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Leh",
+    "route_label": "Leh → Nubra Valley → Turtuk → Pangong → Leh",
+    "warnings": [
+      "Acclimatization is essential; altitude symptoms must never be ignored.",
+      "High-pass roads and lake routes remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "ladakh-8-classic-1-day-1",
+        "title": "Arrive and settle in Leh",
+        "description": "• Meet the team on arrival in Leh\n• Transfer to the stay and complete check-in\n• Rest for acclimatization; avoid strenuous sightseeing",
+        "location_id": "leh",
+        "route_destination": "Arrival → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "ladakh-8-classic-1-day-2",
+        "title": "Leh at an easy pace",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Leh → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "ladakh-8-classic-1-day-3",
+        "title": "Leh at an easy pace",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Leh → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "ladakh-8-classic-1-day-4",
+        "title": "Leh to Nubra Valley",
+        "description": "• Cross to Nubra over the current open route\n• Explore Diskit and the Hunder landscape\n• Overnight in Nubra Valley",
+        "location_id": "nubra",
+        "route_destination": "Leh → Nubra Valley",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "ladakh-8-classic-1-day-5",
+        "title": "Nubra Valley to Turtuk",
+        "description": "• Follow the Shyok valley road to Turtuk\n• Walk through the village with respect for local homes\n• Overnight in Nubra Valley",
+        "location_id": "turtuk",
+        "route_destination": "Nubra Valley → Turtuk",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "ladakh-8-classic-1-day-6",
+        "title": "Turtuk to Pangong",
+        "description": "• Travel to Pangong over the advised seasonal route\n• Settle early and limit exertion beside the lake\n• Overnight in Pangong",
+        "location_id": "pangong",
+        "route_destination": "Turtuk → Pangong",
+        "overnight_location_id": "pangong",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "ladakh-8-classic-1-day-7",
+        "title": "Pangong to Leh",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Pangong → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "ladakh-8-classic-1-day-8",
+        "title": "Departure from Leh",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "leh",
+        "route_destination": "Leh → departure",
+        "overnight_location_id": null,
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      }
+    ]
+  },
+  {
+    "catalog_key": "ladakh-8-offbeat-2",
+    "title": "Lamayuru, Nubra and Pangong",
+    "region": "Ladakh",
+    "duration": 8,
+    "theme": "offbeat",
+    "season_tags": [
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Leh",
+    "route_label": "Leh → Lamayuru → Nubra Valley → Turtuk → Pangong → Leh",
+    "warnings": [
+      "Acclimatization is essential; altitude symptoms must never be ignored.",
+      "High-pass roads and lake routes remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "ladakh-8-offbeat-2-day-1",
+        "title": "Arrive and settle in Leh",
+        "description": "• Meet the team on arrival in Leh\n• Transfer to the stay and complete check-in\n• Rest for acclimatization; avoid strenuous sightseeing",
+        "location_id": "leh",
+        "route_destination": "Arrival → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "ladakh-8-offbeat-2-day-2",
+        "title": "Leh at an easy pace",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Leh → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "ladakh-8-offbeat-2-day-3",
+        "title": "Leh to Lamayuru",
+        "description": "• Drive the Srinagar–Leh highway to Lamayuru\n• Visit the monastery and moonland viewpoints\n• Overnight in Lamayuru",
+        "location_id": "lamayuru",
+        "route_destination": "Leh → Lamayuru",
+        "overnight_location_id": "lamayuru",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "ladakh-8-offbeat-2-day-4",
+        "title": "Lamayuru to Nubra Valley",
+        "description": "• Cross to Nubra over the current open route\n• Explore Diskit and the Hunder landscape\n• Overnight in Nubra Valley",
+        "location_id": "nubra",
+        "route_destination": "Lamayuru → Nubra Valley",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "ladakh-8-offbeat-2-day-5",
+        "title": "Nubra Valley to Turtuk",
+        "description": "• Follow the Shyok valley road to Turtuk\n• Walk through the village with respect for local homes\n• Overnight in Nubra Valley",
+        "location_id": "turtuk",
+        "route_destination": "Nubra Valley → Turtuk",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "ladakh-8-offbeat-2-day-6",
+        "title": "Turtuk to Pangong",
+        "description": "• Travel to Pangong over the advised seasonal route\n• Settle early and limit exertion beside the lake\n• Overnight in Pangong",
+        "location_id": "pangong",
+        "route_destination": "Turtuk → Pangong",
+        "overnight_location_id": "pangong",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "ladakh-8-offbeat-2-day-7",
+        "title": "Pangong to Leh",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Pangong → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "ladakh-8-offbeat-2-day-8",
+        "title": "Departure from Leh",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "leh",
+        "route_destination": "Leh → departure",
+        "overnight_location_id": null,
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      }
+    ]
+  },
+  {
+    "catalog_key": "ladakh-9-classic-1",
+    "title": "Ladakh lakes and high passes",
+    "region": "Ladakh",
+    "duration": 9,
+    "theme": "classic",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Leh",
+    "route_label": "Leh → Nubra Valley → Turtuk → Pangong → Leh → Tso Moriri → Leh",
+    "warnings": [
+      "Acclimatization is essential; altitude symptoms must never be ignored.",
+      "High-pass roads and lake routes remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "ladakh-9-classic-1-day-1",
+        "title": "Arrive and settle in Leh",
+        "description": "• Meet the team on arrival in Leh\n• Transfer to the stay and complete check-in\n• Rest for acclimatization; avoid strenuous sightseeing",
+        "location_id": "leh",
+        "route_destination": "Arrival → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "ladakh-9-classic-1-day-2",
+        "title": "Leh at an easy pace",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Leh → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "ladakh-9-classic-1-day-3",
+        "title": "Leh at an easy pace",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Leh → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "ladakh-9-classic-1-day-4",
+        "title": "Leh to Nubra Valley",
+        "description": "• Cross to Nubra over the current open route\n• Explore Diskit and the Hunder landscape\n• Overnight in Nubra Valley",
+        "location_id": "nubra",
+        "route_destination": "Leh → Nubra Valley",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "ladakh-9-classic-1-day-5",
+        "title": "Nubra Valley to Turtuk",
+        "description": "• Follow the Shyok valley road to Turtuk\n• Walk through the village with respect for local homes\n• Overnight in Nubra Valley",
+        "location_id": "turtuk",
+        "route_destination": "Nubra Valley → Turtuk",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "ladakh-9-classic-1-day-6",
+        "title": "Turtuk to Pangong",
+        "description": "• Travel to Pangong over the advised seasonal route\n• Settle early and limit exertion beside the lake\n• Overnight in Pangong",
+        "location_id": "pangong",
+        "route_destination": "Turtuk → Pangong",
+        "overnight_location_id": "pangong",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "ladakh-9-classic-1-day-7",
+        "title": "Pangong to Leh",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Pangong → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "ladakh-9-classic-1-day-8",
+        "title": "Leh to Tso Moriri",
+        "description": "• Travel across the Changthang plateau\n• Keep the lake visit short if altitude symptoms appear\n• Overnight in Tso Moriri",
+        "location_id": "tso-moriri",
+        "route_destination": "Leh → Tso Moriri",
+        "overnight_location_id": "tso-moriri",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 9,
+        "catalog_key": "ladakh-9-classic-1-day-9",
+        "title": "Departure from Leh",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "leh",
+        "route_destination": "Tso Moriri → departure",
+        "overnight_location_id": null,
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      }
+    ]
+  },
+  {
+    "catalog_key": "ladakh-9-offbeat-2",
+    "title": "Hanle dark-sky journey",
+    "region": "Ladakh",
+    "duration": 9,
+    "theme": "offbeat",
+    "season_tags": [
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Leh",
+    "route_label": "Leh → Lamayuru → Nubra Valley → Pangong → Hanle → Tso Moriri → Leh",
+    "warnings": [
+      "Acclimatization is essential; altitude symptoms must never be ignored.",
+      "High-pass roads and lake routes remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "ladakh-9-offbeat-2-day-1",
+        "title": "Arrive and settle in Leh",
+        "description": "• Meet the team on arrival in Leh\n• Transfer to the stay and complete check-in\n• Rest for acclimatization; avoid strenuous sightseeing",
+        "location_id": "leh",
+        "route_destination": "Arrival → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "ladakh-9-offbeat-2-day-2",
+        "title": "Leh at an easy pace",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Leh → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "ladakh-9-offbeat-2-day-3",
+        "title": "Leh to Lamayuru",
+        "description": "• Drive the Srinagar–Leh highway to Lamayuru\n• Visit the monastery and moonland viewpoints\n• Overnight in Lamayuru",
+        "location_id": "lamayuru",
+        "route_destination": "Leh → Lamayuru",
+        "overnight_location_id": "lamayuru",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "ladakh-9-offbeat-2-day-4",
+        "title": "Lamayuru to Nubra Valley",
+        "description": "• Cross to Nubra over the current open route\n• Explore Diskit and the Hunder landscape\n• Overnight in Nubra Valley",
+        "location_id": "nubra",
+        "route_destination": "Lamayuru → Nubra Valley",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "ladakh-9-offbeat-2-day-5",
+        "title": "Nubra Valley to Pangong",
+        "description": "• Travel to Pangong over the advised seasonal route\n• Settle early and limit exertion beside the lake\n• Overnight in Pangong",
+        "location_id": "pangong",
+        "route_destination": "Nubra Valley → Pangong",
+        "overnight_location_id": "pangong",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "ladakh-9-offbeat-2-day-6",
+        "title": "Pangong to Hanle",
+        "description": "• Continue through the high plateau to Hanle\n• Keep the evening quiet and protect dark-sky conditions\n• Overnight in Hanle",
+        "location_id": "hanle",
+        "route_destination": "Pangong → Hanle",
+        "overnight_location_id": "hanle",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "ladakh-9-offbeat-2-day-7",
+        "title": "Hanle to Tso Moriri",
+        "description": "• Travel across the Changthang plateau\n• Keep the lake visit short if altitude symptoms appear\n• Overnight in Tso Moriri",
+        "location_id": "tso-moriri",
+        "route_destination": "Hanle → Tso Moriri",
+        "overnight_location_id": "tso-moriri",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "ladakh-9-offbeat-2-day-8",
+        "title": "Tso Moriri to Leh",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Tso Moriri → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 9,
+        "catalog_key": "ladakh-9-offbeat-2-day-9",
+        "title": "Departure from Leh",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "leh",
+        "route_destination": "Leh → departure",
+        "overnight_location_id": null,
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      }
+    ]
+  },
+  {
+    "catalog_key": "ladakh-10-classic-1",
+    "title": "Complete Ladakh grand circuit",
+    "region": "Ladakh",
+    "duration": 10,
+    "theme": "classic",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Leh",
+    "route_label": "Leh → Lamayuru → Leh → Nubra Valley → Turtuk → Pangong → Tso Moriri → Leh",
+    "warnings": [
+      "Acclimatization is essential; altitude symptoms must never be ignored.",
+      "High-pass roads and lake routes remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "ladakh-10-classic-1-day-1",
+        "title": "Arrive and settle in Leh",
+        "description": "• Meet the team on arrival in Leh\n• Transfer to the stay and complete check-in\n• Rest for acclimatization; avoid strenuous sightseeing",
+        "location_id": "leh",
+        "route_destination": "Arrival → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "ladakh-10-classic-1-day-2",
+        "title": "Leh at an easy pace",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Leh → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "ladakh-10-classic-1-day-3",
+        "title": "Leh to Lamayuru",
+        "description": "• Drive the Srinagar–Leh highway to Lamayuru\n• Visit the monastery and moonland viewpoints\n• Overnight in Lamayuru",
+        "location_id": "lamayuru",
+        "route_destination": "Leh → Lamayuru",
+        "overnight_location_id": "lamayuru",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "ladakh-10-classic-1-day-4",
+        "title": "Lamayuru to Leh",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Lamayuru → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "ladakh-10-classic-1-day-5",
+        "title": "Leh to Nubra Valley",
+        "description": "• Cross to Nubra over the current open route\n• Explore Diskit and the Hunder landscape\n• Overnight in Nubra Valley",
+        "location_id": "nubra",
+        "route_destination": "Leh → Nubra Valley",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "ladakh-10-classic-1-day-6",
+        "title": "Nubra Valley to Turtuk",
+        "description": "• Follow the Shyok valley road to Turtuk\n• Walk through the village with respect for local homes\n• Overnight in Nubra Valley",
+        "location_id": "turtuk",
+        "route_destination": "Nubra Valley → Turtuk",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "ladakh-10-classic-1-day-7",
+        "title": "Turtuk to Pangong",
+        "description": "• Travel to Pangong over the advised seasonal route\n• Settle early and limit exertion beside the lake\n• Overnight in Pangong",
+        "location_id": "pangong",
+        "route_destination": "Turtuk → Pangong",
+        "overnight_location_id": "pangong",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "ladakh-10-classic-1-day-8",
+        "title": "Pangong to Tso Moriri",
+        "description": "• Travel across the Changthang plateau\n• Keep the lake visit short if altitude symptoms appear\n• Overnight in Tso Moriri",
+        "location_id": "tso-moriri",
+        "route_destination": "Pangong → Tso Moriri",
+        "overnight_location_id": "tso-moriri",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 9,
+        "catalog_key": "ladakh-10-classic-1-day-9",
+        "title": "Tso Moriri to Leh",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Tso Moriri → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 10,
+        "catalog_key": "ladakh-10-classic-1-day-10",
+        "title": "Departure from Leh",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "leh",
+        "route_destination": "Leh → departure",
+        "overnight_location_id": null,
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      }
+    ]
+  },
+  {
+    "catalog_key": "ladakh-10-offbeat-2",
+    "title": "Remote Ladakh and Hanle",
+    "region": "Ladakh",
+    "duration": 10,
+    "theme": "offbeat",
+    "season_tags": [
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Leh",
+    "route_label": "Leh → Lamayuru → Nubra Valley → Turtuk → Pangong → Hanle → Tso Moriri → Leh",
+    "warnings": [
+      "Acclimatization is essential; altitude symptoms must never be ignored.",
+      "High-pass roads and lake routes remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "ladakh-10-offbeat-2-day-1",
+        "title": "Arrive and settle in Leh",
+        "description": "• Meet the team on arrival in Leh\n• Transfer to the stay and complete check-in\n• Rest for acclimatization; avoid strenuous sightseeing",
+        "location_id": "leh",
+        "route_destination": "Arrival → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "ladakh-10-offbeat-2-day-2",
+        "title": "Leh at an easy pace",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Leh → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "ladakh-10-offbeat-2-day-3",
+        "title": "Leh to Lamayuru",
+        "description": "• Drive the Srinagar–Leh highway to Lamayuru\n• Visit the monastery and moonland viewpoints\n• Overnight in Lamayuru",
+        "location_id": "lamayuru",
+        "route_destination": "Leh → Lamayuru",
+        "overnight_location_id": "lamayuru",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "ladakh-10-offbeat-2-day-4",
+        "title": "Lamayuru to Nubra Valley",
+        "description": "• Cross to Nubra over the current open route\n• Explore Diskit and the Hunder landscape\n• Overnight in Nubra Valley",
+        "location_id": "nubra",
+        "route_destination": "Lamayuru → Nubra Valley",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "ladakh-10-offbeat-2-day-5",
+        "title": "Nubra Valley to Turtuk",
+        "description": "• Follow the Shyok valley road to Turtuk\n• Walk through the village with respect for local homes\n• Overnight in Nubra Valley",
+        "location_id": "turtuk",
+        "route_destination": "Nubra Valley → Turtuk",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "ladakh-10-offbeat-2-day-6",
+        "title": "Turtuk to Pangong",
+        "description": "• Travel to Pangong over the advised seasonal route\n• Settle early and limit exertion beside the lake\n• Overnight in Pangong",
+        "location_id": "pangong",
+        "route_destination": "Turtuk → Pangong",
+        "overnight_location_id": "pangong",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "ladakh-10-offbeat-2-day-7",
+        "title": "Pangong to Hanle",
+        "description": "• Continue through the high plateau to Hanle\n• Keep the evening quiet and protect dark-sky conditions\n• Overnight in Hanle",
+        "location_id": "hanle",
+        "route_destination": "Pangong → Hanle",
+        "overnight_location_id": "hanle",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "ladakh-10-offbeat-2-day-8",
+        "title": "Hanle to Tso Moriri",
+        "description": "• Travel across the Changthang plateau\n• Keep the lake visit short if altitude symptoms appear\n• Overnight in Tso Moriri",
+        "location_id": "tso-moriri",
+        "route_destination": "Hanle → Tso Moriri",
+        "overnight_location_id": "tso-moriri",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 9,
+        "catalog_key": "ladakh-10-offbeat-2-day-9",
+        "title": "Tso Moriri to Leh",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Tso Moriri → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 10,
+        "catalog_key": "ladakh-10-offbeat-2-day-10",
+        "title": "Departure from Leh",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "leh",
+        "route_destination": "Leh → departure",
+        "overnight_location_id": null,
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      }
+    ]
+  },
+  {
+    "catalog_key": "combined-8-classic-1",
+    "title": "Srinagar to Leh overland classic",
+    "region": "Combined",
+    "duration": 8,
+    "theme": "classic",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar to Leh",
+    "route_label": "Srinagar → Sonamarg → Kargil → Leh → Nubra Valley → Pangong → Leh",
+    "warnings": [
+      "Acclimatization is essential; altitude symptoms must never be ignored.",
+      "High-pass roads and lake routes remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "combined-8-classic-1-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "combined-8-classic-1-day-2",
+        "title": "Srinagar to Sonamarg",
+        "description": "• Drive beside the Sindh River towards Sonamarg\n• Allow time for a meadow walk and seasonal viewpoints\n• Overnight in Sonamarg",
+        "location_id": "sonamarg",
+        "route_destination": "Srinagar → Sonamarg",
+        "overnight_location_id": "sonamarg",
+        "warning": "Access is seasonal and remains subject to weather, road and local authority advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "combined-8-classic-1-day-3",
+        "title": "Sonamarg to Kargil",
+        "description": "• Follow the mountain highway to Kargil\n• Check in early after the long road journey\n• Overnight in Kargil",
+        "location_id": "kargil",
+        "route_destination": "Sonamarg → Kargil",
+        "overnight_location_id": "kargil",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "combined-8-classic-1-day-4",
+        "title": "Kargil to Leh",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Kargil → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "combined-8-classic-1-day-5",
+        "title": "Leh at an easy pace",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Leh → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "combined-8-classic-1-day-6",
+        "title": "Leh to Nubra Valley",
+        "description": "• Cross to Nubra over the current open route\n• Explore Diskit and the Hunder landscape\n• Overnight in Nubra Valley",
+        "location_id": "nubra",
+        "route_destination": "Leh → Nubra Valley",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "combined-8-classic-1-day-7",
+        "title": "Nubra Valley to Pangong",
+        "description": "• Travel to Pangong over the advised seasonal route\n• Settle early and limit exertion beside the lake\n• Overnight in Pangong",
+        "location_id": "pangong",
+        "route_destination": "Nubra Valley → Pangong",
+        "overnight_location_id": "pangong",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "combined-8-classic-1-day-8",
+        "title": "Departure from Leh",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "leh",
+        "route_destination": "Pangong → departure",
+        "overnight_location_id": null,
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      }
+    ]
+  },
+  {
+    "catalog_key": "combined-9-classic-1",
+    "title": "Kashmir to Ladakh grand traverse",
+    "region": "Combined",
+    "duration": 9,
+    "theme": "classic",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar to Leh",
+    "route_label": "Srinagar → Sonamarg → Kargil → Lamayuru → Leh → Nubra Valley → Pangong → Leh",
+    "warnings": [
+      "Acclimatization is essential; altitude symptoms must never be ignored.",
+      "High-pass roads and lake routes remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "combined-9-classic-1-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "combined-9-classic-1-day-2",
+        "title": "Srinagar to Sonamarg",
+        "description": "• Drive beside the Sindh River towards Sonamarg\n• Allow time for a meadow walk and seasonal viewpoints\n• Overnight in Sonamarg",
+        "location_id": "sonamarg",
+        "route_destination": "Srinagar → Sonamarg",
+        "overnight_location_id": "sonamarg",
+        "warning": "Access is seasonal and remains subject to weather, road and local authority advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "combined-9-classic-1-day-3",
+        "title": "Sonamarg to Kargil",
+        "description": "• Follow the mountain highway to Kargil\n• Check in early after the long road journey\n• Overnight in Kargil",
+        "location_id": "kargil",
+        "route_destination": "Sonamarg → Kargil",
+        "overnight_location_id": "kargil",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "combined-9-classic-1-day-4",
+        "title": "Kargil to Lamayuru",
+        "description": "• Drive the Srinagar–Leh highway to Lamayuru\n• Visit the monastery and moonland viewpoints\n• Overnight in Lamayuru",
+        "location_id": "lamayuru",
+        "route_destination": "Kargil → Lamayuru",
+        "overnight_location_id": "lamayuru",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "combined-9-classic-1-day-5",
+        "title": "Lamayuru to Leh",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Lamayuru → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "combined-9-classic-1-day-6",
+        "title": "Leh at an easy pace",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Leh → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "combined-9-classic-1-day-7",
+        "title": "Leh to Nubra Valley",
+        "description": "• Cross to Nubra over the current open route\n• Explore Diskit and the Hunder landscape\n• Overnight in Nubra Valley",
+        "location_id": "nubra",
+        "route_destination": "Leh → Nubra Valley",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "combined-9-classic-1-day-8",
+        "title": "Nubra Valley to Pangong",
+        "description": "• Travel to Pangong over the advised seasonal route\n• Settle early and limit exertion beside the lake\n• Overnight in Pangong",
+        "location_id": "pangong",
+        "route_destination": "Nubra Valley → Pangong",
+        "overnight_location_id": "pangong",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 9,
+        "catalog_key": "combined-9-classic-1-day-9",
+        "title": "Departure from Leh",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "leh",
+        "route_destination": "Pangong → departure",
+        "overnight_location_id": null,
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      }
+    ]
+  },
+  {
+    "catalog_key": "combined-10-classic-1",
+    "title": "Srinagar–Kargil–Leh complete circuit",
+    "region": "Combined",
+    "duration": 10,
+    "theme": "classic",
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar to Leh",
+    "route_label": "Srinagar → Sonamarg → Kargil → Lamayuru → Leh → Nubra Valley → Turtuk → Pangong → Leh",
+    "warnings": [
+      "Acclimatization is essential; altitude symptoms must never be ignored.",
+      "High-pass roads and lake routes remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "combined-10-classic-1-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "combined-10-classic-1-day-2",
+        "title": "Srinagar to Sonamarg",
+        "description": "• Drive beside the Sindh River towards Sonamarg\n• Allow time for a meadow walk and seasonal viewpoints\n• Overnight in Sonamarg",
+        "location_id": "sonamarg",
+        "route_destination": "Srinagar → Sonamarg",
+        "overnight_location_id": "sonamarg",
+        "warning": "Access is seasonal and remains subject to weather, road and local authority advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "combined-10-classic-1-day-3",
+        "title": "Sonamarg to Kargil",
+        "description": "• Follow the mountain highway to Kargil\n• Check in early after the long road journey\n• Overnight in Kargil",
+        "location_id": "kargil",
+        "route_destination": "Sonamarg → Kargil",
+        "overnight_location_id": "kargil",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "combined-10-classic-1-day-4",
+        "title": "Kargil to Lamayuru",
+        "description": "• Drive the Srinagar–Leh highway to Lamayuru\n• Visit the monastery and moonland viewpoints\n• Overnight in Lamayuru",
+        "location_id": "lamayuru",
+        "route_destination": "Kargil → Lamayuru",
+        "overnight_location_id": "lamayuru",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "combined-10-classic-1-day-5",
+        "title": "Lamayuru to Leh",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Lamayuru → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "combined-10-classic-1-day-6",
+        "title": "Leh at an easy pace",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Leh → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "combined-10-classic-1-day-7",
+        "title": "Leh to Nubra Valley",
+        "description": "• Cross to Nubra over the current open route\n• Explore Diskit and the Hunder landscape\n• Overnight in Nubra Valley",
+        "location_id": "nubra",
+        "route_destination": "Leh → Nubra Valley",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "combined-10-classic-1-day-8",
+        "title": "Nubra Valley to Turtuk",
+        "description": "• Follow the Shyok valley road to Turtuk\n• Walk through the village with respect for local homes\n• Overnight in Nubra Valley",
+        "location_id": "turtuk",
+        "route_destination": "Nubra Valley → Turtuk",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 9,
+        "catalog_key": "combined-10-classic-1-day-9",
+        "title": "Turtuk to Pangong",
+        "description": "• Travel to Pangong over the advised seasonal route\n• Settle early and limit exertion beside the lake\n• Overnight in Pangong",
+        "location_id": "pangong",
+        "route_destination": "Turtuk → Pangong",
+        "overnight_location_id": "pangong",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 10,
+        "catalog_key": "combined-10-classic-1-day-10",
+        "title": "Departure from Leh",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "leh",
+        "route_destination": "Pangong → departure",
+        "overnight_location_id": null,
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      }
+    ]
+  },
+  {
+    "catalog_key": "combined-10-offbeat-2",
+    "title": "Zanskar gateway to Leh",
+    "region": "Combined",
+    "duration": 10,
+    "theme": "offbeat",
+    "season_tags": [
+      "summer",
+      "autumn"
+    ],
+    "gateway": "Srinagar to Leh",
+    "route_label": "Srinagar → Sonamarg → Kargil → Zanskar → Lamayuru → Leh → Nubra Valley → Pangong → Leh",
+    "warnings": [
+      "Acclimatization is essential; altitude symptoms must never be ignored.",
+      "High-pass roads and lake routes remain weather-dependent."
+    ],
+    "days": [
+      {
+        "day_number": 1,
+        "catalog_key": "combined-10-offbeat-2-day-1",
+        "title": "Arrive and settle in Srinagar",
+        "description": "• Meet the team on arrival in Srinagar\n• Transfer to the stay and complete check-in\n• Keep the arrival day unhurried",
+        "location_id": "srinagar",
+        "route_destination": "Arrival → Srinagar",
+        "overnight_location_id": "srinagar",
+        "warning": ""
+      },
+      {
+        "day_number": 2,
+        "catalog_key": "combined-10-offbeat-2-day-2",
+        "title": "Srinagar to Sonamarg",
+        "description": "• Drive beside the Sindh River towards Sonamarg\n• Allow time for a meadow walk and seasonal viewpoints\n• Overnight in Sonamarg",
+        "location_id": "sonamarg",
+        "route_destination": "Srinagar → Sonamarg",
+        "overnight_location_id": "sonamarg",
+        "warning": "Access is seasonal and remains subject to weather, road and local authority advice."
+      },
+      {
+        "day_number": 3,
+        "catalog_key": "combined-10-offbeat-2-day-3",
+        "title": "Sonamarg to Kargil",
+        "description": "• Follow the mountain highway to Kargil\n• Check in early after the long road journey\n• Overnight in Kargil",
+        "location_id": "kargil",
+        "route_destination": "Sonamarg → Kargil",
+        "overnight_location_id": "kargil",
+        "warning": ""
+      },
+      {
+        "day_number": 4,
+        "catalog_key": "combined-10-offbeat-2-day-4",
+        "title": "Kargil to Zanskar",
+        "description": "• Enter the Zanskar corridor on the confirmed open route\n• Keep buffer time for rough or changing roads\n• Overnight in Zanskar",
+        "location_id": "zanskar",
+        "route_destination": "Kargil → Zanskar",
+        "overnight_location_id": "zanskar",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 5,
+        "catalog_key": "combined-10-offbeat-2-day-5",
+        "title": "Zanskar to Lamayuru",
+        "description": "• Drive the Srinagar–Leh highway to Lamayuru\n• Visit the monastery and moonland viewpoints\n• Overnight in Lamayuru",
+        "location_id": "lamayuru",
+        "route_destination": "Zanskar → Lamayuru",
+        "overnight_location_id": "lamayuru",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 6,
+        "catalog_key": "combined-10-offbeat-2-day-6",
+        "title": "Lamayuru to Leh",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Lamayuru → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 7,
+        "catalog_key": "combined-10-offbeat-2-day-7",
+        "title": "Leh at an easy pace",
+        "description": "• Keep the pace gentle in Leh\n• Visit nearby markets or monasteries only if everyone feels well\n• Overnight in Leh",
+        "location_id": "leh",
+        "route_destination": "Leh → Leh",
+        "overnight_location_id": "leh",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 8,
+        "catalog_key": "combined-10-offbeat-2-day-8",
+        "title": "Leh to Nubra Valley",
+        "description": "• Cross to Nubra over the current open route\n• Explore Diskit and the Hunder landscape\n• Overnight in Nubra Valley",
+        "location_id": "nubra",
+        "route_destination": "Leh → Nubra Valley",
+        "overnight_location_id": "nubra",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 9,
+        "catalog_key": "combined-10-offbeat-2-day-9",
+        "title": "Nubra Valley to Pangong",
+        "description": "• Travel to Pangong over the advised seasonal route\n• Settle early and limit exertion beside the lake\n• Overnight in Pangong",
+        "location_id": "pangong",
+        "route_destination": "Nubra Valley → Pangong",
+        "overnight_location_id": "pangong",
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      },
+      {
+        "day_number": 10,
+        "catalog_key": "combined-10-offbeat-2-day-10",
+        "title": "Departure from Leh",
+        "description": "• Breakfast and check-out\n• Transfer to the airport or agreed departure point\n• Trip concludes with departure assistance",
+        "location_id": "leh",
+        "route_destination": "Pangong → departure",
+        "overnight_location_id": null,
+        "warning": "High altitude: keep the pace conservative, hydrate, and follow local medical advice."
+      }
+    ]
+  }
+]

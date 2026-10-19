@@ -8,6 +8,7 @@
     "build": "npm run build --workspace @travcrm/api && npm run build --workspace @travcrm/web",
     "check": "npm run check --workspace @travcrm/api && npm run check --workspace @travcrm/web",
     "test": "npm run test --workspace @travcrm/api",
-    "seed:operations": "node --env-file=apps/api/.env scripts/seed-huz-operations.mjs"
+    "seed:operations": "node --env-file=apps/api/.env scripts/seed-huz-operations.mjs",
+    "seed:travel-catalog": "node --env-file=apps/api/.env scripts/seed-travel-catalog.mjs"
   }
 }
