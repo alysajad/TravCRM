@@ -14,6 +14,7 @@ const { mergeEntitlements } = await import('./core.js')
 const { operationLocalTime } = await import('./operations.js')
 const { normalizeEmail, normalizePhone, matchClientContacts, latestTimeline } = await import('./clients.js')
 const { normalizeCatalogText, seasonForMonth } = await import('./catalog.js')
+const { contributionSnapshot } = await import('./catalog-governance.js')
 
 test('travel catalog has stable unique keys and the promised regional counts', async () => {
   const read = async (name: string) => JSON.parse(await readFile(new URL(`../../../catalog/${name}.json`, import.meta.url), 'utf8')) as Array<Record<string, any>>
@@ -50,6 +51,20 @@ test('travel catalog has stable unique keys and the promised regional counts', a
   assert.equal(seasonForMonth(12), 'winter')
   assert.equal(seasonForMonth(7), 'summer')
   assert.equal(seasonForMonth(9), 'autumn')
+})
+
+test('catalog contribution snapshots exclude tenant-private hotel fields', () => {
+  assert.deepEqual(contributionSnapshot({ type: 'hotel', title: 'Alpine House', data: { name: 'Alpine House', location: 'Gulmarg', location_id: 'location-id', property_type: 'Hotel', price: 9999, negotiated_rate: 7500, contact_name: 'Private supplier', notes: 'Private note', image_path: 'company/photo.jpg' } }), {
+    name: 'Alpine House', location: 'Gulmarg', location_id: 'location-id', property_type: 'Hotel'
+  })
+})
+
+test('catalog governance migration backfills stable source ids and defaults to global access', async () => {
+  const migration = await readFile(new URL('../../../supabase/migrations/0010_platform_managed_catalog.sql', import.meta.url), 'utf8')
+  assert.match(migration, /availability_mode text not null default 'all'/)
+  assert.match(migration, /select id,'hotel',id/)
+  assert.match(migration, /source_url drop not null/)
+  assert.match(migration, /unique index catalog_submissions_one_pending_idx/)
 })
 
 test('quotation totals use cents and apply GST after discount', () => {

@@ -4,6 +4,7 @@ import { admin, audit, enforceLimit, HttpError, requirePermission, unwrap } from
 import { quotePdf } from './pdf.js'
 import { statuses } from './modules.js'
 import { resolveClientLink } from './clients.js'
+import { accessibleCatalogSourceIds } from './catalog-governance.js'
 
 const idSchema = z.uuid()
 const priceLineInput = z.object({ category: z.enum(['package','hotel','transport','activity','supplement','custom']).default('custom'), label: z.string().trim().min(1).max(200), quantity: z.coerce.number().positive().max(10000), unit_amount: z.coerce.number().min(0).max(999999999) })
@@ -46,7 +47,7 @@ export function priceQuote(base: number, child: number, discount: number, gstPer
 
 type QuoteInput = z.infer<typeof quoteInput>
 
-async function prepare(request: Parameters<typeof requirePermission>[0], raw: unknown) {
+async function prepare(request: Parameters<typeof requirePermission>[0], raw: unknown, grandfathered = new Set<string>()) {
   const ctx = requirePermission(request, 'quotes.write')
   const parsed = quoteInput.safeParse(raw)
   if (!parsed.success) throw new HttpError(400, parsed.error.issues[0]?.message || 'Check quotation fields.')
@@ -78,32 +79,38 @@ async function prepare(request: Parameters<typeof requirePermission>[0], raw: un
   const catalogDayIds = value.itinerary.filter(x => x.source === 'catalog').flatMap(x => x.day_plan_id ? [x.day_plan_id] : [])
   const companyHotelIds = value.stays.filter(x => (x.source || 'company') === 'company').flatMap(x => x.hotel_id ? [x.hotel_id] : [])
   const catalogHotelIds = value.stays.filter(x => x.source === 'catalog').flatMap(x => x.hotel_id ? [x.hotel_id] : [])
-  const recordIds = [...new Set([...companyDayIds, ...companyHotelIds, ...value.stays.flatMap(x => x.room_type_id ? [x.room_type_id] : []), ...(value.transport.cab_id ? [value.transport.cab_id] : [])])]
-  const [{ data: records, error }, catalogDaysResult, catalogHotelsResult, overridesResult] = await Promise.all([
+  const roomTypeIds = value.stays.flatMap(x => x.room_type_id ? [x.room_type_id] : [])
+  const recordIds = [...new Set([...companyDayIds, ...companyHotelIds, ...roomTypeIds, ...(value.transport.cab_id ? [value.transport.cab_id] : [])])]
+  const [{ data: records, error }, catalogDaysResult, catalogHotelsResult, overridesResult, visibleDayIds, visibleHotelIds, visibleRoomIds, catalogRoomsResult] = await Promise.all([
     recordIds.length ? ctx.db.from('records').select('id,type,title,data').eq('company_id', ctx.companyId).in('id', recordIds) : Promise.resolve({ data: [], error: null }),
     catalogDayIds.length ? admin.from('catalog_day_plans').select('*,catalog_locations(name)').in('id', catalogDayIds) : Promise.resolve({ data: [], error: null }),
     catalogHotelIds.length ? admin.from('catalog_hotels').select('*,catalog_locations(name)').in('id', catalogHotelIds) : Promise.resolve({ data: [], error: null }),
-    catalogHotelIds.length ? ctx.db.from('company_hotel_overrides').select('*').eq('company_id', ctx.companyId).in('catalog_hotel_id', catalogHotelIds) : Promise.resolve({ data: [], error: null })
+    catalogHotelIds.length ? ctx.db.from('company_hotel_overrides').select('*').eq('company_id', ctx.companyId).in('catalog_hotel_id', catalogHotelIds) : Promise.resolve({ data: [], error: null }),
+    accessibleCatalogSourceIds(ctx.companyId, ['day_plan'], catalogDayIds),
+    accessibleCatalogSourceIds(ctx.companyId, ['hotel'], catalogHotelIds),
+    accessibleCatalogSourceIds(ctx.companyId, ['room_type'], roomTypeIds),
+    roomTypeIds.length ? admin.from('catalog_options').select('id,name').eq('option_type', 'room_type').in('id', roomTypeIds) : Promise.resolve({ data: [], error: null })
   ])
-  if (error || catalogDaysResult.error || catalogHotelsResult.error || overridesResult.error) throw new HttpError(400, error?.message || catalogDaysResult.error?.message || catalogHotelsResult.error?.message || overridesResult.error?.message || 'A selected catalog item is unavailable.')
+  if (error || catalogDaysResult.error || catalogHotelsResult.error || overridesResult.error || catalogRoomsResult.error) throw new HttpError(400, error?.message || catalogDaysResult.error?.message || catalogHotelsResult.error?.message || overridesResult.error?.message || catalogRoomsResult.error?.message || 'A selected catalog item is unavailable.')
   const map = new Map((records || []).map(x => [x.id, x]))
   const catalogDays = new Map((catalogDaysResult.data || []).map(x => [x.id, x]))
   const catalogHotels = new Map((catalogHotelsResult.data || []).map(x => [x.id, x]))
   const overrides = new Map((overridesResult.data || []).map(x => [x.catalog_hotel_id, x]))
+  const catalogRooms = new Map((catalogRoomsResult.data || []).map(x => [x.id, x]))
   for (const day of value.itinerary) {
     const source = day.source || 'company'
     if (source === 'company' && (!day.day_plan_id || map.get(day.day_plan_id)?.type !== 'day_plan')) throw new HttpError(400, 'A selected day plan is unavailable.')
-    if (source === 'catalog' && (!day.day_plan_id || !catalogDays.has(day.day_plan_id))) throw new HttpError(400, 'A selected catalog day plan is unavailable.')
+    if (source === 'catalog' && (!day.day_plan_id || !catalogDays.has(day.day_plan_id) || (!visibleDayIds.has(day.day_plan_id) && !grandfathered.has(day.day_plan_id)))) throw new HttpError(400, 'A selected catalog day plan is unavailable.')
     if (source === 'custom' && (!day.name || !day.description || !day.location)) throw new HttpError(400, 'Custom days need a title, description and location.')
     if (source === 'custom' && day.image_path && !day.image_path.startsWith(`${ctx.companyId}/`)) throw new HttpError(400, 'Custom day images must belong to this company.')
   }
   for (const stay of value.stays) {
     const source = stay.source || 'company'
     if (source === 'company' && (!stay.hotel_id || map.get(stay.hotel_id)?.type !== 'hotel')) throw new HttpError(400, 'A selected hotel is unavailable.')
-    if (source === 'catalog' && (!stay.hotel_id || !catalogHotels.has(stay.hotel_id) || overrides.get(stay.hotel_id)?.hidden)) throw new HttpError(400, 'A selected catalog hotel is unavailable.')
+    if (source === 'catalog' && (!stay.hotel_id || !catalogHotels.has(stay.hotel_id) || ((!visibleHotelIds.has(stay.hotel_id) || overrides.get(stay.hotel_id)?.hidden) && !grandfathered.has(stay.hotel_id)))) throw new HttpError(400, 'A selected catalog hotel is unavailable.')
     if (source === 'custom' && (!stay.name || !stay.location)) throw new HttpError(400, 'Custom stays need a property name and location.')
     if (source === 'custom' && stay.image_path && !stay.image_path.startsWith(`${ctx.companyId}/`)) throw new HttpError(400, 'Custom stay images must belong to this company.')
-    if (stay.room_type_id && map.get(stay.room_type_id)?.type !== 'room_type') throw new HttpError(400, 'A selected room type is unavailable.')
+    if (stay.room_type_id && map.get(stay.room_type_id)?.type !== 'room_type' && (!catalogRooms.has(stay.room_type_id) || (!visibleRoomIds.has(stay.room_type_id) && !grandfathered.has(stay.room_type_id)))) throw new HttpError(400, 'A selected room type is unavailable.')
   }
   const itinerary = value.itinerary.map((x, i) => {
     const source = x.source || 'company'; const company = x.day_plan_id ? map.get(x.day_plan_id) : null; const catalog = x.day_plan_id ? catalogDays.get(x.day_plan_id) : null
@@ -112,7 +119,7 @@ async function prepare(request: Parameters<typeof requirePermission>[0], raw: un
   if (value.transport.cab_id && map.get(value.transport.cab_id)?.type !== 'cab') throw new HttpError(400, 'The selected cab is unavailable.')
   const stays = value.stays.map((x, i) => {
     const source = x.source || 'company'; const company = x.hotel_id ? map.get(x.hotel_id) : null; const catalog = x.hotel_id ? catalogHotels.get(x.hotel_id) : null; const override = x.hotel_id ? overrides.get(x.hotel_id) : null
-    return { night: i + 1, source, hotel_id: x.hotel_id || null, name: source === 'custom' ? x.name : source === 'catalog' ? catalog?.canonical_name : company?.title, location_id: x.location_id || catalog?.location_id || null, location: x.location || (catalog?.catalog_locations as any)?.name || company?.data?.location || '', property_type: source === 'custom' ? x.property_type || 'Hotel' : source === 'catalog' ? catalog?.property_type : company?.data?.property_type || 'Hotel', room_type_id: x.room_type_id || null, room_type: x.room_type_id ? map.get(x.room_type_id)?.title : x.room_type || null, image_path: source === 'custom' ? x.image_path || null : source === 'catalog' ? override?.image_path || null : company?.data?.image_path || null }
+    return { night: i + 1, source, hotel_id: x.hotel_id || null, name: source === 'custom' ? x.name : source === 'catalog' ? catalog?.canonical_name : company?.title, location_id: x.location_id || catalog?.location_id || null, location: x.location || (catalog?.catalog_locations as any)?.name || company?.data?.location || '', property_type: source === 'custom' ? x.property_type || 'Hotel' : source === 'catalog' ? catalog?.property_type : company?.data?.property_type || 'Hotel', room_type_id: x.room_type_id || null, room_type: x.room_type_id ? map.get(x.room_type_id)?.title || catalogRooms.get(x.room_type_id)?.name : x.room_type || null, image_path: source === 'custom' ? x.image_path || null : source === 'catalog' ? override?.image_path || null : company?.data?.image_path || null }
   })
   const cab = value.transport.cab_id ? map.get(value.transport.cab_id) : null
   const transport = { ...value.transport, vehicle_type: value.transport.vehicle_type || cab?.data?.type || cab?.title || '', vehicle_number: value.transport.vehicle_number || cab?.data?.registration || '', driver_name: value.transport.driver_name || cab?.data?.driver_name || '', driver_phone: value.transport.driver_phone || cab?.data?.driver_phone || '' }
@@ -162,9 +169,10 @@ export async function registerQuotes(app: FastifyInstance): Promise<void> {
   app.patch('/quotes/:id', async request => {
     const id = path(request.params).id
     const ctx = requirePermission(request, 'quotes.write')
-    const existing = unwrap(await ctx.db.from('quotes').select('locked_at').eq('company_id', ctx.companyId).eq('id', id).single())
+    const existing = unwrap(await ctx.db.from('quotes').select('locked_at,itinerary,stays').eq('company_id', ctx.companyId).eq('id', id).single())
     if (existing.locked_at) throw new HttpError(409, 'Confirmed quotations are locked. Create a revision to make changes.')
-    const prepared = await prepare(request, request.body); const row = prepared.row
+    const grandfathered = new Set<string>([...(existing.itinerary || []).flatMap((row: any) => row.day_plan_id ? [row.day_plan_id] : []), ...(existing.stays || []).flatMap((row: any) => [row.hotel_id, row.room_type_id].filter(Boolean))])
+    const prepared = await prepare(request, request.body, grandfathered); const row = prepared.row
     const quote = unwrap(await ctx.db.from('quotes').update({ ...row, updated_at: new Date().toISOString() }).eq('company_id', ctx.companyId).eq('id', id).select('*').single())
     await audit(ctx, 'quotes.update', id)
     return { ...quote, client_link_status: prepared.clientLinkStatus }

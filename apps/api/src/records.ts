@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import { admin, audit, enforceLimit, HttpError, requirePermission, unwrap } from './core.js'
 import { modules, validateRecord } from './modules.js'
 import { normalizeEmail, normalizePhone, resolveClientLink } from './clients.js'
+import { accessibleCatalogEntries, accessibleCatalogSourceIds, recordCatalogTypes, submitContribution, type CatalogType } from './catalog-governance.js'
 
 const params = (value: unknown) => value as { slug: string; id?: string }
 const query = (value: unknown) => value as { page?: string; q?: string; status?: string }
@@ -39,6 +40,15 @@ export async function registerRecords(app: FastifyInstance): Promise<void> {
     if (q.trim()) builder = builder.ilike('title', `%${q.trim().replace(/[%_,()]/g, '')}%`)
     const { data, error } = await builder.order('title').limit(50)
     if (error) throw new HttpError(400, error.message)
+    if (['room_type','property_type','hotel_category','voucher_inclusion'].includes(mod.type)) {
+      const shared = await accessibleCatalogEntries(ctx.companyId, [mod.type as CatalogType])
+      const sourceIds = shared.map(entry => entry.source_id)
+      const options = sourceIds.length ? unwrap(await admin.from('catalog_options').select('*').in('id', sourceIds).order('name')) : []
+      const linked = new Set((data || []).flatMap(row => row.data?.catalog_entry_id ? [row.data.catalog_entry_id] : []))
+      const needle = String(q || '').trim().toLowerCase()
+      const catalog = shared.filter(entry => !linked.has(entry.id) && (!needle || entry.title.toLowerCase().includes(needle))).map(entry => { const item = options.find(option => option.id === entry.source_id); return { id: entry.source_id, title: item?.name || entry.title, status: 'Active', source: 'catalog', data: { ...(item || {}), catalog_entry_id: entry.id, catalog_status: 'active' } } })
+      return [...catalog, ...(data || []).map(row => ({ ...row, source: 'company' }))].slice(0, 50)
+    }
     return mod.type === 'query' ? (data || []).map(row => ({ ...row, title: row.data?.client_id ? row.title : `${row.title} · Needs client link`, client_link_status: row.data?.client_id ? 'linked' : 'needs_review' })) : data
   })
 
@@ -78,7 +88,13 @@ export async function registerRecords(app: FastifyInstance): Promise<void> {
     if (status) builder = builder.eq('status', status)
     const { data, error, count } = await builder
     if (error) throw new HttpError(400, error.message)
-    return { items: mod.type === 'query' ? (data || []).map(row => ({ ...row, title: row.data?.client_id ? row.title : `${row.title} · Needs client link`, client_link_status: row.data?.client_id ? 'linked' : 'needs_review' })) : data, total: count ?? 0, page: pageNumber, pageSize: 25 }
+    let items: any[] = mod.type === 'query' ? (data || []).map(row => ({ ...row, title: row.data?.client_id ? row.title : `${row.title} · Needs client link`, client_link_status: row.data?.client_id ? 'linked' : 'needs_review' })) : data || []
+    if (items.length && recordCatalogTypes.has(mod.type as CatalogType)) {
+      const submissions = unwrap(await admin.from('catalog_submissions').select('id,source_record_id,status,reason,target_entry_id,created_at').in('source_record_id', items.map(row => row.id)).order('created_at', { ascending: false }))
+      const latest = new Map<string, any>(); for (const submission of submissions) if (!latest.has(submission.source_record_id)) latest.set(submission.source_record_id, submission)
+      items = items.map(row => ({ ...row, catalog_submission: latest.get(row.id) || null }))
+    }
+    return { items, total: count ?? 0, page: pageNumber, pageSize: 25 }
   })
 
   app.get('/records/:slug/:id', async request => {
@@ -86,6 +102,11 @@ export async function registerRecords(app: FastifyInstance): Promise<void> {
     if (!mod || !id) throw new HttpError(404, 'Record not found.')
     const ctx = requirePermission(request, `${mod.type}.read`)
     const item = unwrap(await ctx.db.from('records').select('*').eq('company_id', ctx.companyId).eq('type', mod.type).eq('id', id).single())
+    if (recordCatalogTypes.has(mod.type as CatalogType)) {
+      const result = await admin.from('catalog_submissions').select('id,status,reason,target_entry_id,created_at').eq('source_record_id', id).order('created_at', { ascending: false }).limit(1).maybeSingle()
+      if (result.error) throw new HttpError(400, result.error.message)
+      return { ...item, catalog_submission: result.data }
+    }
     return mod.type === 'query' ? { ...item, client_link_status: item.data?.client_id ? 'linked' : 'needs_review' } : item
   })
 
@@ -126,7 +147,10 @@ export async function registerRecords(app: FastifyInstance): Promise<void> {
         if (!related) throw new HttpError(400, `${field.label} is invalid.`)
         const source = related.type === 'client' ? admin : ctx.db
         const { data } = await source.from('records').select('id').eq('company_id', ctx.companyId).eq('type', related.type).eq('id', value.data[field.key]).maybeSingle()
-        if (!data) throw new HttpError(400, `${field.label} is not in this company.`)
+        if (!data && ['room_type','property_type','hotel_category','voucher_inclusion'].includes(related.type)) {
+          const visible = await accessibleCatalogSourceIds(ctx.companyId, [related.type as CatalogType], [String(value.data[field.key])])
+          if (!visible.has(String(value.data[field.key]))) throw new HttpError(400, `${field.label} is not available to this company.`)
+        } else if (!data) throw new HttpError(400, `${field.label} is not in this company.`)
       }
     }
     if (mod.type === 'invoice') invoiceAmounts(value.data)
@@ -152,6 +176,7 @@ export async function registerRecords(app: FastifyInstance): Promise<void> {
       clientLinkStatus = link.status
     }
     const item = unwrap(await ctx.db.from('records').insert({ company_id: ctx.companyId, type: mod.type, title: value.title, status: value.status, data: value.data, created_by: ctx.userId }).select('*').single())
+    await submitContribution(ctx, item, 'create')
     await audit(ctx, `${mod.type}.create`, item.id)
     return clientLinkStatus ? { ...item, client_link_status: clientLinkStatus } : item
   })
@@ -171,6 +196,7 @@ export async function registerRecords(app: FastifyInstance): Promise<void> {
     }
     const preserved = Object.fromEntries(Object.entries(previous.data || {}).filter(([key]) => !mod.fields.some(field => field.key === key)))
     const item = unwrap(await ctx.db.from('records').update({ title: value.title, status: value.status, data: { ...preserved, ...value.data }, updated_at: new Date().toISOString() }).eq('company_id', ctx.companyId).eq('type', mod.type).eq('id', id).select('*').single())
+    await submitContribution(ctx, item, 'update')
     if (mod.type === 'query' && previous.data?.client_id !== item.data?.client_id) await admin.from('quotes').update({ client_id: item.data?.client_id || null }).eq('company_id', ctx.companyId).eq('query_id', id)
     await audit(ctx, `${mod.type}.update`, id)
     return clientLinkStatus ? { ...item, client_link_status: clientLinkStatus } : item

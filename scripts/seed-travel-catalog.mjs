@@ -12,6 +12,7 @@ const stableId = key => {
   hex[12] = '4'; hex[16] = ['8','9','a','b'][parseInt(hex[16], 16) % 4]
   return `${hex.slice(0,8).join('')}-${hex.slice(8,12).join('')}-${hex.slice(12,16).join('')}-${hex.slice(16,20).join('')}-${hex.slice(20).join('')}`
 }
+const normalize = value => String(value || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '')
 const upsert = async (table, rows, key = 'catalog_key') => { const { error } = await db.from(table).upsert(rows, { onConflict: key }); if (error) throw error }
 const [locations, templates, hotels] = await Promise.all([read('locations'), read('itinerary-templates'), read('hotels')])
 const locationId = new Map(locations.map(x => [x.catalog_key, stableId(`location:${x.catalog_key}`)]))
@@ -22,4 +23,10 @@ await upsert('catalog_itinerary_templates', templates.map(({ days, ...template }
 const templateDays = templates.flatMap(template => template.days.map(day => ({ template_id: stableId(`template:${template.catalog_key}`), day_number: day.day_number, day_plan_id: stableId(`day:${day.catalog_key}`), overnight_location_id: day.overnight_location_id ? locationId.get(day.overnight_location_id) : null })))
 await upsert('catalog_template_days', templateDays, 'template_id,day_number')
 await upsert('catalog_hotels', hotels.map(hotel => ({ ...hotel, id: stableId(`hotel:${hotel.catalog_key}`), location_id: locationId.get(hotel.location_id), updated_at: new Date().toISOString() })))
+await upsert('catalog_entries', [
+  ...locations.map(item => ({ id: locationId.get(item.catalog_key), catalog_type: 'location', source_id: locationId.get(item.catalog_key), normalized_key: item.catalog_key.toLowerCase(), title: item.name, provenance: 'seed' })),
+  ...dayPlans.map(item => ({ id: item.id, catalog_type: 'day_plan', source_id: item.id, normalized_key: item.catalog_key.toLowerCase(), title: item.title, provenance: 'seed' })),
+  ...templates.map(item => ({ id: stableId(`template:${item.catalog_key}`), catalog_type: 'itinerary_template', source_id: stableId(`template:${item.catalog_key}`), normalized_key: item.catalog_key.toLowerCase(), title: item.title, provenance: 'seed' })),
+  ...hotels.map(item => ({ id: stableId(`hotel:${item.catalog_key}`), catalog_type: 'hotel', source_id: stableId(`hotel:${item.catalog_key}`), normalized_key: `${normalize(item.canonical_name)}:${locationId.get(item.location_id)}`, title: item.canonical_name, provenance: 'seed' }))
+], 'id')
 console.log(`Upserted ${locations.length} locations, ${dayPlans.length} day plans, ${templates.length} templates, and ${hotels.length} hotels.`)

@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { Link, NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom'
-import { Activity, BarChart3, Bell, BriefcaseBusiness, Building2, ChevronDown, CircleDollarSign, ClipboardCheck, Compass, FileText, Hotel, LayoutDashboard, LogOut, Menu, ReceiptText, Search, Settings2, Shield, Users, Wallet, X } from 'lucide-react'
+import { Activity, BarChart3, Bell, BriefcaseBusiness, Building2, ChevronDown, CircleDollarSign, ClipboardCheck, Compass, FileText, Hotel, LayoutDashboard, LibraryBig, LogOut, MapPin, Menu, ReceiptText, Search, Settings2, Shield, Users, Wallet, X } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { api, configured, selectCompany, supabase, type Me } from './api'
 const DashboardPage = lazy(() => import('./pages/Dashboard'))
@@ -23,6 +23,7 @@ const PlatformCompanyDetail = lazy(() => import('./pages/Platform').then(m => ({
 const PlatformPlans = lazy(() => import('./pages/Platform').then(m => ({ default: m.PlatformPlans })))
 const PlatformSettings = lazy(() => import('./pages/Platform').then(m => ({ default: m.PlatformSettings })))
 const PlatformAudit = lazy(() => import('./pages/Platform').then(m => ({ default: m.PlatformAudit })))
+const PlatformCatalog = lazy(() => import('./pages/Catalog').then(m => ({ default: m.PlatformCatalog })))
 const PublicLeadForm = lazy(() => import('./pages/PublicForm'))
 const TasksPage = lazy(() => import('./pages/Operations').then(m => ({ default: m.TasksPage })))
 const OperationsSettings = lazy(() => import('./pages/Operations').then(m => ({ default: m.OperationsSettings })))
@@ -42,7 +43,9 @@ const groups: { label: string; items: NavItem[] }[] = [
     { label: 'Leads', path: '/records/leads', icon: Users, permission: 'lead.read', feature: 'crm' }
   ] },
   { label: 'Travel library', items: [
+    { label: 'Locations', path: '/records/locations', icon: MapPin, permission: 'location.read', feature: 'crm' },
     { label: 'Day plans', path: '/records/day-plans', icon: Compass, permission: 'day_plan.read', feature: 'crm' },
+    { label: 'Itinerary templates', path: '/records/itinerary-templates', icon: LibraryBig, permission: 'itinerary_template.read', feature: 'crm' },
     { label: 'Hotels & houseboats', path: '/records/hotels', icon: Hotel, permission: 'hotel.read', feature: 'crm' },
     { label: 'Cabs', path: '/records/cabs', icon: Compass, permission: 'cab.read', feature: 'crm' },
     { label: 'Stay vouchers', path: '/records/stay-vouchers', icon: FileText, permission: 'stay_voucher.read', feature: 'documents' },
@@ -61,6 +64,7 @@ const groups: { label: string; items: NavItem[] }[] = [
     { label: 'Lead sources', path: '/records/lead-sources', icon: Compass, permission: 'lead_source.read', feature: 'crm' },
     { label: 'Hotel categories', path: '/records/hotel-categories', icon: Hotel, permission: 'hotel_category.read', feature: 'crm' },
     { label: 'Room types', path: '/records/room-types', icon: Hotel, permission: 'room_type.read', feature: 'crm' },
+    { label: 'Property types', path: '/records/property-types', icon: Building2, permission: 'property_type.read', feature: 'crm' },
     { label: 'Voucher inclusions', path: '/records/voucher-inclusions', icon: FileText, permission: 'voucher_inclusion.read', feature: 'crm' },
     { label: 'Partners', path: '/records/partners', icon: Building2, permission: 'partner.read', feature: 'crm' },
     { label: 'Other catalog', path: '/records/other-catalog', icon: Settings2, permission: 'other_catalog.read', feature: 'crm' },
@@ -74,6 +78,7 @@ const groups: { label: string; items: NavItem[] }[] = [
 ]
 const platformGroups: { label: string; items: NavItem[] }[] = [{ label: 'Platform', items: [
   { label: 'Owner overview', path: '/platform', icon: LayoutDashboard, permission: '*' },
+  { label: 'Travel catalog', path: '/platform/catalog', icon: LibraryBig, permission: '*' },
   { label: 'Companies', path: '/companies', icon: Building2, permission: '*' },
   { label: 'Plans & pricing', path: '/platform/plans', icon: CircleDollarSign, permission: '*' },
   { label: 'Platform settings', path: '/platform/settings', icon: Settings2, permission: '*' },
@@ -123,5 +128,5 @@ export default function App() {
   if (location.pathname === '/set-password') return <SetPassword/>
   if (error) return <div className="choice-page"><div className="choice-card"><h1>Account access</h1><p className="form-error">{error}</p><button className="button secondary" onClick={() => { setError(''); api<Me>('/me').then(setMe).catch(e => setError(e.message)) }}>Try again</button><button className="text-button" onClick={() => selectCompany('')}>Choose another company</button><button className="text-button" onClick={() => supabase?.auth.signOut()}>Sign out</button></div></div>
   if (!me) return <div className="loading-screen">Loading your workspace…</div>
-  return <AppShell me={me}><Suspense fallback={<div className="loading-screen page-loading">Opening section…</div>}><Routes><Route path="/" element={me.platform && !me.companyId ? <Navigate to="/platform"/> : <DashboardPage me={me}/>}/><Route path="/platform" element={<PlatformOverview/>}/><Route path="/platform/companies/:id" element={<PlatformCompanyDetail/>}/><Route path="/platform/plans" element={<PlatformPlans/>}/><Route path="/platform/settings" element={<PlatformSettings/>}/><Route path="/platform/audit" element={<PlatformAudit/>}/><Route path="/records/clients" element={<ClientsPage me={me}/>}/><Route path="/clients/:id" element={<CustomerOverview me={me}/>}/><Route path="/records/:slug" element={<EntityPage me={me}/>}/><Route path="/quotes" element={<QuotesPage me={me}/>}/><Route path="/quotes/new" element={<QuoteEditor/>}/><Route path="/quotes/:id/edit" element={<QuoteEditor/>}/><Route path="/bookings" element={<BookingsPage me={me}/>}/><Route path="/bookings/:id" element={<BookingDetail me={me}/>}/><Route path="/operations/tasks" element={<TasksPage me={me}/>}/><Route path="/operations/settings" element={<OperationsSettings me={me}/>}/><Route path="/notifications" element={<NotificationsPage/>}/><Route path="/ledger" element={<LedgerPage/>}/><Route path="/hotel-ledger" element={<HotelLedgerPage/>}/><Route path="/payments" element={<PaymentsPage/>}/><Route path="/users" element={<UsersPage me={me}/>}/><Route path="/roles" element={<RolesPage me={me}/>}/><Route path="/settings" element={<SettingsPage/>}/><Route path="/integrations" element={<IntegrationsPage/>}/><Route path="/audit" element={<AuditPage/>}/><Route path="/companies" element={<CompaniesPage me={me}/>}/><Route path="*" element={<Navigate to={me.platform && !me.companyId ? '/platform' : '/'}/>}/></Routes></Suspense></AppShell>
+  return <AppShell me={me}><Suspense fallback={<div className="loading-screen page-loading">Opening section…</div>}><Routes><Route path="/" element={me.platform && !me.companyId ? <Navigate to="/platform"/> : <DashboardPage me={me}/>}/><Route path="/platform" element={<PlatformOverview/>}/><Route path="/platform/catalog" element={<PlatformCatalog/>}/><Route path="/platform/companies/:id" element={<PlatformCompanyDetail/>}/><Route path="/platform/plans" element={<PlatformPlans/>}/><Route path="/platform/settings" element={<PlatformSettings/>}/><Route path="/platform/audit" element={<PlatformAudit/>}/><Route path="/records/clients" element={<ClientsPage me={me}/>}/><Route path="/clients/:id" element={<CustomerOverview me={me}/>}/><Route path="/records/:slug" element={<EntityPage me={me}/>}/><Route path="/quotes" element={<QuotesPage me={me}/>}/><Route path="/quotes/new" element={<QuoteEditor/>}/><Route path="/quotes/:id/edit" element={<QuoteEditor/>}/><Route path="/bookings" element={<BookingsPage me={me}/>}/><Route path="/bookings/:id" element={<BookingDetail me={me}/>}/><Route path="/operations/tasks" element={<TasksPage me={me}/>}/><Route path="/operations/settings" element={<OperationsSettings me={me}/>}/><Route path="/notifications" element={<NotificationsPage/>}/><Route path="/ledger" element={<LedgerPage/>}/><Route path="/hotel-ledger" element={<HotelLedgerPage/>}/><Route path="/payments" element={<PaymentsPage/>}/><Route path="/users" element={<UsersPage me={me}/>}/><Route path="/roles" element={<RolesPage me={me}/>}/><Route path="/settings" element={<SettingsPage/>}/><Route path="/integrations" element={<IntegrationsPage/>}/><Route path="/audit" element={<AuditPage/>}/><Route path="/companies" element={<CompaniesPage me={me}/>}/><Route path="*" element={<Navigate to={me.platform && !me.companyId ? '/platform' : '/'}/>}/></Routes></Suspense></AppShell>
 }
